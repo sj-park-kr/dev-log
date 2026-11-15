@@ -18,3 +18,21 @@ exclude:
   - CLAUDE.md
   - AGENTS.md
   - docs/
+
+locale: ko_KR
+author:
+  name: sj-park-kr
+  url: https://github.com/sj-park-kr
+logo: /assets/images/og-default.png
+
+# Google Search Console 소유권 확인 코드(content 값)를 아래에 붙여 넣으세요. 비워 두면 태그가 출력되지 않습니다.
+webmaster_verifications:
+  google:
+# 네이버 서치어드바이저 소유권 확인 코드(content 값)를 아래에 붙여 넣으세요. 비워 두면 태그가 출력되지 않습니다.
+naver_site_verification:
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      image: /assets/images/og-default.png

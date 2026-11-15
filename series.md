@@ -10,7 +10,7 @@ wide: true
 {% assign series_posts = site.posts | where: 'series', series.id | sort: 'episode' %}
 <section id="{{ series.id | escape }}" class="series-section" style="--series-color: {{ series.color | escape }}" aria-labelledby="title-{{ series.id | escape }}">
   <header class="series-section-heading">
-    <span class="series-emoji" aria-hidden="true">{{ series.emoji }}</span>
+    {% include series-icon.html series=series %}
     <div><h2 id="title-{{ series.id | escape }}">{{ series.title | escape }}</h2><p>{{ series.description | escape }}</p></div>
     <span class="series-badge">{% if series_posts.size > 0 %}글 {{ series_posts.size }}편{% else %}준비 중{% endif %}</span>
   </header>

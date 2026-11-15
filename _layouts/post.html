@@ -8,7 +8,7 @@ layout: default
 <article class="post"{% if post_series %} style="--series-color: {{ post_series.color | escape }}"{% endif %}>
   <header class="post-heading">
     {% if post_series %}
-      <a class="series-badge" href="{{ '/series/' | relative_url }}#{{ post_series.id | escape }}">{{ post_series.emoji }} {{ post_series.title | escape }}{% if page.episode %} #{{ page.episode | escape }}{% endif %}</a>
+      <a class="series-badge" href="{{ '/series/' | relative_url }}#{{ post_series.id | escape }}">{% if post_series.logo %}<img class="series-logo-mini" src="{{ post_series.logo | relative_url }}" alt="" width="14" height="14"> {% else %}{{ post_series.emoji }} {% endif %}{{ post_series.title | escape }}{% if page.episode %} #{{ page.episode | escape }}{% endif %}</a>
     {% else %}
       <p class="eyebrow">하나씩 이해하는 개념 노트</p>
     {% endif %}
@@ -42,3 +42,4 @@ layout: default
     {% endif %}
   {% endif %}
 </article>
+<script src="{{ '/assets/js/post-toc.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>

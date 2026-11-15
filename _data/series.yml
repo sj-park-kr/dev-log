@@ -20,5 +20,70 @@
 - id: kafka
   title: Kafka
   emoji: "📦"
+  logo: /assets/cursors/kafka.svg
   color: "#c2410c"
   description: 서비스끼리 소식을 주고받는 택배 물류센터 카프카를 알아봐요.
+- id: ai
+  title: 인공지능 AI
+  emoji: "🤖"
+  color: "#4338a0"
+  description: 컴퓨터에게 문제 푸는 법을 가르치는 교실로 함께 들어가요.
+- id: generative-ai
+  title: 생성형 AI
+  emoji: "🎨"
+  color: "#a33268"
+  description: 글과 그림을 만드는 AI의 작업실을 하나씩 둘러봐요.
+- id: machine-learning
+  title: 머신러닝
+  emoji: "🌱"
+  color: "#39723e"
+  description: 예시를 보며 배우는 컴퓨터, 과일을 구별하는 연습부터 시작해요.
+- id: deep-learning
+  title: 딥러닝
+  emoji: "🧠"
+  color: "#8045a0"
+  description: 작은 단서를 모아 큰 그림을 알아보는 탐정단을 만나요.
+- id: llm
+  title: 대규모 언어 모델
+  emoji: "💬"
+  color: "#246789"
+  description: 말하는 AI가 궁금하다면, 단어를 이어 가는 이야기 교실로 와요.
+- id: rag
+  title: RAG
+  emoji: "📚"
+  color: "#986017"
+  description: 책을 찾아 펼쳐 보고 답하는 AI 사서와 함께 공부해요.
+- id: ai-agent
+  title: AI 에이전트
+  emoji: "🧭"
+  color: "#336b68"
+  description: 도구를 챙겨 일을 해결하는 AI 조수의 하루를 따라가요.
+- id: kubernetes
+  title: 쿠버네티스
+  emoji: "☸️"
+  logo: /assets/cursors/kubernetes.svg
+  color: "#2855ad"
+  description: 수많은 앱을 돌보는 항구, 쿠버네티스의 관제실을 구경해요.
+- id: airflow
+  title: Airflow
+  emoji: "🌬️"
+  logo: /assets/images/series/airflow.png
+  color: "#257975"
+  description: 할 일을 순서대로 잇는 시간표로 데이터 작업의 흐름을 알아봐요.
+- id: docker
+  title: Docker
+  emoji: "🐳"
+  logo: /assets/cursors/docker.svg
+  color: "#1f6c9c"
+  description: 앱과 필요한 준비물을 한 상자에, 컨테이너 포장을 함께 풀어봐요.
+- id: redis
+  title: Redis
+  emoji: "⚡"
+  logo: /assets/cursors/redis.svg
+  color: "#aa3939"
+  description: 자주 쓰는 정보를 책상 위에 꺼내 두듯 캐시를 이해해요.
+- id: observability
+  title: 모니터링과 관측
+  emoji: "🔭"
+  color: "#685536"
+  description: 서비스의 건강을 살피는 보건실에서 로그와 지표를 함께 읽어봐요.

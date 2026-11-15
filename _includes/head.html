@@ -3,10 +3,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <script src="{{ '/assets/js/theme.js' | relative_url }}?v={{ site.time | date: '%s' }}"></script>
+  {% if site.naver_site_verification and site.naver_site_verification != "" %}<meta name="naver-site-verification" content="{{ site.naver_site_verification | escape }}">{% endif %}
   {% seo %}
   <link rel="alternate" type="application/atom+xml" title="{{ site.title | escape }} 새 글 구독" href="{{ '/feed.xml' | relative_url }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 </head>

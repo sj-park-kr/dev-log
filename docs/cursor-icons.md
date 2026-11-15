@@ -1,15 +1,31 @@
 # 커서 아이콘 출처
 
-공식 배포 로고와 Devicon 로고를 사용하며 커서용 SVG의 표시 크기는 32×32로 지정한다.
+모든 로고는 각 프로젝트의 공식 사이트·공식 저장소 또는 공식 사이트에서 연결한 배포 서버에서 받는다. 로고 모음 사이트의 파일은 사용하지 않는다.
 
-- VS Code: https://code.visualstudio.com/brand (공식 아이콘 ZIP의 `vscode.svg`)
-- Trino: https://trino.io/assets/images/trino-logo/trino-ko_tiny-alt.svg
-- RabbitMQ: https://www.rabbitmq.com/trademark-guidelines (`rabbitmq-logo.svg`)
+커서 크기는 32×32이며 원본의 비율·색상·투명도를 유지한다. 색상 필터, 밝기 보정, 반투명 효과, 배경 또는 테두리를 추가하지 않는다. PNG 배포본은 원본을 SVG의 data URL로 포함해 크기만 지정한다.
 
-로고의 권리는 각 소유자에게 있다.
+선택한 로고는 OS의 커서 이미지 대신 페이지의 32×32 이미지로 표시한다. 메뉴와 동일한 파일을 그대로 사용하며 포인터 위치를 따라 이동한다. 메뉴 위에서도 보이도록 수동 popover로 최상위에 배치하고 마우스 이벤트는 통과시킨다. 로고 표시 중에는 링크·버튼·드래그 영역을 포함한 페이지 전체에서 기본 커서를 숨긴다. 기본 화살표를 선택하거나 포인터가 창을 벗어나면 브라우저의 커서로 돌아온다. Python 원본의 `pt` 크기는 96/72 배율로 픽셀 영역에 환산한다.
 
-## 추가 개발 도구 로고
+| 로고 | 공식 출처 · 배포 파일 |
+|---|---|
+| VS Code | [브랜드 페이지](https://code.visualstudio.com/brand)의 [아이콘 ZIP](https://code.visualstudio.com/assets/branding/visual-studio-code-icons.zip), `vscode.svg` |
+| Trino | [공식 사이트 SVG](https://trino.io/assets/images/trino-logo/trino-ko_tiny-alt.svg) |
+| RabbitMQ | [상표 안내](https://www.rabbitmq.com/trademark-guidelines)의 [로고 SVG](https://www.rabbitmq.com/img/rabbitmq-logo.svg) |
+| Kafka | [공식 사이트 PNG](https://kafka.apache.org/logos/kafka-logo-no-text.png) |
+| MSSQL | [Microsoft SQL Server 다운로드 페이지](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)의 [제품 아이콘 SVG](https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/1037761-cardgrid-sql-server2022) |
+| PostgreSQL | [공식 보도자료 페이지](https://www.postgresql.org/about/press/)의 [elephant.png](https://www.postgresql.org/media/img/about/press/elephant.png) |
+| MySQL | [공식 로고 페이지](https://www.mysql.com/about/legal/logos.html)의 [로고 PNG](https://www.mysql.com/common/logos/logo-mysql-170x115.png) |
+| Redis | [공식 사이트](https://redis.io/)의 [아이콘 PNG](https://redis.io/icon.png) |
+| Docker | [공식 미디어 자료](https://www.docker.com/company/newsroom/media-resources/)의 [로고 ZIP](https://www.docker.com/static/Docker-Logos-1.zip), `docker-mark-ocean-blue.svg` |
+| Kubernetes | [공식 저장소 SVG](https://raw.githubusercontent.com/kubernetes/kubernetes/master/logo/logo.svg) |
+| Git | [공식 로고 페이지](https://git-scm.com/downloads/logos)의 [Git-Icon-1788C.svg](https://git-scm.com/images/logos/downloads/Git-Icon-1788C.svg) |
+| GitHub | [공식 로고 페이지](https://github.com/logos)의 [로고 ZIP](https://brand.github.com/GitHub_Logos.zip), `GitHub_Invertocat_Black.svg` |
+| Python | [공식 로고 페이지](https://www.python.org/community/logos/)의 [python-logo-only.svg](https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/files/python-logo-only.svg) |
+| TypeScript | [공식 브랜드 페이지](https://www.typescriptlang.org/branding/)의 [디자인 자료 ZIP](https://www.typescriptlang.org/branding/typescript-design-assets.zip), `ts-logo-128.svg` |
+| React | [공식 사이트 저장소 SVG](https://raw.githubusercontent.com/reactjs/react.dev/main/public/images/brand/logo_dark.svg) |
+| Java | [공식 개발자 사이트](https://dev.java/)의 [로고 PNG](https://dev.java/assets/images/java-logo-vector.png) |
+| Spring | [공식 사이트 SVG](https://spring.io/favicon.svg) |
 
-Kafka, MSSQL, PostgreSQL, MySQL, Redis, Docker, Kubernetes, Git, GitHub, Python, TypeScript, React, Java, Spring은 [Devicon](https://github.com/devicons/devicon/tree/32fe1d3b3f36ad11f90ab94f7db59738139c2bf6/icons)의 original SVG를 사용한다. Devicon의 MIT 라이선스는 `assets/cursors/DEVICON-LICENSE.txt`에 보존한다.
+MSSQL 배포본의 흰색 바탕 경로 하나는 제거하고 로고 본체와 그라데이션은 그대로 유지한다. TypeScript의 파란 사각형, Redis의 빨간 사각형, Java의 흰색 부분 등 원본 로고에 포함된 요소는 유지한다.
 
-원본의 색과 비율, 투명 배경을 유지하며 SVG 표시 크기만 32×32로 지정한다. 별도의 배경이나 테두리를 추가하지 않는다.
+Git 로고는 Jason Long의 작품이며 [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)으로 배포된다. 각 로고와 상표의 권리는 해당 권리자에게 있다.
