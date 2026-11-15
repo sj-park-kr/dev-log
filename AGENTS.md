@@ -5,6 +5,7 @@ Claude와 Codex의 공통 진입점이다. 작업에 해당하는 문서를 먼�
 | 작업·상황 | 읽을 문서 |
 |---|---|
 | 코드·문서 변경 전 | [작업 원칙](docs/rules/00-working-principles.md) |
+| 작업 시작, 브랜치 확인, 커밋 | [브랜치와 커밋](docs/rules/10-git-workflow.md) |
 | 새 글 작성·기존 글 수정 | [블로그 목적과 독자](docs/rules/01-blog-identity.md), [글 구성](docs/rules/03-article-structure.md), [슬라이드와 문장](docs/rules/04-slides-writing.md) |
 | 글 파일·시리즈 생성, 메타데이터 수정 | [시리즈와 파일 구조](docs/rules/02-series-files.md) |
 | 그림 생성·수정 | [SVG 규칙](docs/rules/05-svg.md) |
