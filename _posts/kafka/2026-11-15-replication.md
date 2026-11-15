@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "물류센터 건물 하나가 불타면? 택배 물류센터로 이해하는 Kafka 복제"
-description: "카프카 복제(Replication)를 물류센터 비유로 쉽게 설명하고, 개발자용으로 리더·팔로워·ISR, high watermark, acks=all과 min.insync.replicas 조합, unclean 리더 선출, ELR까지 정리합니다."
+description: "카프카 복제(Replication)를 물류센터 비유로 쉽게 설명하고 개발자용으로 리더·팔로워·ISR, high watermark, acks=all과 min.insync.replicas 조합, unclean 리더 선출, ELR까지 정리합니다."
 date: 2026-11-15 14:30:00 +0900
 series: kafka
 episode: 5
@@ -12,7 +12,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 
 <div class="intro">
 <p class="q">물류센터 건물이 불타도 택배를 지킬 수 있을까요?</p>
-<p>4편까지는 택배가 한 건물 안의 선반에 쌓인다고 생각했어요. 그런데 건물이 하나뿐이면, 그 건물이 멈추는 순간 주문 서비스가 맡긴 택배도, 알림 문자 서비스가 가져갈 택배도 함께 사라져요.</p>
+<p>4편까지는 택배가 한 건물 안의 선반에 쌓인다고 생각했어요. 그런데 건물이 하나뿐이면 그 건물이 멈추는 순간 주문 서비스가 맡긴 택배도 알림 문자 서비스가 가져갈 택배도 함께 사라져요.</p>
 <p>이 글을 다 읽으면 카프카가 택배를 <b>여러 건물에 사본으로 나눠 두는 방법(복제)</b>, 그리고 원본이 불탔을 때 <b>누가 새 원본이 되는지(ISR 명단)</b>를 알 수 있어요.</p>
 </div>
 
@@ -21,7 +21,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 
 <section class="slide">
 <h3>건물 하나에만 택배를 두면 모두 잃을 수 있어요</h3>
-<svg class="dg" viewBox="0 0 400 170" role="img" aria-label="주문 서비스가 건물 하나뿐인 물류센터에 택배 1번부터 6번을 맡겼는데, 그 건물에 불이 나면 택배가 전부 사라지는 그림">
+<svg class="dg" viewBox="0 0 400 170" role="img" aria-label="주문 서비스가 건물 하나뿐인 물류센터에 택배 1번부터 6번을 맡겼는데 그 건물에 불이 나면 택배가 전부 사라지는 그림">
 <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="box" x="10" y="60" width="80" height="44" rx="8"/><text x="50" y="82">주문</text>
 <path class="line" d="M90,82 L118,82" marker-end="url(#a1)"/>
@@ -35,12 +35,12 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <text class="alert" x="256" y="124">불이 나면 택배가 전부 사라져요</text>
 </svg>
 <p class="point">건물 하나가 멈추면 택배를 전부 잃어요.</p>
-<p class="explain">주문 서비스가 맡긴 택배가 건물 하나에만 있다고 생각해 봐요. 정전이나 고장으로 그 건물이 멈추면, 아직 배달되지 않은 결제 완료 소식이 모두 사라져요. 한 번 사라진 택배는 다시 만들 수 없어요. 그래서 건물 하나에만 기대면 안 돼요.</p>
+<p class="explain">주문 서비스가 맡긴 택배가 건물 하나에만 있다고 생각해 봐요. 정전이나 고장으로 그 건물이 멈추면 아직 배달되지 않은 결제 완료 소식이 모두 사라져요. 한 번 사라진 택배는 다시 만들 수 없어요. 그래서 건물 하나에만 기대면 안 돼요.</p>
 </section>
 
 <details class="origin">
-<summary>더 알아보기: 복제는 언제, 왜 생겼을까?</summary>
-<p><b>복제는 카프카의 기본 구조예요.</b> 카프카 설계 문서는 파티션마다 쓰기를 맡는 리더 하나와, 그 로그를 따라 복제하는 팔로워들이 있다고 설명해요.</p>
+<summary>더 알아보기: 복제는 언제 왜 생겼을까?</summary>
+<p><b>복제는 카프카의 기본 구조예요.</b> 카프카 설계 문서는 파티션마다 쓰기를 맡는 리더 하나와 그 로그를 따라 복제하는 팔로워들이 있다고 설명해요.</p>
 <p>접수 영수증(acks)의 기본값은 3.0 전까지 "원본에만 적으면 끝"인 <b>acks=1</b>이었어요. <b>Kafka 3.0(KIP-679)</b>에서 "명단 건물이 모두 적어야 끝"인 <b>acks=all</b>로 바뀌었어요.</p>
 <p>명단에 아무도 안 남았을 때의 빈틈은 <b>KIP-966(ELR)</b>이 메웠어요. 4.0에서 도입됐고(기본 꺼짐), 4.1부터 새로 만드는 클러스터에서는 기본으로 켜져요.</p>
 <p>명단의 이름 <b>ISR</b>은 In-Sync Replicas, 곧 "동기화된 복제본들"이라는 뜻이에요.</p>
@@ -48,7 +48,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 
 <section class="slide">
 <h3>다른 건물에 사본 선반을 둬요</h3>
-<svg class="dg" viewBox="0 0 400 270" role="img" aria-label="주문 서비스가 원본 건물 1에 택배를 맡기면, 사본 건물 2와 건물 3이 원본을 보고 같은 택배 1번부터 3번을 따라 적는 그림">
+<svg class="dg" viewBox="0 0 400 270" role="img" aria-label="주문 서비스가 원본 건물 1에 택배를 맡기면 사본 건물 2와 건물 3이 원본을 보고 같은 택배 1번부터 3번을 따라 적는 그림">
 <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="box" x="30" y="10" width="90" height="36" rx="8"/><text x="75" y="28">주문</text>
 <path class="line" d="M75,46 L75,76" marker-end="url(#a2)"/>
@@ -71,13 +71,13 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <circle class="packet" r="5"><animateMotion dur="1.6s" begin="0.5s" repeatCount="indefinite" path="M140,120 L248,82"/></circle>
 <circle class="packet" r="5"><animateMotion dur="1.6s" begin="0.9s" repeatCount="indefinite" path="M140,150 L248,198"/></circle>
 </svg>
-<p class="point">원본 건물만 택배를 받고, 사본 건물은 따라 적어요.</p>
-<p class="explain">주문 서비스는 사본 건물이 몇 개든 신경 쓰지 않고 원본 건물에만 택배를 맡겨요. 사본 건물은 원본 건물에 들어온 택배를 보고, 같은 순서로 자기 선반에 똑같이 적어 두어요. 이렇게 한 택배가 여러 건물에 남으니, 한 건물이 멈춰도 다른 건물에서 이어 갈 수 있어요.</p>
+<p class="point">원본 건물만 택배를 받고 사본 건물은 따라 적어요.</p>
+<p class="explain">주문 서비스는 사본 건물이 몇 개든 신경 쓰지 않고 원본 건물에만 택배를 맡겨요. 사본 건물은 원본 건물에 들어온 택배를 보고 같은 순서로 자기 선반에 똑같이 적어 두어요. 이렇게 한 택배가 여러 건물에 남으니 한 건물이 멈춰도 다른 건물에서 이어 갈 수 있어요.</p>
 </section>
 
 <section class="slide">
 <h3>실제로는: 리더가 쓰기를 받고 컨슈머는 HW 아래를 읽어요</h3>
-<svg class="dg" viewBox="0 0 400 240" role="img" aria-label="파티션 하나의 복제본 세 개: 브로커 1 리더는 오프셋 0부터 5까지, 브로커 2 팔로워는 0부터 4까지 가지고 둘은 ISR이며, 브로커 3 팔로워는 0부터 2까지만 가져 ISR 밖이고, high watermark는 5인 그림">
+<svg class="dg" viewBox="0 0 400 240" role="img" aria-label="파티션 하나의 복제본 세 개: 브로커 1 리더는 오프셋 0부터 5까지, 브로커 2 팔로워는 0부터 4까지 가지고 둘은 ISR이며 브로커 3 팔로워는 0부터 2까지만 가져 ISR 밖이고 high watermark는 5인 그림">
 <text class="small" x="200" y="12">파티션 P0의 복제본 3개</text>
 <rect class="new" x="4" y="22" width="392" height="98" rx="8"/><text class="small" x="378" y="108">ISR</text>
 <text class="label" x="10" y="50">B1 리더</text>
@@ -102,13 +102,13 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <polygon class="mark" points="314,176 306,188 322,188"/><text x="314" y="204">HW = 5</text>
 <text class="small" x="200" y="226">컨슈머는 HW 아래(0~4)까지만 읽어요</text>
 </svg>
-<p class="point">쓰기는 리더가 받고, 컨슈머는 HW 아래까지만 읽어요.</p>
-<p class="explain">택배를 맡기는 앱은 프로듀서, 저장하는 건물은 브로커, 꺼내서 처리하는 앱은 컨슈머예요. 선반의 한 칸인 파티션마다 쓰기를 받는 원본이 리더이고, 같은 기록을 따라 적는 사본이 팔로워예요. ISR은 리더를 잘 따라오는 복제본 명단이고, HW(high watermark)는 복제가 끝난 범위의 다음 번호예요. 그림에서는 HW가 5라서 컨슈머가 0~4를 읽고, 아직 리더에만 있는 5는 기다려요.</p>
+<p class="point">쓰기는 리더가 받고 컨슈머는 HW 아래까지만 읽어요.</p>
+<p class="explain">택배를 맡기는 앱은 프로듀서 저장하는 건물은 브로커, 꺼내서 처리하는 앱은 컨슈머예요. 선반의 한 칸인 파티션마다 쓰기를 받는 원본이 리더이고 같은 기록을 따라 적는 사본이 팔로워예요. ISR은 리더를 잘 따라오는 복제본 명단이고 HW(high watermark)는 복제가 끝난 범위의 다음 번호예요. 그림에서는 HW가 5라서 컨슈머가 0~4를 읽고 아직 리더에만 있는 5는 기다려요.</p>
 </section>
 
 <section class="slide">
 <h3>최신으로 맞춘 건물 명단</h3>
-<svg class="dg" viewBox="0 0 400 246" role="img" aria-label="건물 1과 건물 2는 택배 1번부터 6번까지 따라 적어서 명단에 오르고, 건물 3은 4번까지만 적어서 뒤처진 상태라 명단에 없는 그림">
+<svg class="dg" viewBox="0 0 400 246" role="img" aria-label="건물 1과 건물 2는 택배 1번부터 6번까지 따라 적어서 명단에 오르고 건물 3은 4번까지만 적어서 뒤처진 상태라 명단에 없는 그림">
 <text class="label" x="10" y="42">건물 1</text>
 <rect class="kafka" x="70" y="24" width="36" height="36" rx="5"/><text x="88" y="42">1</text>
 <rect class="kafka" x="112" y="24" width="36" height="36" rx="5"/><text x="130" y="42">2</text>
@@ -136,7 +136,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <rect class="new" x="30" y="184" width="340" height="46" rx="8"/><text x="200" y="207">ISR 명단: 건물 1, 건물 2</text>
 </svg>
 <p class="point">원본을 바짝 따라온 건물만 명단에 올라요.</p>
-<p class="explain">사본 건물이 모두 원본만큼 최신인 건 아니에요. 건물 3처럼 따라 적는 속도가 느려서 5번, 6번 택배가 아직 없는 곳도 있어요. 그래서 카프카는 원본을 잘 따라온 건물만 명단(ISR)에 적어 두고, 뒤처진 건물은 명단에서 빼요. 이 명단이 나중에 "누가 새 원본이 될 수 있나"와 "영수증을 언제 줄까"를 정하는 기준이 돼요.</p>
+<p class="explain">사본 건물이 모두 원본만큼 최신인 건 아니에요. 건물 3처럼 따라 적는 속도가 느려서 5번, 6번 택배가 아직 없는 곳도 있어요. 그래서 카프카는 원본을 잘 따라온 건물만 명단(ISR)에 적어 두고 뒤처진 건물은 명단에서 빼요. 이 명단이 나중에 "누가 새 원본이 될 수 있나"와 "영수증을 언제 줄까"를 정하는 기준이 돼요.</p>
 </section>
 
 <section class="slide">
@@ -151,7 +151,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 </tbody>
 </table>
 <p class="point">컨슈머는 복제가 끝난 레코드까지만 읽어요.</p>
-<p class="explain">HW는 명단 건물들이 함께 보관한 택배의 경계예요. 트랜잭션은 여러 작업을 한 묶음으로 끝내는 장치이고, <code>read_committed</code>는 끝난 묶음만 받는 컨슈머 설정이에요. 이 컨슈머는 HW뿐 아니라 아직 끝나지 않은 묶음의 시작 위치도 넘지 않으며, 두 경계 중 작은 값이 LSO예요. 4.0 이후에는 ISR 수가 유효 min ISR, 곧 적용되는 최소 명단 수 이상이어야 HW가 전진하며, 이는 ELR 활성화 여부와 별개예요.</p>
+<p class="explain">HW는 명단 건물들이 함께 보관한 택배의 경계예요. 트랜잭션은 여러 작업을 한 묶음으로 끝내는 장치이고 <code>read_committed</code>는 끝난 묶음만 받는 컨슈머 설정이에요. 이 컨슈머는 HW뿐 아니라 아직 끝나지 않은 묶음의 시작 위치도 넘지 않으며 두 경계 중 작은 값이 LSO예요. 4.0 이후에는 ISR 수가 유효 min ISR, 곧 적용되는 최소 명단 수 이상이어야 HW가 전진하며 이는 ELR 활성화 여부와 별개예요.</p>
 </section>
 
 </div>
@@ -168,13 +168,13 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <tr><td>명단 건물이 모두 적은 뒤 (<code>acks=all</code>)</td><td>명단 안 건물이 새 원본이 돼도 그 택배가 있어요</td></tr>
 </tbody>
 </table>
-<p class="point">영수증을 늦게 줄수록 더 안전하고, 그만큼 더 기다려요.</p>
-<p class="explain">3편에서 본 영수증(acks)은 복제와 바로 이어져요. 원본에만 적고 영수증을 주면 빠르지만, 그 순간 원본이 불타면 주문 서비스는 "접수됐다"고 믿는데 택배는 어디에도 없어요. 명단 건물이 모두 적은 뒤에 주면 조금 더 기다리지만, 영수증을 받은 택배는 새 원본에도 남아 있어요. 결제 완료 같은 중요한 소식이라면 뒤쪽이 어울려요.</p>
+<p class="point">영수증을 늦게 줄수록 더 안전하고 그만큼 더 기다려요.</p>
+<p class="explain">3편에서 본 영수증(acks)은 복제와 바로 이어져요. 원본에만 적고 영수증을 주면 빠르지만 그 순간 원본이 불타면 주문 서비스는 "접수됐다"고 믿는데 택배는 어디에도 없어요. 명단 건물이 모두 적은 뒤에 주면 조금 더 기다리지만 영수증을 받은 택배는 새 원본에도 남아 있어요. 결제 완료 같은 중요한 소식이라면 뒤쪽이 어울려요.</p>
 </section>
 
 <section class="slide">
 <h3>실제로는: 팔로워가 복제한 뒤 리더가 접수 응답을 보내요</h3>
-<svg class="dg" viewBox="0 0 400 230" role="img" aria-label="프로듀서가 리더에 쓰고, 리더의 로그를 팔로워 두 개가 fetch로 가져가 복제하고, ISR 전체가 적은 뒤 리더가 프로듀서에게 응답하는 그림">
+<svg class="dg" viewBox="0 0 400 230" role="img" aria-label="프로듀서가 리더에 쓰고 리더의 로그를 팔로워 두 개가 fetch로 가져가 복제하고 ISR 전체가 적은 뒤 리더가 프로듀서에게 응답하는 그림">
 <defs><marker id="d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="box" x="10" y="90" width="80" height="40" rx="6"/><text class="chip" x="50" y="110">Producer</text>
 <path class="line" d="M90,100 L148,100" marker-end="url(#d1)"/>
@@ -192,7 +192,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.6s" repeatCount="indefinite" path="M240,100 L298,55"/></circle>
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.6s" repeatCount="indefinite" path="M240,120 L298,165"/></circle>
 </svg>
-<p class="point">팔로워가 fetch로 따라 적고, 리더는 ISR 전체가 적은 뒤 응답해요.</p>
+<p class="point">팔로워가 fetch로 따라 적고 리더는 ISR 전체가 적은 뒤 응답해요.</p>
 <p class="explain">프로듀서가 먼저 리더 브로커에 메시지를 보내요. 팔로워 브로커는 fetch, 곧 기록을 가져오는 요청으로 리더의 새 메시지를 따라 적어요. 리더는 현재 ISR 전체가 적은 뒤 프로듀서에게 성공 응답을 보내요. 앞의 명단 건물이 모두 적은 뒤 영수증을 주는 순서예요.</p>
 </section>
 
@@ -207,8 +207,8 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <tr><td><code>acks=all</code><br><code>min.insync.replicas=3</code></td><td>3개 확인 후 성공</td><td><b>쓰기 거절</b></td><td><b>쓰기 거절</b></td></tr>
 </tbody>
 </table>
-<p class="point">acks=all은 그 순간의 ISR 전체를 기다리고, min.insync.replicas는 ISR의 하한선이에요.</p>
-<p class="explain"><code>acks</code>는 프로듀서가 어떤 접수 응답을 기다릴지 정하는 설정이에요. <code>min.insync.replicas</code>는 성공에 필요한 ISR 수의 하한선으로, 명단 건물이 너무 적으면 접수를 멈추는 기준이에요. 2로 설정해도 리더는 두 곳만 골라 기다리지 않고 현재 ISR 전체의 복제를 기다려요.</p>
+<p class="point">acks=all은 그 순간의 ISR 전체를 기다리고 min.insync.replicas는 ISR의 하한선이에요.</p>
+<p class="explain"><code>acks</code>는 프로듀서가 어떤 접수 응답을 기다릴지 정하는 설정이에요. <code>min.insync.replicas</code>는 성공에 필요한 ISR 수의 하한선으로 명단 건물이 너무 적으면 접수를 멈추는 기준이에요. 2로 설정해도 리더는 두 곳만 골라 기다리지 않고 현재 ISR 전체의 복제를 기다려요.</p>
 </section>
 
 <section class="slide">
@@ -219,12 +219,12 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <tr><td>브로커 1대가 멈추면</td><td>ISR이 2개라 쓰기가 계속돼요</td></tr>
 <tr><td>브로커 2대가 멈추면</td><td>ISR이 1개라 쓰기를 거절해요</td></tr>
 <tr><td>성공한 쓰기는</td><td>항상 2곳 이상에 적혀 있어요</td></tr>
-<tr><td><code>min.insync.replicas=1</code>이면</td><td>ISR이 리더뿐이어도 성공해서, 그 리더를 잃으면 레코드도 잃어요</td></tr>
+<tr><td><code>min.insync.replicas=1</code>이면</td><td>ISR이 리더뿐이어도 성공해서 그 리더를 잃으면 레코드도 잃어요</td></tr>
 <tr><td><code>min.insync.replicas=3</code>이면</td><td>브로커 1대만 멈춰도 쓰기가 막혀요</td></tr>
 </tbody>
 </table>
-<p class="point">한 대가 멈춰도 쓰기가 되고, 성공한 쓰기는 2곳 이상에 남아요.</p>
-<p class="explain">복제 계수는 한 파티션의 원본과 사본을 합친 수예요. 세 건물에 나눠 두고 최소 두 건물이 있어야 접수하게 하면, 한 건물이 멈춰도 프로듀서는 계속 보낼 수 있어요. 두 건물이 멈추면 리더가 쓰기를 거절해서 한 건물에만 새 택배가 남는 일을 막아요.</p>
+<p class="point">한 대가 멈춰도 쓰기가 되고 성공한 쓰기는 2곳 이상에 남아요.</p>
+<p class="explain">복제 계수는 한 파티션의 원본과 사본을 합친 수예요. 세 건물에 나눠 두고 최소 두 건물이 있어야 접수하게 하면 한 건물이 멈춰도 프로듀서는 계속 보낼 수 있어요. 두 건물이 멈추면 리더가 쓰기를 거절해서 한 건물에만 새 택배가 남는 일을 막아요.</p>
 </section>
 
 </div>
@@ -234,7 +234,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 
 <section class="slide">
 <h3>원본 건물이 불타면</h3>
-<svg class="dg" viewBox="0 0 400 190" role="img" aria-label="명단은 건물 1과 건물 2이고, 원본인 건물 1에 불이 나자 명단 안의 건물 2가 새 원본이 되고, 명단 밖의 건물 3은 그대로 사본으로 남는 그림">
+<svg class="dg" viewBox="0 0 400 190" role="img" aria-label="명단은 건물 1과 건물 2이고 원본인 건물 1에 불이 나자 명단 안의 건물 2가 새 원본이 되고 명단 밖의 건물 3은 그대로 사본으로 남는 그림">
 <text class="small" x="200" y="14">ISR 명단: 건물 1, 건물 2</text>
 <rect class="bad blink" x="10" y="30" width="110" height="140" rx="10"/><text x="65" y="54">건물 1</text><text class="alert" x="65" y="76">불이 났어요</text>
 <rect class="box" x="15" y="116" width="22" height="34" rx="4"/><text x="26" y="133">1</text>
@@ -253,7 +253,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <rect class="box dash" x="363" y="116" width="22" height="34" rx="4"/>
 </svg>
 <p class="point">명단 안에 있던 건물이 새 원본이 돼요.</p>
-<p class="explain">원본이 불타면 주문 서비스는 맡길 곳이 없어지니, 빨리 새 원본을 정해야 해요. 카프카는 명단 안의 건물 중에서 고르는데, 이 건물들은 원본을 바짝 따라 적었기 때문에 이미 영수증을 받은 택배를 모두 가지고 있어요. 그래서 건물 2가 새 원본이 되면 택배 기록이 이어지고, 알림 문자 서비스도 하던 자리에서 계속 가져갈 수 있어요.</p>
+<p class="explain">원본이 불타면 주문 서비스는 맡길 곳이 없어지니 빨리 새 원본을 정해야 해요. 카프카는 명단 안의 건물 중에서 고르는데 이 건물들은 원본을 바짝 따라 적었기 때문에 이미 영수증을 받은 택배를 모두 가지고 있어요. 그래서 건물 2가 새 원본이 되면 택배 기록이 이어지고 알림 문자 서비스도 하던 자리에서 계속 가져갈 수 있어요.</p>
 </section>
 
 <section class="slide">
@@ -273,7 +273,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 
 <section class="slide">
 <h3>명단 밖 건물을 원본으로 세우면?</h3>
-<svg class="dg" viewBox="0 0 400 160" role="img" aria-label="불이 난 원래 원본에는 택배 1번부터 6번이 있었는데, 4번까지만 적은 명단 밖 건물 3을 새 원본으로 세우면 5번과 6번 택배가 사라지는 그림">
+<svg class="dg" viewBox="0 0 400 160" role="img" aria-label="불이 난 원래 원본에는 택배 1번부터 6번이 있었는데 4번까지만 적은 명단 밖 건물 3을 새 원본으로 세우면 5번과 6번 택배가 사라지는 그림">
 <text class="label" x="10" y="38">불난 건물</text>
 <rect class="bad" x="80" y="20" width="36" height="36" rx="5"/><text x="98" y="38">1</text>
 <rect class="bad" x="122" y="20" width="36" height="36" rx="5"/><text x="140" y="38">2</text>
@@ -292,7 +292,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <text class="alert" x="287" y="142">5, 6번 택배 사라짐</text>
 </svg>
 <p class="point">못 따라 적은 택배는 사라질 수 있어요.</p>
-<p class="explain">명단 안의 건물이 모두 불타서 남은 건물이 건물 3뿐이라면 어떻게 될까요? 건물 3을 새 원본으로 세우면 다시 일할 수 있지만, 건물 3에 없던 5번과 6번 택배는 영영 사라져요. 일이 멈추는 것과 택배를 잃는 것 중 하나를 골라야 하는 상황이에요. 카프카는 기본으로 이 선택을 막아 두어서, 새 원본이 생길 때까지 일이 멈춰요.</p>
+<p class="explain">명단 안의 건물이 모두 불타서 남은 건물이 건물 3뿐이라면 어떻게 될까요? 건물 3을 새 원본으로 세우면 다시 일할 수 있지만 건물 3에 없던 5번과 6번 택배는 영영 사라져요. 일이 멈추는 것과 택배를 잃는 것 중 하나를 골라야 하는 상황이에요. 카프카는 기본으로 이 선택을 막아 두어서 새 원본이 생길 때까지 일이 멈춰요.</p>
 </section>
 
 <section class="slide">
@@ -343,7 +343,7 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <tr><td><code>acks</code> (프로듀서)</td><td><code>all</code> (3.0+)</td><td>현재 ISR 전체의 확인을 기다림</td></tr>
 </tbody>
 </table>
-<p class="point">기본 복제 계수가 1이라, 그대로 두면 사본이 없어요.</p>
+<p class="point">기본 복제 계수가 1이라 그대로 두면 사본이 없어요.</p>
 <p class="explain">여러 건물에 사본을 두려면 기본 복제 계수 1을 그대로 두어서는 안 돼요. <code>replica.lag.time.max.ms</code>는 팔로워가 따라오지 못할 때 ISR에서 빼는 시간 기준이에요. 프로듀서가 <code>acks=all</code>을 써도 최소 ISR이 1이면 리더 혼자 남은 상태에서 접수할 수 있어요.</p>
 </section>
 
@@ -353,18 +353,18 @@ summary: "카프카는 택배를 여러 건물에 사본으로 나눠 적어 둬
 <thead><tr><th>오해</th><th>실제</th></tr></thead>
 <tbody>
 <tr><td><code>acks=all</code>은 모든 복제본이 적는 것</td><td>모든 복제본이 아니라 <b>현재 ISR 전체</b>예요</td></tr>
-<tr><td><code>min.insync.replicas=2</code>면 ISR 중 2개만 응답하면 됨</td><td>응답은 ISR 전체가 하고, 2는 ISR이 그보다 작아지면 쓰기를 거절하는 하한선이에요</td></tr>
+<tr><td><code>min.insync.replicas=2</code>면 ISR 중 2개만 응답하면 됨</td><td>응답은 ISR 전체가 하고 2는 ISR이 그보다 작아지면 쓰기를 거절하는 하한선이에요</td></tr>
 <tr><td>기본 복제 계수는 3</td><td>기본값은 1이에요. 3은 운영 권장값이에요</td></tr>
 <tr><td>ISR 밖 복제본은 unclean 선출로만 리더가 됨</td><td>ELR이 도입된 뒤에는 일반화할 수 없어요</td></tr>
 </tbody>
 </table>
-<p class="point">acks=all이 기다리는 대상은 현재 ISR 전체이며, 안전성은 사본 수와 최소 ISR 설정도 함께 봐야 해요.</p>
+<p class="point">acks=all이 기다리는 대상은 현재 ISR 전체이며 안전성은 사본 수와 최소 ISR 설정도 함께 봐야 해요.</p>
 <p class="explain">건물이 하나뿐이면 다른 건물에 사본을 둘 수 없어요. 복제 계수가 1이면 건물이 멈출 때 택배를 잃을 수 있으므로 실제 사본 수를 확인해요. 새 리더를 고를 때도 뒤처진 사본과 ELR의 안전한 후보를 구분해야 해요.</p>
 </section>
 
 <section class="slide end">
 <h3>복제 한 줄 정리</h3>
-<p class="point">리더가 받은 택배를 여러 건물에 따라 적고,<br>리더가 멈추면 ISR이나 활성화된 ELR의 안전한 후보가 이어받아요.</p>
+<p class="point">리더가 받은 택배를 여러 건물에 따라 적고<br>리더가 멈추면 ISR이나 활성화된 ELR의 안전한 후보가 이어받아요.</p>
 </section>
 
 </div>

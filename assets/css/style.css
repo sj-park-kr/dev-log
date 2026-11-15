@@ -1,5 +1,5 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   --bg: #faf9f6;
   --surface: #ffffff;
   --ink: #242a30;
@@ -9,13 +9,35 @@
   --soft: #edf2f8;
   --series-color: var(--accent);
   --font: "Noto Sans KR", sans-serif;
+  --developer-cursor: url("../cursors/vscode.svg") 16 16, auto;
 }
 * { box-sizing: border-box; }
 html { scroll-padding-top: 2rem; }
 body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); line-height: 1.8; word-break: keep-all; overflow-wrap: anywhere; -webkit-font-smoothing: antialiased; }
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: var(--developer-cursor); }
+  :where(h1, h2, h3, p, li, dt, dd, blockquote, pre, code, th, td) { cursor: text; }
+  a, button, summary, [role="button"] { cursor: pointer; }
+  :where(a[href], button, summary, [role="button"]) * { cursor: inherit; }
+  input, textarea, [contenteditable="true"] { cursor: auto; }
+}
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .25em; }
 a:hover { text-decoration: underline; }
 a:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; border-radius: 3px; }
+.cursor-picker { position: fixed; inset: auto; margin: 0; width: 380px; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); box-shadow: 0 12px 40px #0003; font-family: var(--font); cursor: auto; }
+.cursor-picker h2 { font-size: 18px; }
+.cursor-picker p { margin: 6px 0 16px; color: var(--muted); font-size: 12px; }
+.cursor-search { display: block; width: 100%; margin-bottom: 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; font-size: 12px; }
+.cursor-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cursor-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-height: 340px; overflow-y: auto; padding: 3px; }
+.cursor-options button[hidden] { display: none; }
+.cursor-options button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 96px; padding: 12px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
+.cursor-options button:hover { background: var(--soft); }
+.cursor-options button[aria-pressed="true"] { border-color: var(--accent); background: var(--soft); box-shadow: inset 0 0 0 1px var(--accent); }
+.cursor-options button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cursor-options img { width: 32px; height: 32px; object-fit: contain; }
+.cursor-default { width: 32px; height: 32px; font-family: sans-serif; font-size: 30px; line-height: 32px; }
+.cursor-picker .cursor-picker-hint { margin: 14px 0 0; font-size: 10px; }
 h1, h2, h3, p { margin: 0; }
 h1, h2, h3 { line-height: 1.4; letter-spacing: -.045em; }
 img, video, svg { max-width: 100%; height: auto; }
@@ -28,6 +50,11 @@ img, video, svg { max-width: 100%; height: auto; }
 .site-header nav { display: flex; gap: 20px; font-size: 14px; font-weight: 600; }
 .site-header nav a { text-decoration: none; }
 .site-header nav a:hover, .site-header nav a[aria-current] { color: var(--accent); text-decoration: underline; }
+.site-header nav { align-items: center; flex-wrap: wrap; }
+.theme-switch:not([hidden]) { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 8px; }
+.theme-switch button { padding: 4px 8px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; }
+.theme-switch button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.theme-switch button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .hero { position: relative; padding: 70px 0 64px; isolation: isolate; }
 .eyebrow { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .06em; margin-bottom: 14px; }
 .hero h1 { font-size: clamp(32px, 5.4vw, 58px); font-weight: 900; line-height: 1.5; letter-spacing: -.065em; }
@@ -112,8 +139,9 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
   .hero-doodle span { color: var(--accent); }
 }
 @media (prefers-color-scheme: dark) {
-  :root { --bg: #171b21; --surface: #20262e; --ink: #eef0f3; --muted: #afb7c2; --line: #39414c; --accent: #8bbaff; --soft: #242e3b; --series-color: #185bba; }
+  :root:not([data-theme="light"]) { color-scheme: dark; --bg: #171b21; --surface: #20262e; --ink: #eef0f3; --muted: #afb7c2; --line: #39414c; --accent: #8bbaff; --soft: #242e3b; --series-color: #185bba; }
 }
+:root[data-theme="dark"] { color-scheme: dark; --bg: #171b21; --surface: #20262e; --ink: #eef0f3; --muted: #afb7c2; --line: #39414c; --accent: #8bbaff; --soft: #242e3b; --series-color: #185bba; }
 @media (prefers-reduced-motion: reduce) {
   .series-card { transition: none; }
   .series-card:hover { transform: none; }
@@ -122,8 +150,9 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 /* ===== 개념 노트 글: 탭 + 슬라이드 + 그림. 틀은 _drafts/lesson-template.md ===== */
 :root { --hl: #fff4d6; --hl-line: #d99a00; --bad: #fff0f0; --bad-line: #d33; --good: #eefaf0; --good-line: #2e9e55; }
 @media (prefers-color-scheme: dark) {
-  :root { --hl: #3a3016; --hl-line: #e0b040; --bad: #3a2224; --bad-line: #ff7b7b; --good: #1f3326; --good-line: #5fcf88; }
+  :root:not([data-theme="light"]) { --hl: #3a3016; --hl-line: #e0b040; --bad: #3a2224; --bad-line: #ff7b7b; --good: #1f3326; --good-line: #5fcf88; }
 }
+:root[data-theme="dark"] { --hl: #3a3016; --hl-line: #e0b040; --bad: #3a2224; --bad-line: #ff7b7b; --good: #1f3326; --good-line: #5fcf88; }
 
 /* 탭: 쉬운 설명(#easy, 기본) / 개발자용 심화(#dev). JS 없이 URL 해시(:target)로 전환 */
 .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--ink); }

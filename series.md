@@ -1,7 +1,7 @@
 ---
 layout: page
 title: 시리즈
-description: 하나의 비유를 따라가다 보면, 낯선 개념도 내 것이 돼요.
+description: 하나의 비유를 따라가다 보면 낯선 개념도 내 것이 돼요.
 permalink: /series/
 wide: true
 ---

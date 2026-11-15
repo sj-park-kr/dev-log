@@ -1,17 +1,17 @@
 # 아래 시리즈는 예시입니다. 주제, 색상, 설명을 원하는 내용으로 수정하세요.
 # 글의 머리말에 series: network / episode: 1 / summary: "한 줄 요약"을 추가하세요.
-# series에는 아래 id를 사용하고, episode에는 따옴표 없는 숫자를 사용하세요.
+# series에는 아래 id를 사용하고 episode에는 따옴표 없는 숫자를 사용하세요.
 # 시리즈에 속하지 않는 글은 series와 episode를 생략하면 됩니다.
 - id: network
   title: 네트워크
   emoji: "🌐"
   color: "#185bba"
-  description: 컴퓨터끼리 이야기를 나누는 방법, 편지를 주고받듯 알아봐요.
+  description: 컴퓨터끼리 이야기를 나누는 방법을 편지를 주고받듯 알아봐요.
 - id: database
   title: 데이터베이스
   emoji: "🗃️"
   color: "#7740a5"
-  description: 수많은 정보를 차곡차곡 담고, 필요한 것을 쏙 찾는 비밀.
+  description: 수많은 정보를 차곡차곡 담고 필요한 것을 쏙 찾는 비밀.
 - id: os
   title: 운영체제
   emoji: "⚙️"
@@ -21,4 +21,4 @@
   title: Kafka
   emoji: "📦"
   color: "#c2410c"
-  description: 서비스끼리 소식을 주고받는 택배 물류센터, 카프카를 알아봐요.
+  description: 서비스끼리 소식을 주고받는 택배 물류센터 카프카를 알아봐요.

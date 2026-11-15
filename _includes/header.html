@@ -5,5 +5,9 @@
     <a href="{{ '/posts/' | relative_url }}"{% if page.url == '/posts/' %} aria-current="page"{% endif %}>전체 글</a>
     <a href="{{ '/about/' | relative_url }}"{% if page.url == '/about/' %} aria-current="page"{% endif %}>소개</a>
     <a href="https://github.com/{{ site.github_username }}">GitHub</a>
+    <div class="theme-switch" role="group" aria-label="화면 모드" hidden>
+      <button type="button" data-theme="light" aria-pressed="false">라이트</button>
+      <button type="button" data-theme="dark" aria-pressed="false">다크</button>
+    </div>
   </nav>
 </header>

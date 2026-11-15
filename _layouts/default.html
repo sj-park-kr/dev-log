@@ -6,5 +6,7 @@
     {% include header.html %}
     <main id="main" class="wrapper" tabindex="-1">{{ content }}</main>
     {% include footer.html %}
+    {% include cursor-picker.html %}
+    <script src="{{ '/assets/js/cursor-picker.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
   </body>
 </html>
