@@ -1,0 +1,44 @@
+---
+layout: default
+---
+{% assign post_series = nil %}
+{% if page.series and site.data.series %}
+  {% assign post_series = site.data.series | where: 'id', page.series | first %}
+{% endif %}
+<article class="post"{% if post_series %} style="--series-color: {{ post_series.color | escape }}"{% endif %}>
+  <header class="post-heading">
+    {% if post_series %}
+      <a class="series-badge" href="{{ '/series/' | relative_url }}#{{ post_series.id | escape }}">{{ post_series.emoji }} {{ post_series.title | escape }}{% if page.episode %} #{{ page.episode | escape }}{% endif %}</a>
+    {% else %}
+      <p class="eyebrow">하나씩 이해하는 개념 노트</p>
+    {% endif %}
+    <h1>{{ page.title | escape }}</h1>
+    <time class="post-meta" datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%Y.%m.%d' }}</time>
+  </header>
+  {% if page.summary and page.summary != empty %}
+    <aside class="summary" aria-label="한 줄 요약"><strong>한 줄 요약</strong><p>{{ page.summary | escape }}</p></aside>
+  {% endif %}
+  <div class="post-content">{{ content }}</div>
+
+  {% if post_series and page.episode %}
+    {% assign episodes = site.posts | where: 'series', post_series.id | sort: 'episode' %}
+    {% assign previous_episode = nil %}
+    {% assign next_episode = nil %}
+    {% for episode in episodes %}
+      {% if episode.episode %}
+        {% if episode.episode < page.episode %}
+          {% assign previous_episode = episode %}
+        {% elsif episode.episode > page.episode %}
+          {% assign next_episode = episode %}
+          {% break %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    {% if previous_episode or next_episode %}
+      <nav class="episode-nav" aria-label="시리즈 이어 읽기">
+        {% if previous_episode %}<a href="{{ previous_episode.url | relative_url }}"><span>← 이전 편 · #{{ previous_episode.episode }}</span><strong>{{ previous_episode.title | escape }}</strong></a>{% endif %}
+        {% if next_episode %}<a href="{{ next_episode.url | relative_url }}"><span>다음 편 · #{{ next_episode.episode }} →</span><strong>{{ next_episode.title | escape }}</strong></a>{% endif %}
+      </nav>
+    {% endif %}
+  {% endif %}
+</article>

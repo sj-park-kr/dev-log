@@ -1,0 +1,11 @@
+---
+layout: default
+---
+<article class="page{% if page.wide %} page-wide{% endif %}">
+  <header class="page-heading">
+    <p class="eyebrow">하나씩 이해하는 개념 노트</p>
+    <h1>{{ page.title | escape }}</h1>
+    {% if page.description %}<p>{{ page.description | escape }}</p>{% endif %}
+  </header>
+  <div class="page-content">{{ content }}</div>
+</article>

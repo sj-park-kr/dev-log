@@ -1,5 +1,5 @@
 title: dev-log
-description: 개발하면서 배운 것들을 기록합니다.
+description: 어려운 개발 개념을 누구나 이해할 수 있게 비유로 설명합니다.
 lang: ko
 url: https://sj-park-kr.github.io
 baseurl: /dev-log # 커스텀 도메인 연결 시 "" 로 변경
@@ -13,3 +13,6 @@ plugins:
 
 permalink: /:year/:month/:day/:title/
 timezone: Asia/Seoul
+
+exclude:
+  - CLAUDE.md

@@ -1,0 +1,16 @@
+{% assign post = include.post %}
+{% assign post_series = nil %}
+{% if post.series and site.data.series %}
+  {% assign post_series = site.data.series | where: 'id', post.series | first %}
+{% endif %}
+<li class="post-item">
+  <div class="post-meta">
+    <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>
+    {% if post_series %}
+      <span aria-hidden="true">·</span>
+      <a class="series-badge" style="--series-color: {{ post_series.color | escape }}" href="{{ '/series/' | relative_url }}#{{ post_series.id | escape }}">{{ post_series.title | escape }}{% if post.episode %} #{{ post.episode | escape }}{% endif %}</a>
+    {% endif %}
+  </div>
+  <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
+  <p>{{ post.summary | default: post.excerpt | strip_html | normalize_whitespace | truncate: 150 | escape }}</p>
+</li>
