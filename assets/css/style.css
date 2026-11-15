@@ -143,6 +143,12 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 .slide h2::before { content: counter(slide, decimal-leading-zero); display: block; margin-bottom: 2px; color: var(--muted); font-size: 12px; letter-spacing: .1em; }
 .slide svg { display: block; width: 100%; max-width: 440px; margin: 0 auto; }
 .slide .point { margin-top: 18px; font-size: 17px; font-weight: 700; text-align: center; }
+.slide .explain { margin: 12px 0 0; font-size: 15.5px; line-height: 1.75; }
+/* 글 맨 위: 이 글에서 풀 질문 */
+.intro { margin: 24px 0 8px; padding: 20px 22px; border: 1px solid var(--line); border-radius: 12px; }
+.intro .q { margin: 0 0 10px; font-size: 19px; font-weight: 700; }
+.intro p { margin: 0 0 8px; line-height: 1.75; }
+.intro p:last-child { margin-bottom: 0; }
 .slide.end { background: var(--ink); border-color: var(--ink); color: var(--bg); text-align: center; }
 .slide.end h2::before { color: inherit; opacity: .6; }
 .slide.end .point { margin: 0; font-size: 19px; }

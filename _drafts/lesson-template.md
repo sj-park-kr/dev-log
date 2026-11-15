@@ -9,8 +9,9 @@ summary: "목록·글 상단에 보일 한 줄 요약"
 
 <!--
 글 쓰는 틀 (_drafts는 사이트에 올라가지 않음. 복사해서 _posts/시리즈id/YYYY-MM-DD-제목.md 로 저장. 폴더는 정리용이고 시리즈 소속은 front matter의 series가 정함. 이전/다음 편 링크는 레이아웃이 자동으로 붙임)
-- 슬라이드 한 장 = h2 제목 + 그림(svg) 또는 표 + p.point 한 문장. 번호는 자동으로 붙음.
-- 본문 문장은 p.point 한 문장이 원칙. 길게 설명하고 싶으면 그림을 고친다.
+- 슬라이드 한 장 = h2 제목 + 그림(svg) 또는 표 + p.point 핵심 한 문장 + p.explain 설명 2~4문장. 번호는 자동으로 붙음.
+- explain은 그림만 봐서는 모르는 상황·이유·결과를 풀어 쓴다. 표만 있는 슬라이드와 한 줄 정리에는 생략 가능.
+- 쉬운 설명 탭 맨 위에 div.intro(이 글에서 풀 질문)를 둔다.
 - 탭 두 개: #easy(쉬운 설명, 기본) / #dev(개발자용 심화). 슬라이드 번호는 탭마다 01부터.
 - 쉬운 설명 순서: 문제 → (더 알아보기: 누가·왜 만들었나) → 해결 → 동작 원리 → 용어 → 언제 쓰면 안 되나 → 한 줄 정리
 - 개발자용 심화: 실제 구조 그림, 내부 동작, 비교, 기본값/설정, 버전별 변화. 표 위주.
@@ -24,6 +25,12 @@ summary: "목록·글 상단에 보일 한 줄 요약"
 
 <div id="easy" class="panel">
 
+<div class="intro">
+<p class="q">이 글에서 풀 질문 한 줄?</p>
+<p>무엇이 문제인지, 앞 편과 이어서 두세 문장.</p>
+<p>이 글을 다 읽으면 무엇을 알 수 있는지 한두 문장.</p>
+</div>
+
 <section class="slide">
 <h2>어떤 문제가 있었을까?</h2>
 <svg class="dg" viewBox="0 0 400 200" role="img" aria-label="그림 설명">
@@ -31,6 +38,7 @@ summary: "목록·글 상단에 보일 한 줄 요약"
 <rect class="bad" x="290" y="80" width="90" height="40" rx="8"/><text x="335" y="100">문제</text><text class="alert" x="335" y="138">빨간 글씨</text>
 </svg>
 <p class="point">문제를 한 문장으로.</p>
+<p class="explain">왜 문제인지, 그래서 어떻게 되는지 2~4문장.</p>
 </section>
 
 <details class="origin">
@@ -45,6 +53,7 @@ summary: "목록·글 상단에 보일 한 줄 요약"
 <rect class="kafka" x="150" y="70" width="100" height="60" rx="10"/><text x="200" y="100">주인공</text>
 </svg>
 <p class="point">해결을 한 문장으로.</p>
+<p class="explain">어떻게 해결되는지 2~4문장.</p>
 </section>
 
 <section class="slide">
