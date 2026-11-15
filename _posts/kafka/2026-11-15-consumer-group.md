@@ -8,10 +8,7 @@ episode: 4
 summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹이에요. 같은 팀은 나눠 가져가고, 다른 팀은 같은 택배를 따로 가져가요."
 ---
 
-<div class="lesson">
-<nav class="tabs"><a href="#easy">쉬운 설명</a><a href="#dev">개발자용 심화</a></nav>
-
-<div id="easy" class="panel">
+<div class="lesson lesson-hierarchy">
 
 <div class="intro">
 <p class="q">택배를 꺼내 가는 기사가 여럿이면, 어떻게 나눠 맡을까요?</p>
@@ -19,8 +16,11 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 <p>이 글을 다 읽으면 기사들이 한 팀(<b>컨슈머 그룹</b>)으로 칸을 나눠 맡는 방법과, 팀원이 바뀌어도 <b>팀 장부(오프셋 커밋)</b> 덕분에 이어서 가져가는 이유를 알 수 있어요.</p>
 </div>
 
+<div class="slide-group">
+<h2 class="slide-group-title">팀이 필요한 이유: 중복 없이 선반 칸을 나눠 맡아요</h2>
+
 <section class="slide">
-<h2>기사 한 명이 모든 칸을 돌면</h2>
+<h3>기사 한 명이 모든 칸을 돌면</h3>
 <svg class="dg" viewBox="0 0 400 225" role="img" aria-label="주문 선반의 칸 세 개에서 기사 한 명이 모든 택배를 혼자 가져가느라 밀리는 그림">
 <defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="kafka" x="20" y="20" width="110" height="50" rx="8"/><text x="75" y="45">칸 0</text>
@@ -36,8 +36,15 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 <p class="explain">2편에서 선반을 칸으로 나눠 둬도, 꺼내 가는 기사가 한 명이면 소용이 없어요. 기사 한 명이 세 칸을 번갈아 돌며 처리할 수 있는 양에는 한계가 있어요. 그 사이 주문은 계속 쌓이고, 알림 문자 같은 일은 점점 늦어져요.</p>
 </section>
 
+<details class="origin">
+<summary>더 알아보기: 이 규칙은 어떻게 다듬어졌을까?</summary>
+<p><b>같은 이름표(group.id)를 가진 컨슈머끼리 일을 나누고, 이름표가 다른 그룹은 서로 상관없이 읽는다</b>는 약속은 카프카 컨슈머의 기본 규칙이에요.</p>
+<p>예전 방식은 팀원이 바뀌어 담당을 다시 나눌 때, 팀 전체가 한 번에 맞춰야 하는 단계(전역 동기화 장벽)를 거쳤어요. 이 단계를 없앤 새 방식이 <b>KIP-848</b>이고, Kafka 4.0(2025년 3월 18일 릴리스)에서 정식(GA)이 됐어요.</p>
+<p>"한 칸은 한 명만 맡는다"는 규칙을 벗어난 <b>share group</b>도 있어요. KIP-932("Queues for Kafka")로 만들어졌고, 4.0에서 Early Access, 4.1에서 Preview를 거쳐 4.2부터 정식이에요.</p>
+</details>
+
 <section class="slide">
-<h2>기사를 그냥 늘리면</h2>
+<h3>배송 기사를 규칙 없이 늘리면 같은 택배를 둘이 가져가요</h3>
 <svg class="dg" viewBox="0 0 400 230" role="img" aria-label="한 칸의 3번 택배를 기사 1과 기사 2가 둘 다 가져가는 그림">
 <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="kafka" x="20" y="90" width="100" height="50" rx="8"/><text x="70" y="115">칸 0</text>
@@ -51,15 +58,8 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 <p class="explain">그렇다고 기사를 규칙 없이 늘리면 새 문제가 생겨요. 기사들은 서로를 몰라서, 같은 칸에서 같은 택배를 각자 꺼내 가요. 결제 완료 택배를 두 명이 처리하면 알림 문자가 두 번 나갈 수 있어요. 그래서 누가 어느 칸을 맡을지 정하는 약속이 필요해요.</p>
 </section>
 
-<details class="origin">
-<summary>더 알아보기: 이 규칙은 어떻게 다듬어졌을까?</summary>
-<p><b>같은 이름표(group.id)를 가진 컨슈머끼리 일을 나누고, 이름표가 다른 그룹은 서로 상관없이 읽는다</b>는 약속은 카프카 컨슈머의 기본 규칙이에요.</p>
-<p>예전 방식은 팀원이 바뀌어 담당을 다시 나눌 때, 팀 전체가 한 번에 맞춰야 하는 단계(전역 동기화 장벽)를 거쳤어요. 이 단계를 없앤 새 방식이 <b>KIP-848</b>이고, Kafka 4.0(2025년 3월 18일 릴리스)에서 정식(GA)이 됐어요.</p>
-<p>"한 칸은 한 명만 맡는다"는 규칙을 벗어난 <b>share group</b>도 있어요. KIP-932("Queues for Kafka")로 만들어졌고, 4.0에서 Early Access, 4.1에서 Preview를 거쳐 4.2부터 정식이에요.</p>
-</details>
-
 <section class="slide">
-<h2>그래서, 배송 팀</h2>
+<h3>배송 팀이 선반 칸마다 담당 기사 한 명을 정해요</h3>
 <svg class="dg" viewBox="0 0 400 225" role="img" aria-label="칸 0, 1, 2를 배송 팀 안의 기사 1, 2, 3이 한 명씩 맡아 가져가는 그림">
 <defs><marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="box dash" x="250" y="2" width="142" height="218" rx="10"/><text class="small" x="321" y="16">배송 팀</text>
@@ -81,7 +81,24 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 </section>
 
 <section class="slide">
-<h2>다른 팀은 따로 가져가요</h2>
+<h3>실제로는: 컨슈머 그룹이 파티션을 나눠 맡아요</h3>
+<table>
+<thead><tr><th>물류센터 이야기</th><th>카프카 용어</th></tr></thead>
+<tbody>
+<tr><td>선반의 칸</td><td>파티션 (Partition)</td></tr>
+<tr><td>가져가는 기사</td><td>컨슈머 (Consumer)</td></tr>
+<tr><td>배송 팀</td><td>컨슈머 그룹 (Consumer Group)</td></tr>
+<tr><td>팀 이름표</td><td><code>group.id</code></td></tr>
+<tr><td>팀원이 바뀔 때 담당 다시 나누기</td><td>리밸런싱 (Rebalancing)</td></tr>
+<tr><td>팀 장부 "어디까지 가져갔나"</td><td>오프셋 커밋 (Offset Commit)</td></tr>
+</tbody>
+</table>
+<p class="point">컨슈머 그룹은 같은 group.id를 가진 컨슈머들이 파티션을 나눠 맡는 팀이에요.</p>
+<p class="explain">컨슈머는 메시지를 꺼내 처리하는 앱으로 앞의 배송 기사에 해당해요. 파티션은 택배 선반의 칸이고, <code>group.id</code>는 배송 팀의 이름표예요. 같은 이름표를 가진 컨슈머들은 한 파티션을 한 명만 맡도록 나누므로, 같은 팀 안에서 두 명이 같은 칸을 동시에 맡지 않아요.</p>
+</section>
+
+<section class="slide">
+<h3>재고 팀과 알림 팀은 같은 택배를 따로 가져가요</h3>
 <svg class="dg" viewBox="0 0 400 260" role="img" aria-label="주문 선반을 재고 팀의 기사 두 명이 나눠 읽고, 알림 팀의 기사 한 명이 혼자 전부 읽는 그림">
 <defs><marker id="a4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="kafka" x="10" y="70" width="100" height="110" rx="10"/><text x="60" y="125">주문 선반</text>
@@ -98,7 +115,19 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 </section>
 
 <section class="slide">
-<h2>팀원이 들어오면 담당을 다시 나눠요</h2>
+<h3>실제로는: group.id가 다르면 같은 메시지를 따로 읽어요</h3>
+<table><thead><tr><th>컨슈머의 group.id</th><th>같은 주문 메시지를 읽는 방식</th></tr></thead><tbody><tr><td>같은 이름</td><td>같은 그룹 안에서 파티션을 나눠 읽어요</td></tr><tr><td>서로 다른 이름</td><td>재고 서비스와 알림 서비스가 각각 읽어요</td></tr></tbody></table>
+<p class="point">서비스마다 같은 주문을 전부 받아야 한다면 group.id를 서로 다르게 정해요.</p>
+<p class="explain">재고 서비스의 컨슈머가 주문을 읽어도, 다른 그룹인 알림 서비스가 읽을 몫은 없어지지 않아요. 두 서비스가 실수로 같은 <code>group.id</code>를 쓰면 한 팀으로 묶여 주문을 나눠 읽으므로 각각 일부만 받아요. 앞의 재고 팀과 알림 팀처럼 각자 전체 주문이 필요한 서비스는 팀 이름표를 구분해요.</p>
+</section>
+
+</div>
+
+<div class="slide-group">
+<h2 class="slide-group-title">담당 바꾸기: 팀원이 바뀌면 파티션을 다시 나눠요</h2>
+
+<section class="slide">
+<h3>팀원이 들어오면 담당을 다시 나눠요</h3>
 <svg class="dg" viewBox="0 0 400 250" role="img" aria-label="기사 2명일 때는 기사 1이 칸 0과 1을, 기사 2가 칸 2를 맡다가, 기사가 3명이 되면 한 칸씩 맡는 그림">
 <text class="label" x="10" y="14">기사 2명</text>
 <rect class="kafka" x="30" y="30" width="100" height="36" rx="8"/><text x="80" y="48">칸 0</text>
@@ -122,7 +151,43 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 </section>
 
 <section class="slide">
-<h2>기사가 칸보다 많으면</h2>
+<h3>실제로는: 컨슈머가 드나들거나 파티션이 늘면 다시 배정해요</h3>
+<table>
+<thead><tr><th>계기</th><th>예</th></tr></thead>
+<tbody>
+<tr><td>멤버 가입</td><td>컨슈머를 새로 띄움</td></tr>
+<tr><td>멤버 이탈</td><td>컨슈머를 내리거나 연결이 끊김</td></tr>
+<tr><td>멤버 실패</td><td>하트비트가 끊김, <code>poll()</code> 간격 초과 (아래 설정 표)</td></tr>
+<tr><td>구독 토픽의 파티션 증가</td><td>새 파티션도 배정해야 함</td></tr>
+</tbody>
+</table>
+<p class="point">리밸런싱은 파티션 배정을 다시 계산하는 일이에요.</p>
+<p class="explain">리밸런싱은 배송 기사들의 칸 담당을 바꾸듯, 그룹의 파티션 배정을 다시 계산하는 일이에요. 컨슈머가 들어오거나 나갈 때뿐 아니라 구독하는 토픽의 파티션이 늘 때도 새 배정이 필요해요. 하트비트는 컨슈머가 살아 있다고 보내는 신호이며, 이 신호가 끊기거나 메시지를 요청하는 <code>poll()</code> 호출 간격이 너무 길어져도 담당을 조정해요.</p>
+</section>
+
+<section class="slide">
+<h3>실제로는: classic과 consumer는 담당을 다시 나누는 방식이 달라요</h3>
+<table>
+<thead><tr><th></th><th>classic (기본)</th><th>consumer (KIP-848)</th></tr></thead>
+<tbody>
+<tr><td>선택</td><td><code>group.protocol=classic</code></td><td><code>group.protocol=consumer</code></td></tr>
+<tr><td>리밸런싱</td><td>전역 동기화 장벽이 있음</td><td>서버 중심의 증분 리밸런싱, 전역 동기화 장벽 없음</td></tr>
+<tr><td>세션·하트비트</td><td>클라이언트 설정: 45초, 3초</td><td>브로커 설정 <code>group.consumer.session.timeout.ms</code> 45초, <code>group.consumer.heartbeat.interval.ms</code> 5초</td></tr>
+<tr><td>클라이언트의 <code>session.timeout.ms</code>, <code>heartbeat.interval.ms</code></td><td>적용됨</td><td>적용 안 됨</td></tr>
+<tr><td>상태</td><td>기본값</td><td>4.0 GA, 서버는 기본 활성화, 클라이언트가 골라야 함</td></tr>
+</tbody>
+</table>
+<p class="point">새 프로토콜은 4.0부터 쓸 수 있지만, 기본값은 아직 classic이에요 (4.4 기준).</p>
+<p class="explain">그룹 프로토콜은 컨슈머와 브로커가 팀 담당을 조정할 때 따르는 약속이에요. <code>classic</code>은 팀 전체가 한 번에 맞추는 단계인 전역 동기화 장벽을 거치고, <code>consumer</code>는 브로커가 필요한 배정을 조금씩 바꾸는 증분 리밸런싱을 해요. 새 방식은 4.0부터 정식(GA)으로 쓸 수 있고 서버에서는 기본 활성화되지만, 4.4 기준 클라이언트 기본값은 여전히 <code>classic</code>이어서 직접 골라야 해요. 새 방식을 고르면 생존 신호의 간격과 대기 시간도 클라이언트가 아닌 표의 브로커 설정으로 정해요.</p>
+</section>
+
+</div>
+
+<div class="slide-group">
+<h2 class="slide-group-title">인원 늘리기: 칸 수의 한계와 share group의 차이</h2>
+
+<section class="slide">
+<h3>선반 칸보다 기사가 많으면 맡을 일이 남지 않아요</h3>
 <svg class="dg" viewBox="0 0 400 230" role="img" aria-label="칸이 두 개인데 기사가 세 명이라서 기사 3은 맡을 칸이 없어 쉬는 그림">
 <defs><marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="kafka" x="10" y="30" width="90" height="40" rx="8"/><text x="55" y="50">칸 0</text>
@@ -139,7 +204,42 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 </section>
 
 <section class="slide">
-<h2>장부를 보고 이어서 가져가요</h2>
+<h3>실제로는: 일반 컨슈머 그룹은 파티션 수만큼 나눠 읽어요</h3>
+<table>
+<thead><tr><th>컨슈머 수 (파티션 3개)</th><th>컨슈머별 담당 파티션 수</th><th>결과</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>3</td><td>혼자 전부 읽어요</td></tr>
+<tr><td>2</td><td>2, 1</td><td>한 컨슈머가 파티션 여러 개를 받아요</td></tr>
+<tr><td>3</td><td>1, 1, 1</td><td>병렬성이 가장 높아요</td></tr>
+<tr><td>4</td><td>1, 1, 1, 0</td><td>한 컨슈머는 배정을 못 받아요</td></tr>
+</tbody>
+</table>
+<p class="point">일반 컨슈머 그룹의 병렬성 상한은 파티션 수예요.</p>
+<p class="explain">병렬성은 여러 컨슈머가 동시에 나눠 처리할 수 있는 정도예요. 일반 컨슈머 그룹에서는 선반 칸 하나를 기사 한 명만 맡듯 한 파티션을 한 컨슈머에게 배정해요. 파티션이 세 개면 컨슈머가 넷이어도 한 명은 맡을 칸이 없으므로, 컨슈머만 늘려서는 더 나눠 처리할 수 없어요.</p>
+</section>
+
+<section class="slide">
+<h3>다른 소비 방식: share group은 메시지별로 협력해요</h3>
+<table>
+<thead><tr><th></th><th>컨슈머 그룹</th><th>share group (KIP-932)</th></tr></thead>
+<tbody>
+<tr><td>파티션 배정</td><td>한 컨슈머에 독점 배정</td><td>독점 배정 없이 레코드를 협력 소비</td></tr>
+<tr><td>확인 단위</td><td>오프셋 커밋</td><td>레코드별 확인, 전달 시도 횟수 추적</td></tr>
+<tr><td>컨슈머 수 상한</td><td>파티션 수</td><td>이 규칙을 그대로 적용하지 않음</td></tr>
+<tr><td>상태</td><td>정식</td><td>4.0 Early Access (기본 비활성, 운영용 아님) → 4.1 Preview → 4.2 정식</td></tr>
+</tbody>
+</table>
+<p class="point">share group은 칸을 독점하는 대신 택배 하나씩 나눠 처리하는 별도의 소비 방식이에요.</p>
+<p class="explain">레코드는 택배 하나에 해당하는 메시지예요. share group은 기사가 칸 전체를 독점하는 대신 메시지별로 협력해서 가져가고, 각각 받았는지와 전달 시도 횟수를 확인하는 방식이에요. 그래서 일반 컨슈머 그룹의 파티션 수 상한을 그대로 적용하지 않아요. KIP-932로 만들어진 이 방식은 4.0 Early Access, 4.1 Preview를 거쳐 4.2에서 정식이 됐으며, 여기서는 차이만 알아 둬요.</p>
+</section>
+
+</div>
+
+<div class="slide-group">
+<h2 class="slide-group-title">팀 장부: 담당이 바뀌어도 이어서 읽어요</h2>
+
+<section class="slide">
+<h3>장부를 보고 이어서 가져가요</h3>
 <svg class="dg" viewBox="0 0 400 230" role="img" aria-label="주문 선반에서 3번 택배까지 가져갔다고 팀 장부에 적혀 있어서, 새로 온 기사가 장부를 보고 4번부터 이어서 가져가는 그림">
 <defs><marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <text class="small" x="200" y="14">주문 선반</text>
@@ -159,45 +259,7 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 </section>
 
 <section class="slide">
-<h2>진짜 이름 붙이기</h2>
-<table>
-<thead><tr><th>물류센터 이야기</th><th>카프카 용어</th></tr></thead>
-<tbody>
-<tr><td>선반의 칸</td><td>파티션 (Partition)</td></tr>
-<tr><td>가져가는 기사</td><td>컨슈머 (Consumer)</td></tr>
-<tr><td>배송 팀</td><td>컨슈머 그룹 (Consumer Group)</td></tr>
-<tr><td>팀 이름표</td><td><code>group.id</code></td></tr>
-<tr><td>팀원이 바뀔 때 담당 다시 나누기</td><td>리밸런싱 (Rebalancing)</td></tr>
-<tr><td>팀 장부 "어디까지 가져갔나"</td><td>오프셋 커밋 (Offset Commit)</td></tr>
-</tbody>
-</table>
-</section>
-
-<section class="slide">
-<h2>주의할 점</h2>
-<table>
-<thead><tr><th>상황</th><th>어떻게 되나</th></tr></thead>
-<tbody>
-<tr><td>다른 서비스가 같은 팀 이름을 써요</td><td>택배를 나눠 가져서 서로 일부만 받아요</td></tr>
-<tr><td>기사가 칸보다 많아요</td><td>남는 기사는 쉬어요. 빨라지려면 칸이 늘어야 해요</td></tr>
-<tr><td>칸을 늘려요</td><td>팀이 담당을 다시 나눠요</td></tr>
-<tr><td>장부에 적기 전에 기사가 쓰러져요</td><td>일부 택배를 한 번 더 받을 수 있어요 (7편에서 다뤄요)</td></tr>
-</tbody>
-</table>
-</section>
-
-<section class="slide end">
-<h2>한 줄 정리</h2>
-<p class="point">컨슈머 그룹은 배송 기사들이 칸을 나눠 맡는 팀이고,<br>팀 장부 덕분에 이어서 가져갈 수 있어요.</p>
-</section>
-
-<p class="next-tab"><a href="#dev">이해됐다면, 개발자용 심화 보기 →</a></p>
-</div>
-
-<div id="dev" class="panel">
-
-<section class="slide">
-<h2>전체 구조</h2>
+<h3>실제로는: 브로커가 팀 장부를 __consumer_offsets에 저장해요</h3>
 <svg class="dg" viewBox="0 0 400 300" role="img" aria-label="토픽의 파티션 P0, P1, P2를 그룹 A의 컨슈머 C1이 P0과 P1을, C2가 P2를 읽고, 그룹 코디네이터 브로커가 오프셋 커밋을 내부 토픽 __consumer_offsets에 저장하는 그림">
 <defs><marker id="d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="box dash" x="10" y="20" width="90" height="190" rx="10"/><text class="small" x="55" y="36">토픽</text>
@@ -216,38 +278,11 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 <rect class="kafka" x="150" y="250" width="240" height="36" rx="6"/><text class="chip" x="270" y="268">__consumer_offsets</text>
 </svg>
 <p class="point">그룹 코디네이터가 오프셋 커밋을 내부 토픽 <code>__consumer_offsets</code>에 저장해요.</p>
+<p class="explain">오프셋은 파티션 안의 메시지 위치이고, 오프셋 커밋은 이어 읽을 위치를 저장하는 일이에요. 컨슈머가 팀 장부를 적듯 커밋을 보내면, 그룹 관리를 맡은 브로커인 그룹 코디네이터가 받아요. 코디네이터는 그 기록을 내부 토픽 <code>__consumer_offsets</code>에 저장하고, 새 컨슈머는 저장된 위치를 바탕으로 이어 읽어요.</p>
 </section>
 
 <section class="slide">
-<h2>컨슈머 수와 배정</h2>
-<table>
-<thead><tr><th>컨슈머 수 (파티션 3개)</th><th>컨슈머별 담당 파티션 수</th><th>결과</th></tr></thead>
-<tbody>
-<tr><td>1</td><td>3</td><td>혼자 전부 읽어요</td></tr>
-<tr><td>2</td><td>2, 1</td><td>한 컨슈머가 파티션 여러 개를 받아요</td></tr>
-<tr><td>3</td><td>1, 1, 1</td><td>병렬성이 가장 높아요</td></tr>
-<tr><td>4</td><td>1, 1, 1, 0</td><td>한 컨슈머는 배정을 못 받아요</td></tr>
-</tbody>
-</table>
-<p class="point">일반 컨슈머 그룹의 병렬성 상한은 파티션 수예요.</p>
-</section>
-
-<section class="slide">
-<h2>리밸런싱은 언제 일어날까</h2>
-<table>
-<thead><tr><th>계기</th><th>예</th></tr></thead>
-<tbody>
-<tr><td>멤버 가입</td><td>컨슈머를 새로 띄움</td></tr>
-<tr><td>멤버 이탈</td><td>컨슈머를 내리거나 연결이 끊김</td></tr>
-<tr><td>멤버 실패</td><td>하트비트가 끊김, <code>poll()</code> 간격 초과 (아래 설정 표)</td></tr>
-<tr><td>구독 토픽의 파티션 증가</td><td>새 파티션도 배정해야 함</td></tr>
-</tbody>
-</table>
-<p class="point">리밸런싱은 파티션 배정을 다시 계산하는 일이에요.</p>
-</section>
-
-<section class="slide">
-<h2>자동 커밋의 함정</h2>
+<h3>실제로는: 자동 커밋과 메시지 처리의 순서가 어긋날 수 있어요</h3>
 <svg class="dg" viewBox="0 0 400 215" role="img" aria-label="처리를 끝내고 커밋 전에 죽으면 같은 메시지를 다시 받아 중복되고, 처리를 다른 스레드에 넘긴 채 커밋이 먼저 되고 죽으면 처리하지 못한 메시지가 유실되는 두 가지 경우">
 <defs><marker id="d2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <text class="label" x="10" y="14">① 처리한 뒤, 커밋 전에 죽으면</text>
@@ -263,11 +298,17 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 <path class="line" d="M230,164 L268,164" marker-end="url(#d2)"/>
 <rect class="bad" x="270" y="144" width="120" height="40" rx="8"/><text x="330" y="164">처리 못 함</text><text class="alert" x="330" y="200">유실</text>
 </svg>
-<p class="point">자동 커밋은 다음 <code>poll()</code> 때 커밋하므로 기본은 중복 쪽이고, 처리를 비동기로 넘기면 유실도 생겨요(7편).</p>
+<p class="point">자동 커밋은 다음 poll() 때 장부를 적어 중복이 생길 수 있고, 처리를 따로 맡기면 유실도 생길 수 있어요.</p>
+<p class="explain">자동 커밋은 컨슈머가 다음 <code>poll()</code>을 호출할 때 소비 위치를 기록하는 방식이에요. 앞의 기사가 배달을 끝냈어도 장부에 적기 전에 멈추면, 새 기사는 같은 택배를 다시 받아 처리할 수 있어요. 반대로 컨슈머가 처리를 다른 스레드에 맡기고 커밋부터 한 뒤 멈추면, 장부만 앞서가서 처리하지 못한 메시지를 건너뛸 수 있어요. 이 중복과 유실의 차이는 7편에서 더 다뤄요.</p>
 </section>
 
+</div>
+
+<div class="slide-group">
+<h2 class="slide-group-title">정리: 시작 위치와 그룹 설정을 확인해요</h2>
+
 <section class="slide">
-<h2>먼저 알아 둘 설정</h2>
+<h3>설정 확인: 읽기 시작 위치와 장부 기록·생존 신호의 기본값</h3>
 <table>
 <thead><tr><th>설정</th><th>기본값</th><th>의미</th></tr></thead>
 <tbody>
@@ -281,39 +322,11 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 </tbody>
 </table>
 <p class="point">처음 만든 그룹은 기본값 <code>latest</code> 때문에, 이미 쌓인 메시지를 건너뛰어요.</p>
+<p class="explain"><code>auto.offset.reset</code>은 팀 장부에 유효한 기록이 없거나 기록된 위치를 더 읽을 수 없을 때 시작 위치를 정해요. 기본값 <code>latest</code>는 새로 들어오는 쪽부터 읽으므로 처음 만든 그룹은 이미 쌓인 메시지를 건너뛰어요. <code>enable.auto.commit</code>과 <code>auto.commit.interval.ms</code>는 자동 장부 기록을, 나머지 시간 설정은 컨슈머가 계속 일하고 있는지 확인하는 기준을 정해요. <code>consumer</code> 프로토콜에서는 표의 classic용 생존 신호 설정을 적용하지 않으므로 브로커 설정을 확인해요.</p>
 </section>
 
 <section class="slide">
-<h2>classic과 새 consumer 프로토콜</h2>
-<table>
-<thead><tr><th></th><th>classic (기본)</th><th>consumer (KIP-848)</th></tr></thead>
-<tbody>
-<tr><td>선택</td><td><code>group.protocol=classic</code></td><td><code>group.protocol=consumer</code></td></tr>
-<tr><td>리밸런싱</td><td>전역 동기화 장벽이 있음</td><td>서버 중심의 증분 리밸런싱, 전역 동기화 장벽 없음</td></tr>
-<tr><td>세션·하트비트</td><td>클라이언트 설정: 45초, 3초</td><td>브로커 설정 <code>group.consumer.session.timeout.ms</code> 45초, <code>group.consumer.heartbeat.interval.ms</code> 5초</td></tr>
-<tr><td>클라이언트의 <code>session.timeout.ms</code>, <code>heartbeat.interval.ms</code></td><td>적용됨</td><td>적용 안 됨</td></tr>
-<tr><td>상태</td><td>기본값</td><td>4.0 GA, 서버는 기본 활성화, 클라이언트가 골라야 함</td></tr>
-</tbody>
-</table>
-<p class="point">새 프로토콜은 4.0부터 쓸 수 있지만, 기본값은 아직 classic이에요 (4.4 기준).</p>
-</section>
-
-<section class="slide">
-<h2>share group은 맛보기만</h2>
-<table>
-<thead><tr><th></th><th>컨슈머 그룹</th><th>share group (KIP-932)</th></tr></thead>
-<tbody>
-<tr><td>파티션 배정</td><td>한 컨슈머에 독점 배정</td><td>독점 배정 없이 레코드를 협력 소비</td></tr>
-<tr><td>확인 단위</td><td>오프셋 커밋</td><td>레코드별 확인, 전달 시도 횟수 추적</td></tr>
-<tr><td>컨슈머 수 상한</td><td>파티션 수</td><td>이 규칙을 그대로 적용하지 않음</td></tr>
-<tr><td>상태</td><td>정식</td><td>4.0 Early Access (기본 비활성, 운영용 아님) → 4.1 Preview → 4.2 정식</td></tr>
-</tbody>
-</table>
-<p class="point">레코드별 소비 모델은 따로 깊게 다룰 만큼 커서, 여기서는 개요만 봐요.</p>
-</section>
-
-<section class="slide">
-<h2>예전 글이 틀린 지점</h2>
+<h3>설정 확인: 내 그룹의 프로토콜과 소비 방식부터 구분해요</h3>
 <table>
 <thead><tr><th>예전 글의 설명</th><th>4.x 기준</th></tr></thead>
 <tbody>
@@ -324,12 +337,13 @@ summary: "배송 기사 여럿이 칸을 나눠 맡는 것이 컨슈머 그룹�
 </tbody>
 </table>
 <p class="point">설정 이름만 보고 따라 하지 말고, 쓰는 프로토콜부터 확인해요.</p>
+<p class="explain">같은 컨슈머 설명이라도 일반 컨슈머 그룹과 share group은 일을 나누는 단위가 달라요. 일반 그룹 안에서도 <code>classic</code>과 <code>consumer</code>는 담당 변경과 생존 확인에 쓰는 설정이 달라요. 따라서 팀을 어떤 방식으로 운영하는지 확인한 뒤에 그 방식에 맞는 설정을 골라요.</p>
 </section>
 
 <section class="slide end">
-<h2>한 줄 정리</h2>
-<p class="point">컨슈머 그룹은 파티션을 컨슈머에게 나눠 주고,<br>오프셋 커밋으로 이어 읽게 하는 장치예요.</p>
+<h3>한 줄 정리</h3>
+<p class="point">컨슈머 그룹은 배송 기사처럼 파티션을 나눠 맡고,<br>브로커에 저장한 팀 장부인 오프셋 커밋으로 이어 읽어요.</p>
 </section>
-
 </div>
+
 </div>

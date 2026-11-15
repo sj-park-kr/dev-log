@@ -144,6 +144,16 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 .slide svg { display: block; width: 100%; max-width: 440px; margin: 0 auto; }
 .slide .point { margin-top: 18px; font-size: 17px; font-weight: 700; text-align: center; }
 .slide .explain { margin: 12px 0 0; font-size: 15.5px; line-height: 1.75; }
+.slide-with-question { display: grid; gap: 16px; align-items: start; }
+.slide-with-question > .slide { min-width: 0; margin: 0; }
+.author-questions { display: grid; gap: 12px; min-width: 0; }
+.author-question { padding: 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); font-size: 14px; line-height: 1.8; }
+.author-question summary { cursor: pointer; color: var(--accent); font-weight: 700; }
+.author-question summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.author-question p { margin-top: 12px; }
+@media (min-width: 1280px) {
+  .slide-with-question { --question-width: min(320px, calc((100vw - 740px) / 2 - 40px)); width: calc(100% - 16px + var(--question-width) + 20px); grid-template-columns: minmax(0, 1fr) var(--question-width); gap: 20px; }
+}
 /* 글 맨 위: 이 글에서 풀 질문 */
 .intro { margin: 24px 0 8px; padding: 20px 22px; border: 1px solid var(--line); border-radius: 12px; }
 .intro .q { margin: 0 0 10px; font-size: 19px; font-weight: 700; }
@@ -152,6 +162,18 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 .slide.end { background: var(--ink); border-color: var(--ink); color: var(--bg); text-align: center; }
 .slide.end h2::before { color: inherit; opacity: .6; }
 .slide.end .point { margin: 0; font-size: 19px; }
+.slide.end code { color: var(--ink); }
+
+/* 주제 묶음을 쓰는 탭에만 상위 제목과 하위 번호를 적용해요. */
+.lesson-hierarchy { counter-reset: slide-group; }
+.lesson-hierarchy > .slide-group { counter-increment: slide-group; counter-reset: subslide; margin: 36px 0; }
+.post-content .lesson-hierarchy .slide-group-title { margin: 0 0 18px; font-size: 26px; }
+.lesson-hierarchy .slide-group-title::before { content: counter(slide-group) ". "; color: var(--muted); }
+.lesson-hierarchy .slide-group > .slide,
+.lesson-hierarchy .slide-group > .slide-with-question { counter-increment: subslide; margin: 18px 0 18px 16px; }
+.post-content .lesson-hierarchy .slide h3 { margin: 0 0 18px; font-size: 20px; }
+.lesson-hierarchy .slide h3::before { content: counter(slide-group) "-" counter(subslide); display: block; margin-bottom: 2px; color: var(--muted); font-size: 12px; letter-spacing: .1em; }
+.lesson-hierarchy .slide.end h3::before { color: inherit; opacity: .6; }
 
 /* 슬라이드 안 SVG 그림 */
 .dg text { font-size: 16px; fill: var(--ink); text-anchor: middle; dominant-baseline: middle; }
@@ -173,7 +195,7 @@ details.origin { padding: 12px 16px; border-left: 3px solid var(--line); color: 
 details.origin summary { cursor: pointer; font-weight: 700; color: var(--ink); }
 details.origin p { margin: .6em 0; font-size: 15px; line-height: 1.8; }
 
-/* 움직임: 이해를 도울 때만. 규칙은 CLAUDE.md 6장 */
+/* 움직임: 이해를 도울 때만. 규칙은 docs/rules/06-animation.md */
 .dg .packet { fill: var(--accent); }
 .dg .blink { animation: dg-blink 1.6s ease-in-out infinite; }
 @keyframes dg-blink { 50% { opacity: .35; } }

@@ -13,3 +13,10 @@ permalink: /about/
 - 용어보다 "**왜 필요한지**"를 먼저 설명합니다.
 - 시리즈 하나는 **비유 하나**로 끝까지 이어 갑니다.
 - 전문 용어는 그림이 잡힌 뒤에 붙입니다.
+
+## 운영자
+
+공부한 개념을 남에게 설명할 수 있을 만큼 정리하려고 이 블로그를 씁니다. 틀린 내용이나 더 쉬운 설명이 떠오르면 알려 주세요.
+
+- GitHub: [{{ site.github_username }}](https://github.com/{{ site.github_username }})
+- 글 오류 제보: [이슈 남기기](https://github.com/{{ site.github_username }}/dev-log/issues)
