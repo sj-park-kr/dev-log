@@ -175,8 +175,8 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 .post-content .slide h2 { margin: 0 0 18px; font-size: 22px; }
 .slide h2::before { content: counter(slide, decimal-leading-zero); display: block; margin-bottom: 2px; color: var(--muted); font-size: 12px; letter-spacing: .1em; }
 .slide svg { display: block; width: 100%; max-width: 440px; margin: 0 auto; }
-.slide .point { margin-top: 18px; font-size: 17px; font-weight: 700; text-align: center; }
-.slide .explain { margin: 12px 0 0; font-size: 15.5px; line-height: 1.75; }
+.slide .point { margin-top: 18px; font-size: 17px; font-weight: 700; text-align: center; text-wrap: balance; }
+.slide .explain { margin: 12px 0 0; font-size: 15.5px; line-height: 1.75; text-wrap: pretty; }
 .slide-with-question { display: grid; gap: 16px; align-items: start; }
 .slide-with-question > .slide { min-width: 0; margin: 0; }
 .author-questions { display: grid; gap: 12px; min-width: 0; }
@@ -241,6 +241,10 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 .dg .dash { stroke-dasharray: 5 4; }
 .dg .mark { fill: var(--hl-line); }
 .dg marker path { fill: var(--muted); }
+.dg .big { font-size: 17px; font-weight: 700; }
+.dg .center { text-anchor: middle; }
+/* 아이콘(Lucide, ISC): 선 아이콘은 <use class="ic">로 불러 써요. 라이선스는 assets/icons/LICENSE-lucide.txt */
+.dg .ic { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 /* 탄생 이야기: 궁금한 사람만 펼쳐 본다 */
 details.origin { padding: 12px 16px; border-left: 3px solid var(--line); color: var(--muted); }
