@@ -320,9 +320,9 @@ summary: "선반 하나에 주문이 몰리면 한 명씩만 꺼낼 수 있어�
 </section>
 
 <section class="slide" id="pp" hidden>
-<h3>직접 해 보기: 칸 수를 바꿔 동네가 옮겨 가는지 봐요</h3>
+<h3>직접 해 보기: 선반에 칸을 하나 늘려 봐요</h3>
 <div class="pp-body"></div>
-<p class="point">키를 적고 칸 수를 3에서 4로 바꿔 보세요. 문자열 키를 쓰는 Java 프로듀서와 같은 계산이에요.</p>
+<p class="point">칸을 늘리면 같은 동네 택배도 새로 오는 것은 다른 칸으로 갈 수 있어요(설명을 위해 동네 첫 글자로 칸을 정했고 실제 카프카는 키의 해시값을 칸 수로 나눈 나머지를 써요).</p>
 </section>
 <script src="{{ '/assets/js/partition-playground.js' | relative_url }}" defer></script>
 </div>

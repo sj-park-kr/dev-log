@@ -12,7 +12,8 @@ Claude와 Codex의 공통 진입점이다. 작업에 해당하는 문서를 먼�
 | 움직임 추가·수정 | [애니메이션 규칙](docs/rules/06-animation.md) |
 | 기술적 주장·날짜·버전·기본값 작성 | [사실 확인](docs/rules/07-fact-checking.md) |
 | 작성자 질문 추가·수정 | [작성자 질문](docs/rules/09-author-questions.md) |
-| 글 작성·수정 완료 (초보자 페르소나 서브에이전트 검토 필수), 검증·게시 준비 | [검토 규칙](docs/rules/08-review.md) |
+| 글 작성·수정 완료 (양식 검토 → 초보자 페르소나 검토, 둘 다 서브에이전트 필수), 검증·게시 준비 | [검토 규칙](docs/rules/08-review.md) |
+| 서브에이전트를 띄울 때 (글 작성 Opus, 자료 조사·검토 Sonnet) | [작업별 모델](docs/rules/11-agent-models.md) |
 | 매일 자동으로 새 글 작성 | [자동화 프롬프트와 설정](docs/daily-writing-prompt.md) |
 | 문체·설명 방식 판단, 과거 피드백 확인 | [세션 기반 수정 성향](docs/writing-feedback.md) |
 

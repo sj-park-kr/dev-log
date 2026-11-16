@@ -41,7 +41,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <svg class="dg" viewBox="0 0 400 300" role="img" aria-label="친구 주방의 냄비에서는 맛있는 요리가 되지만 레시피 종이만 우리 주방으로 보내면 맛이 달라지고 그 이유는 간장과 고춧가루와 불 크기가 서로 달랐기 때문이라는 그림">
 <defs><marker id="m1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <path class="line" d="M108,78 L292,78" marker-end="url(#m1)"/>
-<circle class="kafka" cx="65" cy="78" r="42"/><use class="ic" href="#i-pot" x="39" y="52" width="52" height="52"/>
+<circle class="box" cx="65" cy="78" r="42"/><use class="ic" href="#i-pot" x="39" y="52" width="52" height="52"/>
 <circle class="box" cx="200" cy="78" r="32"/><use class="ic" href="#i-doc" x="178" y="56" width="44" height="44"/>
 <circle class="bad" cx="335" cy="78" r="42"/><use class="ic" href="#i-pot" x="309" y="52" width="52" height="52"/>
 <text class="alert big" x="335" y="46">?</text>
@@ -64,7 +64,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <circle class="packet" r="5"><animateMotion dur="1.8s" begin="0s" repeatCount="indefinite" path="M108,78 L292,78"/></circle>
 </svg>
 <p class="point">레시피가 같아도 주방의 재료와 양념이 다르면 다른 요리가 나와요.</p>
-<p class="explain">친구가 맛있게 만든 요리의 레시피만 받아서 우리 주방에서 따라 하면 간장 종류와 고춧가루와 불 세기가 달라서 맛이 달라져요. 비유에서 레시피는 앱 코드이고 주방의 재료와 양념은 컴퓨터마다 다른 준비물이며 친구 주방은 내 노트북, 우리 주방은 코드를 옮겨 받은 서버예요. 그러면 무엇이 달랐는지 찾느라 시간을 써요.</p>
+<p class="explain">요리하는 사람은 레시피에 적히지 않은 준비물까지 같을 거라고 생각하기 쉬워요. 비유에서 레시피는 앱 코드이고 주방의 재료와 양념은 컴퓨터마다 다른 준비물이며 친구 주방은 내 노트북, 우리 주방은 코드를 옮겨 받은 서버예요. 받는 쪽은 준비물의 차이를 모르니 문제가 생긴 뒤에야 하나씩 비교하게 돼요.</p>
 </section>
 
 <section class="slide">
@@ -103,7 +103,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <circle class="kafka" cx="80" cy="70" r="42"/><use class="ic" href="#i-box" x="54" y="44" width="52" height="52"/>
 <text class="big" x="80" y="126">밀키트 상자</text>
 <rect class="line" x="10" y="142" width="140" height="98" rx="10"/>
-<text class="small" x="80" y="158">상자 안</text>
+<text class="label center" x="80" y="158">상자 안</text>
 <circle class="box" cx="38" cy="188" r="17"/><use class="ic" href="#i-doc" x="27" y="177" width="22" height="22"/>
 <circle class="box" cx="80" cy="188" r="17"/><use class="ic" href="#i-bowl" x="69" y="177" width="22" height="22"/>
 <circle class="box" cx="122" cy="188" r="17"/><use class="ic" href="#i-drop" x="111" y="177" width="22" height="22"/>
@@ -159,27 +159,28 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 
 <section class="slide">
 <h3>같은 상자를 여러 조리대에서 뜯어요</h3>
-<svg class="dg" viewBox="0 0 400 266" role="img" aria-label="밀키트 상자 하나에서 화살표가 조리대 세 곳으로 이어져 각각 요리가 진행되고 다 쓰고 치우면 흔적은 사라지고 남길 음식은 냉장고에 넣는다는 그림">
+<svg class="dg" viewBox="0 0 400 288" role="img" aria-label="밀키트 상자 하나에서 화살표가 조리대 세 곳으로 이어져 각각 요리가 진행되고 다 쓰고 치우면 흔적은 사라지고 남길 음식은 냉장고에 넣는다는 그림">
 <defs><marker id="m4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <path class="line" d="M188,64 L82,106" marker-end="url(#m4)"/>
 <path class="line" d="M200,68 L200,100" marker-end="url(#m4)"/>
 <path class="line" d="M212,64 L318,106" marker-end="url(#m4)"/>
 <circle class="kafka" cx="200" cy="38" r="28"/><use class="ic" href="#i-box" x="182" y="20" width="36" height="36"/>
 <text class="small" x="240" y="38" style="text-anchor:start">같은 상품</text>
-<circle class="kafka" cx="70" cy="134" r="30"/><use class="ic" href="#i-pot" x="50" y="114" width="40" height="40"/>
-<circle class="kafka" cx="200" cy="134" r="30"/><use class="ic" href="#i-pot" x="180" y="114" width="40" height="40"/>
-<circle class="kafka" cx="330" cy="134" r="30"/><use class="ic" href="#i-pot" x="310" y="114" width="40" height="40"/>
+<circle class="box" cx="70" cy="134" r="30"/><use class="ic" href="#i-pot" x="50" y="114" width="40" height="40"/>
+<circle class="box" cx="200" cy="134" r="30"/><use class="ic" href="#i-pot" x="180" y="114" width="40" height="40"/>
+<circle class="box" cx="330" cy="134" r="30"/><use class="ic" href="#i-pot" x="310" y="114" width="40" height="40"/>
 <text class="chip" x="70" y="180">조리대 1</text><text class="chip" x="200" y="180">조리대 2</text><text class="chip" x="330" y="180">조리대 3</text>
-<rect class="line" x="10" y="198" width="380" height="58" rx="12"/>
-<text class="chip" x="105" y="218">치우면 흔적도</text><text class="chip" x="105" y="236">같이 사라져요</text>
-<circle class="new" cx="225" cy="227" r="20"/><use class="ic" href="#i-fridge" x="212" y="214" width="26" height="26"/>
-<text class="chip" x="315" y="218">남길 음식은</text><text class="chip" x="315" y="236">냉장고에</text>
+<rect class="line" x="10" y="198" width="380" height="80" rx="12"/>
+<text class="label center" x="200" y="218">요리가 끝난 뒤</text>
+<text class="chip" x="105" y="242">치우면 흔적도</text><text class="chip" x="105" y="260">같이 사라져요</text>
+<circle class="new" cx="225" cy="251" r="20"/><use class="ic" href="#i-fridge" x="212" y="238" width="26" height="26"/>
+<text class="chip" x="315" y="242">남길 음식은</text><text class="chip" x="315" y="260">냉장고에</text>
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M188,64 L82,106"/></circle>
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.4s" repeatCount="indefinite" path="M200,68 L200,100"/></circle>
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.8s" repeatCount="indefinite" path="M212,64 L318,106"/></circle>
 </svg>
 <p class="point">같은 상자를 여러 조리대에서 동시에 뜯어 따로따로 요리할 수 있어요.</p>
-<p class="explain">손님은 같은 밀키트를 여러 개 사서 조리대마다 하나씩 뜯어 요리하고 조리대 사이의 칸막이 덕분에 양념이 옆 요리에 섞이지 않아요. 다 먹고 조리대를 치우면 그 위의 흔적도 같이 사라지니까 남길 음식은 조리대 밖 냉장고에 넣어요.</p>
+<p class="explain">손님이 여럿이면 요리사는 각자의 주문을 동시에 준비해야 해요. 조리대 사이의 칸막이 덕분에 한쪽에서 양념을 더해도 옆 사람의 요리에 섞이지 않아요. 다음에도 쓸 음식이 있는지는 치우기 전에 요리사가 챙겨야 해요.</p>
 </section>
 
 <section class="slide">
@@ -198,7 +199,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="alert" x="112" y="202">지우면 안에 쓴 파일은 사라져요</text>
 </svg>
 <p class="point">컨테이너는 이미지를 바탕으로 실행된 앱이고 한 이미지로 여러 개를 띄울 수 있어요.</p>
-<p class="explain">Docker가 이미지를 읽어 그 위에 컨테이너 전용 쓰기 공간을 얹고 앱을 실행하면 컨테이너가 돼요. 컨테이너는 다른 컨테이너와 서버의 나머지 부분에서 칸막이로 나뉜(격리된) 프로세스이고 프로세스는 실행 중인 프로그램 하나를 뜻해요. 개발자가 컨테이너를 지우면 그 안에서 쓴 파일도 같이 사라져요. 그래서 남겨야 할 데이터는 볼륨이라는 바깥 보관함에 저장하고 볼륨은 컨테이너를 지워도 남아요.</p>
+<p class="explain">Docker는 앱을 시작할 때 컨테이너마다 전용 쓰기 공간을 마련해요. 컨테이너는 다른 컨테이너와 서버의 나머지 부분에서 칸막이로 나뉜(격리된) 프로세스이고 프로세스는 실행 중인 프로그램 하나를 뜻해요. 실행 중에 생기는 주문 기록까지 이미지에 담겨 있는 것은 아니어서 개발자가 데이터의 보관 장소를 따로 정해야 해요.</p>
 </section>
 
 <section class="slide">
@@ -223,7 +224,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.9s" repeatCount="indefinite" path="M232,106 L316,110"/></circle>
 </svg>
 <p class="point">공장이 포장한 상자를 마트에 두면 어느 주방이든 같은 상품을 사 갈 수 있어요.</p>
-<p class="explain">포장 공장은 상자를 다 만들면 마트 진열대에 올리고 우리 주방과 회사 주방은 마트에서 같은 상품 이름으로 가져가요. 그래서 상자는 한 번만 만들고 여러 곳에서 똑같이 써요.</p>
+<p class="explain">새 주방이 생길 때마다 공장이 그곳에 가서 재료를 준비할 필요는 없어요. 받는 쪽이 필요한 때에 상품을 가져오면 되니 만드는 일과 사용하는 일을 따로 할 수 있어요.</p>
 </section>
 
 <section class="slide">
@@ -264,15 +265,15 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="alert" x="102" y="166">무겁고 오래 걸려요</text>
 <rect class="line" x="205" y="14" width="185" height="182" rx="12"/>
 <text class="label center" x="297" y="38">건물 하나에 칸막이</text>
-<circle class="kafka" cx="243" cy="86" r="20"/><use class="ic" href="#i-pot" x="230" y="73" width="26" height="26"/>
-<circle class="kafka" cx="297" cy="86" r="20"/><use class="ic" href="#i-pot" x="284" y="73" width="26" height="26"/>
-<circle class="kafka" cx="351" cy="86" r="20"/><use class="ic" href="#i-pot" x="338" y="73" width="26" height="26"/>
+<circle class="box" cx="243" cy="86" r="20"/><use class="ic" href="#i-pot" x="230" y="73" width="26" height="26"/>
+<circle class="box" cx="297" cy="86" r="20"/><use class="ic" href="#i-pot" x="284" y="73" width="26" height="26"/>
+<circle class="box" cx="351" cy="86" r="20"/><use class="ic" href="#i-pot" x="338" y="73" width="26" height="26"/>
 <path class="line" d="M270,62 L270,110 M324,62 L324,110"/>
 <rect class="new" x="220" y="122" width="155" height="30" rx="6"/><text class="chip" x="297" y="137">공용 가스·수도</text>
 <text class="small" x="297" y="176">가볍고 금방 시작해요</text>
 </svg>
 <p class="point">요리마다 건물을 새로 지으면 무겁고 건물 하나에 칸막이를 치면 가벼워요.</p>
-<p class="explain">첫 번째 방법인 가상 머신(컴퓨터 안에 컴퓨터를 한 대 더 통째로 만드는 방법)은 요리마다 건물과 가스·수도 배관까지 따로 지어서 서로 확실히 떨어져 있지만 짓는 데 오래 걸리고 자리를 많이 차지해요. 두 번째 방법인 컨테이너는 건물 하나의 가스와 수도를 함께 쓰고 조리대만 칸막이로 나눠서 금방 시작하고 건물 하나에 조리대를 더 많이 넣을 수 있어요.</p>
+<p class="explain">주방 주인은 새 요리를 시작할 때마다 공용 설비까지 새로 마련해야 하는지 생각해요. 설비를 따로 갖추면 서로 확실히 떨어뜨릴 수 있고 이미 있는 설비를 활용하면 한 건물에서 더 많은 요리를 준비할 수 있어요.</p>
 </section>
 
 <section class="slide">
@@ -308,7 +309,6 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 </tbody>
 </table>
 <p class="point">컨테이너는 가볍지만 서버의 커널과 CPU 종류에 맞아야 해요.</p>
-<p class="explain">컨테이너는 서버의 커널을 빌려 쓰기 때문에 그 서버의 CPU에서 돌 수 있는 이미지여야 해요. 예를 들어 Apple 실리콘 Mac에서 arm64용으로만 만든 이미지는 amd64 서버에서 에뮬레이션 없이 그대로 실행되지 않아요. Mac과 Windows에는 리눅스 커널이 없어서 Docker Desktop이 리눅스 가상 머신을 하나 띄워 두고 컨테이너를 그 안에서 돌려요.</p>
 <p>참고: <a href="https://docs.docker.com/get-started/docker-overview/">Docker 개요</a> · <a href="https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/">이미지란</a> · <a href="https://docs.docker.com/get-started/docker-concepts/running-containers/persisting-container-data/">컨테이너 데이터 보존</a> · <a href="https://docs.docker.com/build/building/multi-platform/">멀티 플랫폼 빌드</a> · <a href="https://docs.docker.com/desktop/features/vmm/">Mac의 Docker Desktop VM</a> · <a href="https://docs.docker.com/desktop/features/wsl/">Windows의 WSL 2</a></p>
 </section>
 
@@ -328,7 +328,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="label" x="62" y="19">문제</text><text class="small" x="62" y="38" style="text-anchor:start">코드만 옮기면 준비물이 달라 다르게 돌아요</text>
 <circle class="kafka" cx="30" cy="76" r="18"/><use class="ic" href="#i-box" x="19" y="65" width="22" height="22"/>
 <text class="label" x="62" y="67">이미지</text><text class="small" x="62" y="86" style="text-anchor:start">앱과 준비물을 봉인한 읽기 전용 상자</text>
-<circle class="kafka" cx="30" cy="124" r="18"/><use class="ic" href="#i-pot" x="19" y="113" width="22" height="22"/>
+<circle class="box" cx="30" cy="124" r="18"/><use class="ic" href="#i-pot" x="19" y="113" width="22" height="22"/>
 <text class="label" x="62" y="115">컨테이너</text><text class="small" x="62" y="134" style="text-anchor:start">이미지를 실행한 앱이에요</text>
 <circle class="kafka" cx="30" cy="172" r="18"/><use class="ic" href="#i-store" x="19" y="161" width="22" height="22"/>
 <text class="label" x="62" y="163">레지스트리</text><text class="small" x="62" y="182" style="text-anchor:start">이미지를 보관하고 나눠 주는 저장소</text>

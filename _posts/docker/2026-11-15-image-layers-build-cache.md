@@ -37,7 +37,7 @@ summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바
 <h2 class="slide-group-title">무엇이 문제인가: 고명만 바꿨는데 처음부터 다시 포장</h2>
 
 <section class="slide">
-<h3>고명 하나 바꿨는데 상자를 처음부터 다시 담아요</h3>
+<h3>바뀌지 않은 육수까지 다시 끓이느라 기다려요</h3>
 <svg class="dg" viewBox="0 0 400 262" role="img" aria-label="포장 지시서에서 고명만 바꿨는데 포장 공장이 육수 끓이기와 소스 만들기와 고명 담기를 모두 처음부터 다시 해서 오래 걸리는 그림">
 <defs><marker id="l1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <path class="line" d="M96,66 L152,66" marker-end="url(#l1)"/>
@@ -52,9 +52,9 @@ summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바
 <text class="label center" x="200" y="172">처음부터 다시 하는 일</text>
 <circle class="bad" cx="80" cy="202" r="19"/><use class="ic" href="#i-soup" x="66" y="188" width="28" height="28"/>
 <text class="chip" x="80" y="234">육수 끓이기</text>
-<circle class="bad" cx="200" cy="202" r="19"/><use class="ic" href="#i-carrot" x="186" y="188" width="28" height="28"/>
+<circle class="bad" cx="200" cy="202" r="19"/><use class="ic" href="#i-drop" x="186" y="188" width="28" height="28"/>
 <text class="chip" x="200" y="234">소스 만들기</text>
-<circle class="bad" cx="320" cy="202" r="19"/><use class="ic" href="#i-drop" x="306" y="188" width="28" height="28"/>
+<circle class="bad" cx="320" cy="202" r="19"/><use class="ic" href="#i-carrot" x="306" y="188" width="28" height="28"/>
 <text class="chip" x="320" y="234">고명 담기</text>
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M96,66 L152,66"/></circle>
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.7s" repeatCount="indefinite" path="M248,66 L300,66"/></circle>
@@ -89,16 +89,16 @@ summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바
 <h2 class="slide-group-title">레이어: 칸마다 따로 봉인한 트레이</h2>
 
 <section class="slide">
-<h3>상자 속 재료를 칸칸이 트레이에 담아 쌓아요</h3>
-<svg class="dg" viewBox="0 0 400 236" role="img" aria-label="밀키트 상자 안에 육수 베이스 트레이를 바닥에 두고 소스 트레이와 소스 트레이와 고명 트레이를 차례로 얹어 칸마다 따로 봉인한 그림">
+<h3>육수 위에 소스와 고명을 차례로 얹어요</h3>
+<svg class="dg" viewBox="0 0 400 236" role="img" aria-label="밀키트 상자 안에 육수 베이스 트레이를 바닥에 두고 소스 트레이와 고명 트레이를 차례로 얹어 칸마다 따로 봉인한 그림">
 <circle class="kafka" cx="66" cy="104" r="42"/><use class="ic" href="#i-box" x="40" y="78" width="52" height="52"/>
 <text class="big" x="66" y="168">밀키트 상자</text>
 <path class="line dash" d="M110,104 L140,104"/>
 <rect class="kafka" x="146" y="24" width="244" height="52" rx="8"/>
-<circle class="box" cx="176" cy="50" r="17"/><use class="ic" href="#i-drop" x="165" y="39" width="22" height="22"/>
+<circle class="box" cx="176" cy="50" r="17"/><use class="ic" href="#i-carrot" x="165" y="39" width="22" height="22"/>
 <text class="chip" x="290" y="50">3층 · 고명</text>
 <rect class="kafka" x="146" y="84" width="244" height="52" rx="8"/>
-<circle class="box" cx="176" cy="110" r="17"/><use class="ic" href="#i-carrot" x="165" y="99" width="22" height="22"/>
+<circle class="box" cx="176" cy="110" r="17"/><use class="ic" href="#i-drop" x="165" y="99" width="22" height="22"/>
 <text class="chip" x="290" y="110">2층 · 소스</text>
 <rect class="kafka" x="146" y="144" width="244" height="52" rx="8"/>
 <circle class="box" cx="176" cy="170" r="17"/><use class="ic" href="#i-soup" x="165" y="159" width="22" height="22"/>
@@ -191,7 +191,7 @@ summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바
 <text class="small" x="297" y="178">지우면 쓰기 층만 사라져요</text>
 </svg>
 <p class="point">같은 레이어는 디스크에 한 번만 두고 여러 이미지와 컨테이너가 함께 써요.</p>
-<p class="explain">Python 이미지를 바닥에 깐 이미지 두 개는 Python 레이어를 디스크에 한 번만 저장해 함께 써요. 서버가 레지스트리에서 이미지를 받을(pull) 때도 이미 가진 레이어는 다시 내려받지 않아요. 컨테이너는 이미지 레이어를 건드리지 않고 맨 위에 자기만의 쓰기 층을 얹어요. 앱이 아래 층의 파일을 고치려 하면 Docker가 그 파일을 쓰기 층으로 복사한 뒤 고치는데 이를 copy-on-write(쓸 때 복사)라고 해요.</p>
+<p class="explain">개발자가 같은 준비물을 쓰는 앱을 늘릴 때 Docker가 이미지 전체를 매번 복제할 필요는 없어요. 앱이 이미지 속 파일을 바꾸려는 순간에야 그 컨테이너의 전용 공간에 복사본을 만들고 이를 copy-on-write(쓸 때 복사)라고 해요. 원본을 그대로 두기 때문에 한 앱의 수정이 같은 이미지를 쓰는 다른 앱에 섞이지 않아요.</p>
 </section>
 </div>
 
@@ -199,7 +199,7 @@ summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바
 <h2 class="slide-group-title">빌드 캐시: 어제 담은 트레이를 다시 꺼내 쓰기</h2>
 
 <section class="slide">
-<h3>지시서가 같은 칸은 창고에서 꺼내고 바뀐 칸부터 다시 담아요</h3>
+<h3>소스를 바꾸면 그대로인 고명도 다시 담아요</h3>
 <svg class="dg" viewBox="0 0 400 236" role="img" aria-label="창고에서 1층 육수 베이스 트레이는 그대로 꺼내 쓰고 2층 소스가 바뀌어 다시 담으면 그 위의 3층 고명도 바뀌지 않았지만 다시 담는 그림">
 <defs><marker id="l3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <path class="line" d="M98,168 L128,168" marker-end="url(#l3)"/>
@@ -243,7 +243,7 @@ summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바
 <h2 class="slide-group-title">명령 순서: 자주 바뀌는 것은 맨 위 칸에</h2>
 
 <section class="slide">
-<h3>매일 바뀌는 고명은 맨 위 칸에 담아요</h3>
+<h3>고명 한 칸만 다시 담도록 순서를 바꿔요</h3>
 <svg class="dg" viewBox="0 0 400 236" role="img" aria-label="왼쪽은 매일 바뀌는 고명이 맨 아래 칸에 있어 고명만 바꿔도 세 칸을 모두 다시 담고 오른쪽은 고명이 맨 위 칸에 있어 한 칸만 다시 담는 그림">
 <rect class="line" x="10" y="10" width="185" height="216" rx="12"/>
 <text class="label center" x="102" y="32">고명이 맨 아래</text>
@@ -286,7 +286,7 @@ summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바
 <rect class="bad" x="236" y="226" width="16" height="12" rx="3"/><text class="small" x="284" y="232">다시 실행</text>
 </svg>
 <p class="point">라이브러리 목록 파일만 먼저 복사해 설치하고 앱 코드는 마지막에 복사하면 코드를 고쳐도 설치 단계는 캐시를 써요.</p>
-<p class="explain"><code>COPY . .</code>는 빌드할 폴더의 파일을 모두 이미지에 넣으라는 명령이고 requirements.txt는 Python 앱이 쓸 라이브러리 목록 파일이에요(Node.js의 package.json과 같은 역할). 왼쪽처럼 코드 전체를 먼저 넣으면 코드 한 줄만 고쳐도 복사 단계의 캐시가 깨져서 뒤의 설치가 매번 다시 돌아요. 오른쪽처럼 목록만 먼저 복사하면 목록이 그대로인 동안 설치 단계는 캐시에서 가져오고 마지막 코드 복사만 다시 해요. 그래서 Dockerfile은 잘 바뀌지 않는 것을 앞에 두고 자주 바뀌는 것을 뒤에 둬요.</p>
+<p class="explain">requirements.txt는 Python 앱이 쓸 라이브러리 목록 파일이에요(Node.js의 package.json과 같은 역할). 개발자는 기능을 고칠 때 이 목록보다 앱 코드를 훨씬 자주 바꿔요. 설치 명령이 코드 파일을 필요로 하지 않는다면 코드를 받기 전에 끝내 둘 수 있어서 작은 수정 때마다 긴 설치를 기다릴 이유가 줄어요.</p>
 </section>
 
 <section class="slide">
@@ -294,13 +294,13 @@ summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바
 <table>
 <thead><tr><th>오해나 상황</th><th>실제와 확인할 것</th></tr></thead>
 <tbody>
-<tr><td><code>RUN apt-get update</code>(리눅스에서 프로그램 목록을 새로 받는 명령)는 빌드할 때마다 최신 목록을 받는다</td><td>명령 글자가 같으면 캐시를 써서 예전 목록이 그대로 남아요. 목록이 낡는 일을 막으려면 update와 install을 같은 RUN에 함께 쓰고 꼭 새로 받아야 할 땐 <code>docker build --no-cache</code>로 캐시 없이 빌드해요</td></tr>
+<tr><td>인터넷의 프로그램 목록을 꼭 새로 받아야 해요</td><td><code>docker build --no-cache</code>로 캐시 없이 빌드해요. 프로그램 목록을 받는 <code>apt-get update</code>와 설치하는 <code>apt-get install</code>은 같은 RUN에 함께 적어요</td></tr>
 <tr><td><code>COPY . .</code>에 <code>.git</code>(코드 변경 기록 폴더)·<code>node_modules</code>(Node.js 라이브러리 폴더)·로그 파일이 같이 들어간다</td><td>앱과 상관없는 이 파일들이 바뀌어도 캐시가 깨지고 이미지도 커져요. 빌드할 폴더 맨 위의 <code>.dockerignore</code> 파일에 뺄 경로를 한 줄에 하나씩 적으면 빌드 컨텍스트에서 빠져요</td></tr>
 <tr><td>파일을 열었다가 내용 그대로 다시 저장해도 캐시가 깨진다</td><td>파일의 수정 시각(mtime)만 바뀐 것은 캐시 비교에 쓰지 않아요</td></tr>
 </tbody>
 </table>
 <p class="point">캐시는 명령 글자와 복사할 파일만 보고 판단해서 바깥 세상의 변화는 모르고 쓸데없는 파일 변화에는 깨져요.</p>
-<p class="explain">Docker는 RUN 명령이 인터넷에서 무엇을 받아 올지 미리 알 수 없어서 글자가 같으면 같은 결과라고 봐요. 반대로 COPY는 빌드 컨텍스트의 파일을 비교하니 앱과 상관없는 파일이 바뀌어도 다시 빌드해요. 빌드 컨텍스트는 <code>docker build</code>를 실행할 때 빌드 엔진에게 넘기는 폴더의 파일들이에요.</p>
+<p class="explain">빌드 컨텍스트는 개발자가 빌드 엔진에게 넘기는 폴더의 파일들이에요. 이미지를 만드는 데 필요한 파일만 넘기도록 범위를 정하는 것도 개발자가 할 일이에요.</p>
 <p>참고: <a href="https://docs.docker.com/build/cache/">Docker 빌드 캐시</a> · <a href="https://docs.docker.com/build/cache/invalidation/">캐시가 깨지는 조건</a> · <a href="https://docs.docker.com/build/cache/optimize/">캐시 최적화</a> · <a href="https://docs.docker.com/get-started/docker-concepts/building-images/understanding-image-layers/">이미지 레이어 이해하기</a> · <a href="https://docs.docker.com/engine/storage/drivers/">스토리지 드라이버와 쓰기 층</a> · <a href="https://docs.docker.com/build/building/best-practices/">Dockerfile 모범 사례</a></p>
 </section>
 
