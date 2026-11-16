@@ -29,8 +29,8 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 
 <div class="intro">
 <p class="q">내 컴퓨터에서 잘 되던 앱이 왜 서버에서는 안 될까요?</p>
-<p>Docker 시리즈의 첫 편이에요. 바이브 코딩으로 만든 앱이 내 노트북에서는 잘 돌아가는데 서버나 동료의 컴퓨터로 옮기면 오류가 나는 일이 자주 있어요. 코드는 똑같아도 그 코드를 돌리는 언어 버전과 라이브러리 같은 준비물이 컴퓨터마다 다르기 때문이에요.</p>
-<p>이 글을 다 읽으면 Docker가 앱과 준비물을 <b>이미지</b>라는 상자에 담고 그 상자를 <b>컨테이너</b>로 실행해서 이 문제를 어떻게 푸는지 알 수 있어요. 이미지가 <b>레지스트리</b>를 거쳐 서버까지 가는 흐름과 컨테이너가 <b>가상 머신</b>과 무엇이 다른지도 함께 봐요.</p>
+<p>Docker 시리즈의 첫 편이에요. 바이브 코딩으로 만든 앱이 내 노트북에서는 잘 돌아가는데 서버(앱을 늘 켜 두고 다른 사람이 쓰게 하는 컴퓨터)나 동료의 컴퓨터로 옮기면 오류가 나는 일이 자주 있어요. 코드는 똑같아도 그 코드를 돌리는 언어 버전과 라이브러리 같은 준비물이 컴퓨터마다 다르기 때문이에요.</p>
+<p>이 글을 다 읽으면 Docker(앱을 상자에 담아 어디서나 실행하게 해 주는 프로그램)가 앱과 준비물을 <b>이미지</b>라는 상자에 담고 그 상자를 <b>컨테이너</b>로 실행해서 이 문제를 어떻게 푸는지 알 수 있어요. 이미지가 <b>레지스트리</b>를 거쳐 서버까지 가는 흐름과 컨테이너가 <b>가상 머신</b>과 무엇이 다른지도 함께 봐요.</p>
 </div>
 
 <div class="slide-group">
@@ -64,7 +64,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <circle class="packet" r="5"><animateMotion dur="1.8s" begin="0s" repeatCount="indefinite" path="M108,78 L292,78"/></circle>
 </svg>
 <p class="point">레시피가 같아도 주방의 재료와 양념이 다르면 다른 요리가 나와요.</p>
-<p class="explain">친구가 맛있게 만든 요리의 레시피만 받아서 우리 주방에서 따라 하면 간장 종류와 고춧가루와 불 세기가 달라서 맛이 달라져요. 그러면 무엇이 달랐는지 찾느라 시간을 써요.</p>
+<p class="explain">친구가 맛있게 만든 요리의 레시피만 받아서 우리 주방에서 따라 하면 간장 종류와 고춧가루와 불 세기가 달라서 맛이 달라져요. 비유에서 레시피는 앱 코드이고 주방의 재료와 양념은 컴퓨터마다 다른 준비물이며 친구 주방은 내 노트북, 우리 주방은 코드를 옮겨 받은 서버예요. 그러면 무엇이 달랐는지 찾느라 시간을 써요.</p>
 </section>
 
 <section class="slide">
@@ -79,7 +79,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 </tbody>
 </table>
 <p class="point">코드는 같아도 코드를 돌리는 준비물이 다르면 앱이 다르게 움직여요.</p>
-<p class="explain">개발자가 노트북에서 만든 앱은 코드만으로 돌지 않고 런타임과 라이브러리 같은 준비물 위에서 돌아요. 런타임은 코드를 읽어 실행해 주는 프로그램이고 라이브러리는 남이 만들어 둔 코드 묶음이에요. 코드만 서버로 옮기면 서버에 깔린 준비물이 달라서 "내 컴퓨터에선 되는데"라는 일이 생겨요. 서버를 늘릴 때마다 사람이 준비물을 똑같이 맞추는 일도 오래 걸리고 실수가 나기 쉬워요.</p>
+<p class="explain">개발자가 노트북에서 만든 앱은 코드만으로 돌지 않고 런타임과 라이브러리 같은 준비물 위에서 돌아요. 런타임은 코드를 읽어 실행해 주는 프로그램이고 라이브러리는 남이 만들어 둔 코드 묶음이며 환경 변수는 앱이 읽는 설정 값(비밀번호나 주소 같은 것)이에요. 코드만 서버로 옮기면 서버에 깔린 준비물이 달라서 "내 컴퓨터에선 되는데"라는 일이 생겨요. 서버를 늘릴 때마다 사람이 준비물을 똑같이 맞추는 일도 오래 걸리고 실수가 나기 쉬워요.</p>
 </section>
 
 <details class="origin">
@@ -119,13 +119,14 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <p class="explain">밀키트 공장은 포장 지시서를 보고 레시피 카드와 계량한 재료를 칸마다 담아 상자를 봉인해요. 받는 사람은 자기 주방에 무엇이 있는지 신경 쓰지 않고 상자 안의 것만 써서 어느 주방에서나 같은 맛이 나요. 봉인한 상자는 열어서 고치지 않고 바꾸고 싶으면 새 상자를 포장해요.</p>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>실제로는: Dockerfile대로 층을 쌓아 이미지를 만들어요</h3>
-<svg class="dg" viewBox="0 0 400 230" role="img" aria-label="왼쪽 Dockerfile의 FROM python, COPY 라이브러리 목록, RUN 라이브러리 설치, COPY 앱 코드 네 줄이 각각 오른쪽 이미지의 층 하나가 되어 읽기 전용 이미지로 쌓이는 그림">
+<svg class="dg" viewBox="0 0 400 230" role="img" aria-label="왼쪽 Dockerfile의 FROM python:3.12, COPY 라이브러리 목록, RUN 라이브러리 설치, COPY 앱 코드 네 줄이 각각 오른쪽 이미지의 층 하나가 되어 읽기 전용 이미지로 쌓이는 그림">
 <defs><marker id="m3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <text class="label" x="10" y="14">Dockerfile</text>
 <text class="label" x="210" y="14">이미지 (읽기 전용)</text>
-<rect class="box" x="10" y="30" width="160" height="34" rx="5"/><text class="chip" x="90" y="47">FROM python</text>
+<rect class="box" x="10" y="30" width="160" height="34" rx="5"/><text class="chip" x="90" y="47">FROM python:3.12</text>
 <rect class="box" x="10" y="74" width="160" height="34" rx="5"/><text class="chip" x="90" y="91">COPY 라이브러리 목록</text>
 <rect class="box" x="10" y="118" width="160" height="34" rx="5"/><text class="chip" x="90" y="135">RUN 라이브러리 설치</text>
 <rect class="box" x="10" y="162" width="160" height="34" rx="5"/><text class="chip" x="90" y="179">COPY 앱 코드</text>
@@ -140,8 +141,17 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="small" x="200" y="217">명령 한 줄이 층 하나가 돼요</text>
 </svg>
 <p class="point">이미지는 앱 코드와 실행에 필요한 준비물을 층층이 담아 봉인한 꾸러미예요.</p>
-<p class="explain">이미지는 앱을 실행하는 데 필요한 파일과 라이브러리와 설정을 모두 담은 꾸러미이고 Dockerfile은 그 이미지를 만드는 포장 지시서예요. 개발자가 빌드(build)를 하면 Docker가 Dockerfile을 위에서부터 읽으며 이미 만들어진 Python 이미지를 바닥에 깔고 명령마다 층(레이어)을 하나씩 쌓아요. 완성된 이미지는 고칠 수 없어서 바꾸려면 Dockerfile을 고쳐 새로 빌드해요. 다시 빌드할 때는 바뀐 층부터 다시 만들고 그 앞의 층은 그대로 써서 빨라요.</p>
+<p class="explain">이미지는 앱을 실행하는 데 필요한 파일과 라이브러리와 설정을 모두 담은 꾸러미이고 Dockerfile은 그 이미지를 만드는 포장 지시서예요. 개발자가 빌드(build)를 하면 Docker가 Dockerfile을 위에서부터 읽으며 이미 만들어진 Python 이미지를 바닥에 깔고 명령마다 층(레이어)을 하나씩 쌓아요. 완성된 이미지는 고칠 수 없어서 바꾸려면 Dockerfile을 고쳐 새로 빌드해요. Dockerfile의 FROM은 바닥에 깔 기본 이미지를 고르고 COPY는 파일을 이미지 안에 복사하고 RUN은 명령(여기서는 라이브러리 설치)을 실행하는 줄이에요.</p>
 </section>
+
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. Dockerfile은 어디에 어떤 이름으로 만들고, 빌드는 어떻게 하나요?</summary>
+<p>A. 앱 코드 폴더 맨 위에 <code>Dockerfile</code>이라는 이름의 글자 파일로 만들어요. 빌드는 터미널에서 그 폴더로 가서 <code>docker build -t 이미지이름 .</code>을 직접 입력해요.</p>
+<p>이미지를 레지스트리에 올리고 받고 실행하는 것도 <code>docker push</code>, <code>docker pull</code>, <code>docker run</code>처럼 터미널에 입력하는 명령이에요.</p>
+</details>
+</aside>
+</div>
 </div>
 
 <div class="slide-group">
@@ -188,7 +198,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="alert" x="112" y="202">지우면 안에 쓴 파일은 사라져요</text>
 </svg>
 <p class="point">컨테이너는 이미지를 바탕으로 실행된 앱이고 한 이미지로 여러 개를 띄울 수 있어요.</p>
-<p class="explain">Docker가 이미지를 읽어 그 위에 컨테이너 전용 쓰기 공간을 얹고 앱을 실행하면 컨테이너가 돼요. 컨테이너는 다른 컨테이너와 서버의 나머지 부분에서 칸막이로 나뉜(격리된) 프로세스이고 프로세스는 실행 중인 프로그램 하나를 뜻해요. 컨테이너를 지우면 그 안에서 쓴 파일도 같이 사라져요. 그래서 남겨야 할 데이터는 볼륨이라는 바깥 보관함에 저장하고 볼륨은 컨테이너를 지워도 남아요.</p>
+<p class="explain">Docker가 이미지를 읽어 그 위에 컨테이너 전용 쓰기 공간을 얹고 앱을 실행하면 컨테이너가 돼요. 컨테이너는 다른 컨테이너와 서버의 나머지 부분에서 칸막이로 나뉜(격리된) 프로세스이고 프로세스는 실행 중인 프로그램 하나를 뜻해요. 개발자가 컨테이너를 지우면 그 안에서 쓴 파일도 같이 사라져요. 그래서 남겨야 할 데이터는 볼륨이라는 바깥 보관함에 저장하고 볼륨은 컨테이너를 지워도 남아요.</p>
 </section>
 
 <section class="slide">
@@ -235,7 +245,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.8s" repeatCount="indefinite" path="M240,90 L320,126"/></circle>
 </svg>
 <p class="point">개발자가 이미지를 레지스트리에 올리면 서버와 동료는 같은 이미지를 받아 실행해요.</p>
-<p class="explain">개발자가 노트북에서 이미지를 빌드하고 레지스트리에 올려요(push). 레지스트리는 이미지를 보관하고 나눠 주는 저장소이고 Docker Hub는 누구나 쓸 수 있는 공개 레지스트리예요. 서버와 동료의 노트북은 이미지 이름으로 받아(pull) 컨테이너로 실행해요(run). 모두가 같은 이미지를 쓰니까 "내 컴퓨터에선 되는데" 문제가 줄어요.</p>
+<p class="explain">개발자가 노트북에서 이미지를 빌드하고 레지스트리에 올려요(push). 레지스트리는 이미지를 보관하고 나눠 주는 저장소이고 Docker Hub는 누구나 쓸 수 있는 공개 레지스트리예요. Docker가 설치된 서버와 동료의 노트북은 이미지 이름으로 받아(pull) 컨테이너로 실행해요(run). 모두가 같은 이미지를 쓰니까 "내 컴퓨터에선 되는데" 문제가 줄어요.</p>
 </section>
 </div>
 
@@ -262,7 +272,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="small" x="297" y="176">가볍고 금방 시작해요</text>
 </svg>
 <p class="point">요리마다 건물을 새로 지으면 무겁고 건물 하나에 칸막이를 치면 가벼워요.</p>
-<p class="explain">첫 번째 방법은 요리마다 건물과 가스·수도 배관까지 따로 지어서 서로 확실히 떨어져 있지만 짓는 데 오래 걸리고 자리를 많이 차지해요. 두 번째 방법은 건물 하나의 가스와 수도를 함께 쓰고 조리대만 칸막이로 나눠서 금방 시작하고 더 많이 들어가요.</p>
+<p class="explain">첫 번째 방법인 가상 머신(컴퓨터 안에 컴퓨터를 한 대 더 통째로 만드는 방법)은 요리마다 건물과 가스·수도 배관까지 따로 지어서 서로 확실히 떨어져 있지만 짓는 데 오래 걸리고 자리를 많이 차지해요. 두 번째 방법인 컨테이너는 건물 하나의 가스와 수도를 함께 쓰고 조리대만 칸막이로 나눠서 금방 시작하고 건물 하나에 조리대를 더 많이 넣을 수 있어요.</p>
 </section>
 
 <section class="slide">
@@ -287,6 +297,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <p class="explain">커널은 운영체제(OS)의 핵심으로 CPU와 메모리와 파일을 프로그램들에게 나눠 주는 부분이고 비유의 가스·수도 배관이에요. 가상 머신(VM)은 하이퍼바이저라는 프로그램이 컴퓨터 하드웨어를 흉내 내고 그 안에 OS를 하나씩 통째로 설치해서 무겁고 켜는 데 오래 걸려요. 컨테이너는 서버의 커널 하나를 함께 쓰고 리눅스 커널의 네임스페이스(namespace)라는 칸막이로 각자 볼 수 있는 범위만 나눠서 가볍고 금방 켜져요. 대신 커널을 함께 쓰니까 컨테이너 안의 프로그램은 그 서버의 커널과 CPU에서 돌 수 있는 것이어야 해요.</p>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>이럴 땐 조심해요: 이미지가 안 돌아가는 경우</h3>
 <table>
@@ -300,6 +311,15 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <p class="explain">컨테이너는 서버의 커널을 빌려 쓰기 때문에 그 서버의 CPU에서 돌 수 있는 이미지여야 해요. 예를 들어 Apple 실리콘 Mac에서 arm64용으로만 만든 이미지는 amd64 서버에서 에뮬레이션 없이 그대로 실행되지 않아요. Mac과 Windows에는 리눅스 커널이 없어서 Docker Desktop이 리눅스 가상 머신을 하나 띄워 두고 컨테이너를 그 안에서 돌려요.</p>
 <p>참고: <a href="https://docs.docker.com/get-started/docker-overview/">Docker 개요</a> · <a href="https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-an-image/">이미지란</a> · <a href="https://docs.docker.com/get-started/docker-concepts/running-containers/persisting-container-data/">컨테이너 데이터 보존</a> · <a href="https://docs.docker.com/build/building/multi-platform/">멀티 플랫폼 빌드</a> · <a href="https://docs.docker.com/desktop/features/vmm/">Mac의 Docker Desktop VM</a> · <a href="https://docs.docker.com/desktop/features/wsl/">Windows의 WSL 2</a></p>
 </section>
+
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. Mac이나 Windows에서는 결국 가상 머신 위에서 도는 건데 컨테이너가 가볍다는 말이 맞나요?</summary>
+<p>A. 맞아요. Docker Desktop이 띄우는 리눅스 가상 머신은 <b>하나뿐</b>이고 컨테이너 여러 개가 그 안에서 같은 커널을 함께 써요. 컨테이너마다 가상 머신을 하나씩 만드는 것보다는 훨씬 가벼워요.</p>
+<p>다만 리눅스 서버에서 바로 돌릴 때보다는 가상 머신 한 겹이 더 있어요.</p>
+</details>
+</aside>
+</div>
 
 <section class="slide">
 <h3>한눈에 다시 보기: 이 글의 다섯 줄</h3>

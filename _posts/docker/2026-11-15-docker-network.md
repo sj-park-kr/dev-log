@@ -26,7 +26,7 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 
 <div class="intro">
 <p class="q">칸막이로 나뉜 컨테이너는 바깥이나 다른 컨테이너와 어떻게 주고받을까요?</p>
-<p>Docker 시리즈의 세 번째 편이에요. 1편에서 컨테이너는 칸막이로 나뉜 조리대라고 했어요. 칸막이 덕분에 양념이 옆 요리에 섞이지 않지만 손님의 주문도 옆 조리대의 음식도 칸막이를 바로 넘지 못해요. 웹 앱 컨테이너를 띄웠는데 브라우저에서 열리지 않거나 앱이 DB 컨테이너를 찾지 못하는 일이 여기서 생겨요.</p>
+<p>Docker 시리즈의 세 번째 편이에요. 1편에서 컨테이너는 칸막이로 나뉜 조리대라고 했어요. 칸막이 덕분에 양념이 옆 요리에 섞이지 않지만 손님의 주문도 옆 조리대의 음식도 칸막이를 바로 넘지 못해요. 브라우저로 여는 웹 앱을 컨테이너로 띄웠는데 브라우저에서 열리지 않거나 앱이 DB 컨테이너를 찾지 못하는 일이 여기서 생겨요.</p>
 <p>이 글을 다 읽으면 <b>포트 매핑</b>으로 바깥의 요청을 컨테이너까지 보내는 방법과 <b>사용자 정의 네트워크</b>에서 컨테이너끼리 <b>이름</b>으로 찾는 방법을 알 수 있어요. 기본 bridge 네트워크와 무엇이 다른지와 host·none 같은 다른 연결 방식도 가볍게 봐요.</p>
 </div>
 
@@ -49,7 +49,7 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 <text class="small" x="262" y="162">옆 조리대가 어디 있는지 몰라요</text>
 </svg>
 <p class="point">칸막이 덕분에 섞이지 않지만 바깥 주문도 옆 조리대의 음식도 바로 넘어오지 못해요.</p>
-<p class="explain">손님은 주방 건물 밖에서 주문하는데 조리대는 칸막이 안에 있어서 주문을 받을 창구가 없어요. 조리대 A의 요리사가 조리대 B에 소스를 부탁하려 해도 B가 지금 몇 번 자리에 있는지 모르면 넘길 수 없어요.</p>
+<p class="explain">손님(브라우저가 보내는 요청)은 주방 건물 밖에서 주문하는데 조리대는 칸막이 안에 있어서 주문을 받을 창구가 없어요. 조리대 A의 요리사가 조리대 B에 소스를 부탁하려 해도 B가 지금 몇 번 자리에 있는지 모르면 넘길 수 없어요.</p>
 </section>
 
 <section class="slide">
@@ -64,7 +64,7 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 </tbody>
 </table>
 <p class="point">컨테이너마다 자기 IP와 포트를 가진 네트워크 공간이 따로 있어서 바깥에서는 바로 들어올 수 없어요.</p>
-<p class="explain">IP 주소는 네트워크에서 컴퓨터를 찾는 집 주소이고 포트는 그 컴퓨터 안에서 어느 프로그램에게 갈지 정하는 창구 번호예요. Docker는 컨테이너를 실행할 때 리눅스 커널의 네트워크 네임스페이스로 칸막이를 쳐서 컨테이너마다 IP와 포트를 따로 줘요. 그래서 컨테이너 안의 웹 앱이 80번 포트에서 기다려도 바깥의 브라우저는 그 포트에 바로 닿지 않아요. 옆 컨테이너의 IP는 컨테이너를 다시 만들 때 바뀔 수 있어서 IP를 코드에 적어 두기도 어려워요.</p>
+<p class="explain">IP 주소는 네트워크에서 컴퓨터를 찾는 집 주소이고 포트는 그 컴퓨터 안에서 어느 프로그램에게 갈지 정하는 창구 번호이고 웹 서버는 보통 80번 포트에서 요청을 기다려요. 이 글에서 바깥은 컨테이너 밖 전부를 뜻하고 같은 컴퓨터의 브라우저도 포함해요. Docker는 컨테이너를 실행할 때 리눅스 커널의 네트워크 네임스페이스로 칸막이를 쳐서 컨테이너마다 IP와 포트를 따로 줘요. 그래서 컨테이너 안의 웹 앱이 80번 포트에서 기다려도 바깥의 브라우저는 그 포트에 바로 닿지 않아요. 옆 컨테이너의 IP는 컨테이너를 다시 만들 때 바뀔 수 있어서 IP를 코드에 적어 두기도 어려워요.</p>
 </section>
 
 <details class="origin">
@@ -101,7 +101,7 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 <circle class="packet" r="5"><animateMotion dur="1.2s" begin="0.6s" repeatCount="indefinite" path="M200,85 L286,85"/></circle>
 </svg>
 <p class="point">가게 정문의 창구 번호를 조리대 창구에 이어 두면 손님 주문이 그 조리대까지 가요.</p>
-<p class="explain">가게 주인이 8080번 창구로 온 주문은 web 조리대의 80번 창구로 보내라고 정해 두면 손님은 칸막이 안을 몰라도 8080번 창구에만 주문하면 돼요. 창구를 잇지 않은 db 조리대에는 손님 주문이 닿지 않아요.</p>
+<p class="explain">가게 주인(Docker)이 8080번 창구로 온 주문은 web 조리대의 80번 창구로 보내라고 정해 두면 손님은 칸막이 안을 몰라도 8080번 창구에만 주문하면 돼요. 창구를 잇지 않은 db 조리대에는 손님 주문이 닿지 않아요.</p>
 </section>
 
 <section class="slide">
@@ -123,9 +123,10 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 <circle class="packet" r="5"><animateMotion dur="1s" begin="0.5s" repeatCount="indefinite" path="M255,136 L276,136"/></circle>
 </svg>
 <p class="point">-p 호스트포트:컨테이너포트를 주면 호스트로 온 연결을 Docker가 컨테이너 포트로 넘겨줘요.</p>
-<p class="explain">개발자가 <code>docker run -p 8080:80</code>처럼 실행하면 Docker가 호스트(Docker를 돌리는 컴퓨터)의 8080번 포트로 들어온 연결을 컨테이너의 80번 포트로 넘겨줘요. 이것을 포트 공개(publish) 또는 포트 매핑이라고 하고 비유의 창구 연결에 해당해요. <code>-p</code>를 주지 않은 컨테이너의 포트는 호스트 바깥에 공개되지 않아요. 앞에 호스트 IP를 적지 않으면 Docker는 호스트의 모든 주소에 그 포트를 열어요.</p>
+<p class="explain">개발자가 <code>docker run -p 8080:80</code>처럼 실행하면 Docker가 호스트(Docker를 돌리는 컴퓨터)의 8080번 포트로 들어온 연결을 컨테이너의 80번 포트로 넘겨줘요. 이것을 포트 공개(publish) 또는 포트 매핑이라고 하고 비유의 창구 연결에 해당해요. <code>-p</code>를 주지 않은 컨테이너의 포트는 호스트 쪽으로 열리지 않아요. 앞에 호스트 IP를 적지 않으면 Docker는 호스트의 모든 주소(그 컴퓨터를 가리키는 모든 IP)에 그 포트를 열어요.</p>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>이럴 땐 조심해요: 포트를 열 때 헷갈리는 것</h3>
 <table>
@@ -137,9 +138,18 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 </tbody>
 </table>
 <p class="point">호스트 포트는 한 번에 하나만 쓸 수 있고 주소를 적지 않으면 바깥에도 열려요.</p>
-<p class="explain">localhost는 지금 이 컴퓨터 자신을 뜻하는 이름이라서 컨테이너 안에서는 그 컨테이너를 가리켜요. 컨테이너끼리 이을 때는 포트를 열기보다 다음 묶음의 네트워크와 이름을 써요.</p>
+<p class="explain">localhost(숫자로는 127.0.0.1)는 지금 이 컴퓨터 자신을 뜻하는 이름이라서 내 컴퓨터에서는 내 컴퓨터를, 컨테이너 안에서는 그 컨테이너를 가리켜요. 컨테이너끼리 이을 때는 포트를 열기보다 다음 묶음의 네트워크와 이름을 써요.</p>
 <p>참고: <a href="https://docs.docker.com/engine/network/port-publishing/">포트 공개</a> · <a href="https://docs.docker.com/desktop/features/networking/networking-how-tos/">Docker Desktop 네트워크 사용법</a></p>
 </section>
+
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. 컨테이너 안의 앱이 바깥 인터넷으로 나가는 것도 -p가 있어야 하나요?</summary>
+<p>A. 아니요. 컨테이너에서 바깥으로 <b>나가는</b> 연결은 <code>-p</code> 없이도 돼요. 예를 들어 앱이 외부 서버의 API를 부르거나 패키지를 내려받는 일이에요.</p>
+<p><code>-p</code>는 바깥에서 컨테이너로 <b>들어오는</b> 연결을 열 때만 필요해요.</p>
+</details>
+</aside>
+</div>
 </div>
 
 <div class="slide-group">
@@ -167,7 +177,7 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M262,90 L333,90"/></circle>
 </svg>
 <p class="point">자리 번호로만 부르면 자리가 바뀔 때 못 찾고 이름표로 부르면 언제든 찾아요.</p>
-<p class="explain">가게가 처음부터 마련해 둔 공용 구역에서는 조리대끼리 자리 번호로만 음식을 넘길 수 있어요. 요리사가 구역을 따로 만들고 함께 일할 조리대를 들이면 구역 안내판이 이름표를 보고 지금 자리를 알려 줘요.</p>
+<p class="explain">가게가 처음부터 마련해 둔 공용 구역에서는 조리대끼리 자리 번호로만 음식을 넘길 수 있어요. 요리사(개발자)가 구역을 따로 만들고 함께 일할 조리대를 들이면 구역 안내판이 이름표(컨테이너 이름)를 보고 지금 자리를 알려 줘요. 공용 구역은 기본 bridge 네트워크이고 새로 만든 구역은 사용자 정의 네트워크예요.</p>
 </section>
 
 <section class="slide">
@@ -191,7 +201,7 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 <circle class="packet" r="5"><animateMotion dur="1s" begin="1.6s" repeatCount="indefinite" path="M85,110 L85,144"/></circle>
 </svg>
 <p class="point">사용자 정의 네트워크에서는 Docker의 내장 DNS가 컨테이너 이름을 지금의 IP로 바꿔 줘요.</p>
-<p class="explain">DNS는 이름을 IP 주소로 바꿔 주는 전화번호부 같은 장치이고 비유의 구역 안내판이에요. 개발자가 <code>docker network create</code>로 네트워크를 만들고 web과 db 컨테이너를 <code>--network</code>로 붙이면 web 앱은 주소 대신 <code>db</code>라는 이름으로 접속해요. 그러면 Docker의 내장 DNS가 그 이름을 지금 db 컨테이너의 IP로 알려 주고 같은 네트워크 안의 컨테이너끼리는 <code>-p</code>로 포트를 열지 않아도 서로의 포트에 닿아요. db 컨테이너를 다시 만들어 IP가 바뀌어도 이름은 그대로라서 web의 설정을 고치지 않아도 돼요.</p>
+<p class="explain">DNS는 이름을 IP 주소로 바꿔 주는 전화번호부 같은 장치이고 비유의 구역 안내판이에요. 개발자가 <code>docker network create mynet</code>으로 네트워크를 만들고 web과 db 컨테이너를 <code>--name db --network mynet</code>처럼 이름을 주면서 붙이면 web 앱은 주소 대신 <code>db</code>라는 이름으로 접속해요(예의 db는 PostgreSQL DB라 기본 포트인 5432번을 써요). 그러면 Docker의 내장 DNS가 그 이름을 지금 db 컨테이너의 IP로 알려 주고 같은 네트워크 안의 컨테이너끼리는 <code>-p</code>로 포트를 열지 않아도 서로의 포트에 닿아요. db 컨테이너를 다시 만들어 IP가 바뀌어도 이름은 그대로라서 web의 설정을 고치지 않아도 돼요.</p>
 </section>
 
 <section class="slide">
@@ -202,7 +212,7 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 <tr><td>붙는 때</td><td><code>--network</code> 없이 실행하면 자동으로 붙어요</td><td><code>docker network create</code>로 만들고 <code>--network</code>로 붙여요</td></tr>
 <tr><td>서로 찾는 법</td><td>IP 주소로만 닿아요. 이름은 옛 기능인 <code>--link</code>를 써야 해요</td><td>컨테이너 이름으로 찾아요</td></tr>
 <tr><td>함께 있는 컨테이너</td><td>네트워크를 정하지 않은 컨테이너 전부</td><td>그 네트워크에 붙인 컨테이너만</td></tr>
-<tr><td>다른 bridge 네트워크와</td><td colspan="2">어느 쪽이든 서로 바로 닿지 않고 공개한 포트로만 닿아요</td></tr>
+<tr><td>다른 bridge 네트워크의 컨테이너와</td><td colspan="2">어느 쪽이든 서로 바로 닿지 않고 그쪽이 <code>-p</code>로 공개한 호스트 포트를 거쳐야 닿아요</td></tr>
 </tbody>
 </table>
 <p class="point">컨테이너끼리 이름으로 부르려면 사용자 정의 bridge 네트워크를 만들어 함께 넣어요.</p>
@@ -242,7 +252,7 @@ summary: "컨테이너는 칸막이 너머라 바로 닿지 않아요. 포트 �
 <thead><tr><th>드라이버</th><th>하는 일</th><th>쓰는 때</th></tr></thead>
 <tbody>
 <tr><td><code>bridge</code> (기본값)</td><td>호스트 안에 컨테이너 전용 네트워크를 만들어요</td><td>대부분의 경우</td></tr>
-<tr><td><code>host</code></td><td>칸막이 없이 호스트의 네트워크를 그대로 써요. 컨테이너에 따로 IP가 없고 <code>-p</code>는 무시돼요</td><td>성능을 아끼거나 포트를 아주 많이 써야 할 때</td></tr>
+<tr><td><code>host</code></td><td>칸막이 없이 호스트의 네트워크를 그대로 써요. 컨테이너에 따로 IP가 없고 <code>-p</code>는 무시돼요</td><td>중간 단계 없이 호스트 네트워크를 바로 써야 하거나 포트를 아주 많이 써야 할 때</td></tr>
 <tr><td><code>none</code></td><td>자기 자신과만 통하는 연결(루프백)만 남기고 네트워크를 끊어요</td><td>네트워크가 필요 없는 작업</td></tr>
 <tr><td><code>overlay</code></td><td>여러 대의 Docker 호스트를 하나의 네트워크로 이어요</td><td>Swarm으로 서버 여러 대를 묶을 때</td></tr>
 </tbody>
