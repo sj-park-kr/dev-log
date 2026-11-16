@@ -70,6 +70,11 @@
   logo: /assets/images/series/airflow.png
   color: "#257975"
   description: 할 일을 순서대로 잇는 시간표로 데이터 작업의 흐름을 알아봐요.
+- id: spark
+  title: Spark
+  emoji: "✨"
+  color: "#b4471a"
+  description: 산더미 같은 데이터를 여러 일꾼이 나눠 맡아 빠르게 처리하는 법을 알아봐요.
 - id: docker
   title: Docker
   emoji: "🐳"
