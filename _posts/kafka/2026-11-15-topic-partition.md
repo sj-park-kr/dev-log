@@ -318,6 +318,13 @@ summary: "선반 하나에 주문이 몰리면 한 명씩만 꺼낼 수 있어�
 <p class="point">프로듀서가 같은 숫자를 계산해도 나누는 파티션 수가 바뀌면 나머지가 달라질 수 있어요.</p>
 <p class="explain">앞의 마포 택배처럼 같은 키를 보내도 칸 수가 달라지면 목적지가 바뀔 수 있어요. 그림의 7은 실제 키의 계산 결과가 아니라 원리를 보여 주는 가짜 해시값이에요. 프로듀서가 7을 3으로 나누면 나머지가 1이고 4로 나누면 나머지가 3이라 다른 칸을 골라요. 브로커는 옛 기록을 자동으로 옮기지 않아서 같은 키의 예전 기록과 새 기록이 서로 다른 칸에 남을 수 있어요.</p>
 </section>
+
+<section class="slide" id="pp" hidden>
+<h3>직접 해 보기: 칸 수를 바꿔 동네가 옮겨 가는지 봐요</h3>
+<div class="pp-body"></div>
+<p class="point">키를 적고 칸 수를 3에서 4로 바꿔 보세요. 문자열 키를 쓰는 Java 프로듀서와 같은 계산이에요.</p>
+</section>
+<script src="{{ '/assets/js/partition-playground.js' | relative_url }}" defer></script>
 </div>
 
 <div class="slide-group">
