@@ -1,291 +1,206 @@
 ---
 layout: post
 title: "선반이 꽉 차면 어떻게 할까? 택배 물류센터로 이해하는 Kafka 보관과 정리"
-description: "카프카가 메시지를 읽어도 지우지 않는데 디스크는 어떻게 안 차는지 보관 기간(retention)과 로그 컴팩션, 톰스톤을 물류센터 비유로 쉽게 설명하고 개발자용으로 세그먼트 구조·기본값·cleanup.policy·티어드 스토리지까지 정리합니다."
+description: "읽어도 남는 Kafka 기록을 언제 지우는지 보관 한도·로그 컴팩션·톰스톤을 물류센터 그림과 움직이는 위젯으로 설명합니다."
 date: 2026-11-15 15:00:00 +0900
 series: kafka
 episode: 6
-summary: "카프카는 가져가도 택배를 안 버려요. 대신 오래된 선반 단을 통째로 폐기하거나 동네별 최신 택배만 남겨서 선반이 꽉 차지 않게 해요."
+summary: "읽은 소식도 남겨 두되 오래된 단을 통째로 버리거나 키별 최신 상태를 남겨요. 무엇을 다시 읽어야 하는지가 정리 방법을 결정해요."
 ---
 
 <div class="lesson lesson-hierarchy">
 
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+<defs>
+<!-- 아이콘 원본: https://cdn.jsdelivr.net/npm/lucide-static@1.25.0/icons/ (ISC). 라이선스: assets/icons/LICENSE-lucide.txt. -->
+<symbol id="i-store" viewBox="0 0 24 24"><path d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"/><path d="M17.774 10.31a1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.451 0 1.12 1.12 0 0 0-1.548 0 2.5 2.5 0 0 1-3.452 0 1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.77-3.248l2.889-4.184A2 2 0 0 1 7 2h10a2 2 0 0 1 1.653.873l2.895 4.192a2.5 2.5 0 0 1-3.774 3.244"/><path d="M4 10.95V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.05"/></symbol>
+<symbol id="i-package" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></symbol>
+<symbol id="i-user-round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
+<symbol id="i-shelving-unit" viewBox="0 0 24 24"><path d="M12 12V9a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/><path d="M16 20v-3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/><path d="M20 22V2"/><path d="M4 12h16"/><path d="M4 20h16"/><path d="M4 2v20"/><path d="M4 4h16"/></symbol>
+</defs>
+</svg>
 <div class="intro">
-<p class="q">가져가도 안 버리는 선반은 어떻게 꽉 차지 않을까요?</p>
-<p>1편에서 카프카는 택배를 가져가도 없애지 않는다고 했어요. 그래서 다시 읽을 수도 있고 여러 팀이 같은 택배를 각자 읽을 수도 있었죠. 그런데 쌓기만 하고 버리지 않으면 선반은 결국 꽉 차요.</p>
-<p>이 글을 다 읽으면 <b>보관 기간(retention)</b>으로 오래된 단을 통째로 버리는 방법과 <b>로그 컴팩션</b>으로 동네별 최신 택배만 남기는 방법, 그리고 <b>톰스톤</b>으로 동네를 지우는 방법을 알 수 있어요.</p>
+<p class="q">읽어도 남는 소식은 언제 지우는 걸까요?</p>
+<p>5편에서는 브로커가 고장 나도 이어 가도록 사본을 두었어요. 하지만 사본까지 계속 쌓아 둘 공간은 한정돼 있어요. 1편에서 읽어도 남고 정해 둔 기간이나 용량을 넘으면 지운다고 한 이야기를 이제 자세히 살펴봐요.</p>
+<p>이 글을 다 읽으면 오래된 기록을 묶어서 버리는 방법과 키별 최신 상태를 남기는 방법이 왜 다른지 알 수 있어요. 삭제를 표시하는 소식도 함께 살펴보며 어떤 기록을 다시 읽을 수 있는지 구분해요.</p>
 </div>
-
 <div class="slide-group">
-<h2 class="slide-group-title">기간으로 정리: 오래된 선반 단을 버려요</h2>
+<h2 class="slide-group-title">쌓이는 기록: 읽었다는 것과 지운다는 것은 달라요</h2>
 
 <section class="slide">
-<h3>선반은 언젠가 꽉 차요</h3>
-<svg class="dg" viewBox="0 0 400 110" role="img" aria-label="주문 선반에 택배 1번부터 7번까지 가득 쌓여 있고 새로 온 택배는 놓을 자리가 없어서 깜빡이는 그림">
-<text class="small" x="200" y="14">주문 선반</text>
-<rect class="kafka" x="10" y="30" width="40" height="40" rx="5"/><text x="30" y="50">1</text>
-<rect class="kafka" x="56" y="30" width="40" height="40" rx="5"/><text x="76" y="50">2</text>
-<rect class="kafka" x="102" y="30" width="40" height="40" rx="5"/><text x="122" y="50">3</text>
-<rect class="kafka" x="148" y="30" width="40" height="40" rx="5"/><text x="168" y="50">4</text>
-<rect class="kafka" x="194" y="30" width="40" height="40" rx="5"/><text x="214" y="50">5</text>
-<rect class="kafka" x="240" y="30" width="40" height="40" rx="5"/><text x="260" y="50">6</text>
-<rect class="kafka" x="286" y="30" width="40" height="40" rx="5"/><text x="306" y="50">7</text>
-<rect class="bad blink" x="336" y="30" width="54" height="40" rx="5"/><text class="chip" x="363" y="50">새 택배</text>
-<text class="small" x="168" y="92">가져가도 그대로 쌓여요</text>
-<text class="alert" x="363" y="92">자리 없음</text>
+<h3>담당자가 다 읽어도 선반은 비워지지 않아요</h3>
+<svg class="dg" viewBox="0 0 400 220" role="img" aria-label="가게에서 새 택배가 계속 도착하고 읽은 택배도 선반에 남아 공간이 부족한 그림">
+<circle class="box" cx="52" cy="65" r="32"/><use class="ic" href="#i-store" x="30" y="43" width="44" height="44"/><text class="chip" x="52" y="114">주문 가게</text><circle class="new" cx="200" cy="65" r="32"/><use class="ic" href="#i-shelving-unit" x="178" y="43" width="44" height="44"/><text class="chip" x="200" y="114">주문 선반</text><circle class="box" cx="348" cy="65" r="32"/><use class="ic" href="#i-user-round" x="326" y="43" width="44" height="44"/><text class="chip" x="348" y="114">알림 담당</text><path class="line" d="M86,65 L163,65 M235,65 L313,65"/><circle class="new" cx="116" cy="155" r="18"/><use class="ic" href="#i-package" x="103" y="142" width="26" height="26"/><circle class="new" cx="158" cy="155" r="18"/><use class="ic" href="#i-package" x="145" y="142" width="26" height="26"/><circle class="new" cx="200" cy="155" r="18"/><use class="ic" href="#i-package" x="187" y="142" width="26" height="26"/><circle class="new" cx="242" cy="155" r="18"/><use class="ic" href="#i-package" x="229" y="142" width="26" height="26"/><circle class="bad" cx="284" cy="155" r="18"/><use class="ic" href="#i-package" x="271" y="142" width="26" height="26"/><text class="small" x="200" y="198">읽어도 남아요 · 새 소식도 와요</text>
 </svg>
-<p class="point">1편에서 가져가도 안 없어진다고 했으니 선반은 언젠가 꽉 차요.</p>
-<p class="explain">주문 서비스가 택배를 하루 종일 맡기면 선반에는 새 택배가 계속 쌓여요. 알림 서비스가 이미 읽어 간 택배도 그대로 남아 있어서 줄어드는 일이 없어요. 선반(디스크)은 크기가 정해져 있으니 어느 순간 새 택배를 놓을 자리가 없어져요. 그래서 "무엇을 언제 버릴지"를 미리 정해 둬야 해요.</p>
+<p class="point">다시 읽으려고 남겨 둔 소식에도 보관할 자리가 필요해요.</p>
+<p class="explain">가게가 새 소식을 맡길 때마다 센터의 보관량이 늘어요. 담당자가 내용을 확인하는 일과 센터가 상자를 치우는 일은 따로예요. 센터는 나중에 무엇을 다시 읽어야 하는지에 맞춰 버릴 기준을 정해야 해요.</p>
+</section>
+
+<section class="slide">
+<h3>실제로는: 컨슈머의 읽기와 브로커의 삭제는 별개예요</h3>
+<table>
+<thead><tr><th>하는 일</th><th>담당과 기준</th></tr></thead>
+<tbody>
+<tr><td>읽은 자리 저장</td><td>컨슈머 그룹이 다음에 읽을 오프셋을 기억해요</td></tr>
+<tr><td>기록 보관과 삭제</td><td>브로커가 토픽에 정한 정책으로 관리해요</td></tr>
+</tbody>
+</table>
+<p class="point">컨슈머가 어디까지 꺼내 읽었는지가 보관 한도를 늘려 주지는 않아요.</p>
+<p class="explain">Kafka가 파티션에 이어 쓰는 기록을 <b>로그</b>라고 해요. 브로커는 컨슈머의 읽기 완료와 별개로 로그를 보관하므로 느린 서비스의 못 읽은 메시지도 사라질 수 있어요. 토픽마다 오래된 이력이 필요한지 현재 상태가 필요한지에 따라 정리 정책을 골라요.</p>
 </section>
 
 <details class="origin">
-<summary>더 알아보기: 왜 이런 기능이 생겼을까?</summary>
-<p>이유는 단순해요. <b>디스크는 무한하지 않은데, 카프카는 읽어도 지우지 않기 때문</b>이에요. 큐처럼 "읽으면 삭제"로 가면 편하지만 그러면 1편에서 본 "다시 읽기"와 "여러 팀이 같은 택배를 각자 읽기"를 포기해야 해요.</p>
-<p>그래서 카프카는 <b>"언제 버릴지"를 토픽마다 정하게</b> 했어요. 기본은 7일이고 버리는 방식은 <code>cleanup.policy</code> 설정 하나로 골라요.</p>
-<p>컴팩션은 카프카 자신도 써요. 4편에서 나온 팀 장부, 즉 오프셋 커밋을 저장하는 내부 토픽 <code>__consumer_offsets</code>이 컴팩션되는 토픽이에요. 장부는 "지금 어디까지 읽었나"만 있으면 되니까요.</p>
-<p>선반이 너무 커져서 오래된 단까지 비싼 디스크에 두기 부담스러운 팀을 위한 기능도 생겼어요. 로컬 디스크와 원격 저장소를 함께 쓰는 <b>티어드 스토리지(KIP-405)</b>예요. Kafka 3.6에서 처음 들어왔고 3.9부터 운영에 써도 되는 정식 기능(GA)이 됐어요.</p>
-</details>
-
-<section class="slide">
-<h3>방법 ①: 오래된 단을 통째로 버려요</h3>
-<svg class="dg" viewBox="0 0 400 215" role="img" aria-label="선반이 세 단으로 나뉘어 있고 가장 오래된 첫째 단은 알림 서비스가 2번까지만 읽었어도 보관 기간이 지나면 통째로 폐기되는 그림">
-<text class="small" x="70" y="16">오래된 단</text><text class="small" x="200" y="16">다음 단</text><text class="small" x="330" y="16">쌓는 중</text>
-<rect class="bad" x="10" y="30" width="120" height="70" rx="8"/>
-<rect class="kafka" x="16" y="47" width="32" height="36" rx="4"/><text x="32" y="65">1</text>
-<rect class="kafka" x="54" y="47" width="32" height="36" rx="4"/><text x="70" y="65">2</text>
-<rect class="kafka" x="92" y="47" width="32" height="36" rx="4"/><text x="108" y="65">3</text>
-<rect class="box" x="140" y="30" width="120" height="70" rx="8"/>
-<rect class="kafka" x="146" y="47" width="32" height="36" rx="4"/><text x="162" y="65">4</text>
-<rect class="kafka" x="184" y="47" width="32" height="36" rx="4"/><text x="200" y="65">5</text>
-<rect class="kafka" x="222" y="47" width="32" height="36" rx="4"/><text x="238" y="65">6</text>
-<rect class="new" x="270" y="30" width="120" height="70" rx="8"/>
-<rect class="kafka" x="276" y="47" width="32" height="36" rx="4"/><text x="292" y="65">7</text>
-<rect class="kafka" x="314" y="47" width="32" height="36" rx="4"/><text x="330" y="65">8</text>
-<rect class="kafka" x="352" y="47" width="32" height="36" rx="4"/><text x="368" y="65">9</text>
-<polygon class="mark" points="70,108 62,120 78,120"/><text x="70" y="134">알림</text><text class="small" x="70" y="153">2번까지 읽음</text>
-<text class="alert" x="70" y="182">기간이 지나면</text><text class="alert" x="70" y="200">통째로 폐기</text>
-</svg>
-<p class="point">읽었는지와 상관없이 기간이 지난 단을 통째로 버려요.</p>
-<p class="explain">그림에서 알림 서비스는 2번까지만 읽었지만 첫째 단의 보관 기간이 지나면 3번 택배도 함께 사라져요. 물류센터는 누가 얼마나 읽었는지 보지 않고 단의 나이만 봐요. 그래서 알림 서비스가 오래 멈춰 있다가 돌아오면 못 읽은 택배가 이미 없어졌을 수 있어요. 대신 택배를 하나씩 확인하지 않고 단째로 버리니까 정리가 아주 빨라요.</p>
-</section>
-
-<section class="slide">
-<h3>실제로는: 브로커가 파티션 로그를 세그먼트로 나눠요</h3>
-<svg class="dg" viewBox="0 0 400 190" role="img" aria-label="파티션 로그가 오프셋 0부터 99, 100부터 199인 닫힌 세그먼트 두 개와 오프셋 200부터 새 메시지가 쓰이는 활성 세그먼트로 나뉘어 있고 삭제는 세그먼트 단위로 이루어지는 그림">
-<defs><marker id="d1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
-<text class="small" x="200" y="14">파티션 0의 로그 (예시)</text>
-<rect class="box" x="10" y="30" width="110" height="60" rx="8"/><text class="chip" x="65" y="50">닫힌 세그먼트</text><text class="small" x="65" y="72">0~99</text>
-<rect class="box" x="130" y="30" width="110" height="60" rx="8"/><text class="chip" x="185" y="50">닫힌 세그먼트</text><text class="small" x="185" y="72">100~199</text>
-<rect class="kafka" x="250" y="30" width="140" height="60" rx="8"/><text class="chip" x="320" y="50">활성 세그먼트</text><text class="small" x="320" y="72">200~ 쓰는 중</text>
-<path class="line dash" d="M10,100 L240,100"/>
-<text class="small" x="125" y="118">retention은 세그먼트 단위로 삭제</text>
-<path class="line" d="M320,138 L320,94" marker-end="url(#d1)"/>
-<text class="chip" x="320" y="150">새 메시지</text>
-<text class="small" x="130" y="150">크기(segment.bytes)나</text>
-<text class="small" x="130" y="168">시간(segment.ms)이 차면 새 세그먼트</text>
-</svg>
-<p class="point">로그는 세그먼트 파일들의 묶음이고 정리의 기본 단위도 세그먼트예요.</p>
-<p class="explain">택배를 저장하는 서버인 브로커는 파티션의 기록을 여러 파일로 나눠 두어요. 이 파일 하나가 세그먼트이고 비유의 선반 한 단에 해당해요. 브로커는 새 메시지를 활성 세그먼트에 적다가 크기나 시간 한도에 닿으면 새 세그먼트를 열어요. 보관 한도를 넘긴 기록은 세그먼트 단위로 지워서 개별 택배마다 정확한 삭제 시각을 맞추지는 않아요.</p>
-</section>
-
-<section class="slide">
-<h3>실제로는: 세그먼트와 보관 한도의 기본값을 확인해요 (Kafka 4.x)</h3>
-<table>
-<thead><tr><th>설정</th><th>기본값</th><th>의미</th></tr></thead>
-<tbody>
-<tr><td><code>segment.bytes</code></td><td>1 GiB</td><td>세그먼트 크기 한도 (브로커 설정명 <code>log.segment.bytes</code>)</td></tr>
-<tr><td><code>segment.ms</code></td><td>7일</td><td>세그먼트를 새로 여는 시간 한도 (브로커 설정명 <code>log.roll.ms</code>)</td></tr>
-<tr><td><code>retention.ms</code></td><td>7일</td><td><code>delete</code> 정책의 시간 보관 한도</td></tr>
-<tr><td><code>retention.bytes</code></td><td>-1</td><td>크기 제한 없음. 설정하면 <b>파티션별</b> 한도</td></tr>
-<tr><td><code>cleanup.policy</code></td><td><code>delete</code></td><td><code>compact</code>, <code>delete,compact</code>도 가능</td></tr>
-<tr><td><code>delete.retention.ms</code></td><td>24시간</td><td>컴팩션 토픽에서 톰스톤을 보관하는 시간</td></tr>
-</tbody>
-</table>
-<p class="point">용량 한도는 토픽 전체가 아니라 파티션마다 적용돼요.</p>
-<p class="explain"><code>segment.bytes</code>와 <code>segment.ms</code>는 새 선반 단을 여는 기준이에요. <code>retention.ms</code>와 <code>retention.bytes</code>는 오래된 기록을 버리는 보관 한도예요. 브로커는 컨슈머가 어디까지 읽었는지와 관계없이 이 정책으로 정리하므로 컨슈머가 오래 멈출 수 있다면 보관 기간도 함께 봐야 해요.</p>
-</section>
-
-</div>
+<summary>더 알아보기: 보관과 키별 정리는 어디서 출발했을까?</summary>
+<p>2011년 LinkedIn의 제이 크렙스(Jay Kreps), 네하 나크헤데(Neha Narkhede), 준 라오(Jun Rao)가 발표한 Kafka 논문에는 이미 읽은 메시지도 일정 기간 보관하고 지난 세그먼트를 지우는 설계가 나와요. 여러 서비스가 각자의 속도로 꺼내 읽고 다시 읽으면서도 저장 공간을 회수하려는 방법이었어요.</p>
+<p>Kafka의 로그 컴팩션은 같은 회사의 데이터 변경 기록 전달 시스템인 <b>Databus</b>에서 영감을 받았어요. 서비스가 다시 켜질 때 현재 상태를 복구하려면 최근에 바뀌지 않은 항목도 필요해서 기간으로만 자르면 부족했어요.</p>
+<p><b>retention</b>은 보관을 뜻하고 <b>compaction</b>은 불필요한 옛 기록을 덜어 더 작게 만든다는 뜻이에요.</p>
+<p>참고: <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2017/09/Kafka.pdf">2011년 Kafka 논문: 3.1절의 보관 설계</a> · <a href="https://kafka.apache.org/41/design/design/#log-compaction">Apache Kafka 4.1 설계: 복구 문제와 Databus의 영향</a></p>
+</details></div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">키로 정리: 같은 동네의 최신 택배를 남겨요</h2>
+<h2 class="slide-group-title">보관 한도: 오래된 묶음을 통째로 치워요</h2>
 
 <section class="slide">
-<h3>방법 ②: 동네별 최신 택배만 남겨요</h3>
-<svg class="dg" viewBox="0 0 400 200" role="img" aria-label="정리 전에는 A동, B동, A동, C동, B동, A동 택배가 0번부터 5번까지 있고 정리 후에는 같은 동네의 오래된 택배가 사라져 C동 3번, B동 4번, A동 5번만 번호 그대로 남는 그림">
-<defs><marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
-<text class="label" x="10" y="14">정리 전</text>
-<rect class="bad" x="12" y="26" width="56" height="44" rx="6"/><text class="small" x="40" y="39">0</text><text class="chip" x="40" y="58">A동</text>
-<rect class="bad" x="76" y="26" width="56" height="44" rx="6"/><text class="small" x="104" y="39">1</text><text class="chip" x="104" y="58">B동</text>
-<rect class="bad" x="140" y="26" width="56" height="44" rx="6"/><text class="small" x="168" y="39">2</text><text class="chip" x="168" y="58">A동</text>
-<rect class="kafka" x="204" y="26" width="56" height="44" rx="6"/><text class="small" x="232" y="39">3</text><text class="chip" x="232" y="58">C동</text>
-<rect class="kafka" x="268" y="26" width="56" height="44" rx="6"/><text class="small" x="296" y="39">4</text><text class="chip" x="296" y="58">B동</text>
-<rect class="kafka" x="332" y="26" width="56" height="44" rx="6"/><text class="small" x="360" y="39">5</text><text class="chip" x="360" y="58">A동</text>
-<path class="line" d="M200,76 L200,110" marker-end="url(#a1)"/>
-<text class="label" x="212" y="94">동네별 최신만 남겨요</text>
-<text class="label" x="10" y="126">정리 후</text>
-<rect class="box dash" x="12" y="138" width="56" height="44" rx="6"/><text class="small" x="40" y="160">0</text>
-<rect class="box dash" x="76" y="138" width="56" height="44" rx="6"/><text class="small" x="104" y="160">1</text>
-<rect class="box dash" x="140" y="138" width="56" height="44" rx="6"/><text class="small" x="168" y="160">2</text>
-<rect class="kafka" x="204" y="138" width="56" height="44" rx="6"/><text class="small" x="232" y="151">3</text><text class="chip" x="232" y="170">C동</text>
-<rect class="kafka" x="268" y="138" width="56" height="44" rx="6"/><text class="small" x="296" y="151">4</text><text class="chip" x="296" y="170">B동</text>
-<rect class="kafka" x="332" y="138" width="56" height="44" rx="6"/><text class="small" x="360" y="151">5</text><text class="chip" x="360" y="170">A동</text>
+<h3>기간이 지난 단은 아직 못 읽었어도 버려요</h3>
+<svg class="dg" viewBox="0 0 400 200" role="img" aria-label="0번부터 2번 택배가 든 오래된 단 전체가 폐기 대상이고 다음 단과 쌓는 중인 단은 보관하는 그림">
+<rect class="bad" x="12" y="20" width="116" height="128" rx="12"/><text class="label center" x="70" y="42">폐기할 단</text><circle class="new" cx="34" cy="82" r="18"/><use class="ic" href="#i-package" x="21" y="69" width="26" height="26"/><text class="chip" x="34" y="117">0</text><circle class="new" cx="70" cy="82" r="18"/><use class="ic" href="#i-package" x="57" y="69" width="26" height="26"/><text class="chip" x="70" y="117">1</text><circle class="new" cx="106" cy="82" r="18"/><use class="ic" href="#i-package" x="93" y="69" width="26" height="26"/><text class="chip" x="106" y="117">2</text><rect class="line" x="142" y="20" width="116" height="128" rx="12"/><text class="label center" x="200" y="42">보관할 단</text><circle class="new" cx="164" cy="82" r="18"/><use class="ic" href="#i-package" x="151" y="69" width="26" height="26"/><text class="chip" x="164" y="117">3</text><circle class="new" cx="200" cy="82" r="18"/><use class="ic" href="#i-package" x="187" y="69" width="26" height="26"/><text class="chip" x="200" y="117">4</text><circle class="new" cx="236" cy="82" r="18"/><use class="ic" href="#i-package" x="223" y="69" width="26" height="26"/><text class="chip" x="236" y="117">5</text><rect class="line" x="272" y="20" width="116" height="128" rx="12"/><text class="label center" x="330" y="42">쌓는 중</text><circle class="new" cx="294" cy="82" r="18"/><use class="ic" href="#i-package" x="281" y="69" width="26" height="26"/><text class="chip" x="294" y="117">6</text><circle class="new" cx="330" cy="82" r="18"/><use class="ic" href="#i-package" x="317" y="69" width="26" height="26"/><text class="chip" x="330" y="117">7</text><text class="small" x="200" y="180">오래된 단 전체가 폐기 대상이에요</text>
 </svg>
-<p class="point">같은 동네 택배는 가장 새것만 남고 번호는 그대로예요.</p>
-<p class="explain">회원 주소가 바뀔 때마다 새 택배가 쌓인다고 생각해 봐요. 지금 주소를 알고 싶을 뿐이라면 같은 회원의 옛 주소 택배는 더 필요 없어요. 그래서 송장에 적힌 동네(키)별로 가장 새 택배만 남기고 나머지를 치워요. 남은 택배의 번호는 바뀌지 않아서 어디까지 읽었는지 적어 둔 기록이 그대로 맞아요.</p>
+<p class="point">기간으로 치울 때는 택배 하나씩이 아니라 오래된 단을 통째로 버려요.</p>
+<p class="explain">센터는 택배가 들어온 순서대로 단을 채워요. 담당자가 오래 자리를 비워도 센터는 정해 둔 보관 한도에 따라 자리를 비워요. 그래서 담당자가 돌아올 때까지 모든 소식이 남는다고 생각하면 안 돼요.</p>
 </section>
 
 <section class="slide">
-<h3>실제로는: 브로커가 옛 레코드를 지워도 오프셋은 유지해요</h3>
-<svg class="dg" viewBox="0 0 400 210" role="img" aria-label="컴팩션 전에는 오프셋 0부터 5까지 A=1, B=1, A=2, B=2, C=1, A=3이 있고 컴팩션 후에는 오프셋 3의 B=2, 4의 C=1, 5의 A=3만 남으며 0부터 2번은 비어 있지만 남은 레코드의 번호는 바뀌지 않는 그림">
-<defs><marker id="d2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
-<text class="label" x="10" y="14">컴팩션 전</text>
-<rect class="bad" x="12" y="24" width="56" height="52" rx="6"/><text class="small" x="40" y="37">0</text><text class="chip" x="40" y="60">A=1</text>
-<rect class="bad" x="76" y="24" width="56" height="52" rx="6"/><text class="small" x="104" y="37">1</text><text class="chip" x="104" y="60">B=1</text>
-<rect class="bad" x="140" y="24" width="56" height="52" rx="6"/><text class="small" x="168" y="37">2</text><text class="chip" x="168" y="60">A=2</text>
-<rect class="kafka" x="204" y="24" width="56" height="52" rx="6"/><text class="small" x="232" y="37">3</text><text class="chip" x="232" y="60">B=2</text>
-<rect class="kafka" x="268" y="24" width="56" height="52" rx="6"/><text class="small" x="296" y="37">4</text><text class="chip" x="296" y="60">C=1</text>
-<rect class="kafka" x="332" y="24" width="56" height="52" rx="6"/><text class="small" x="360" y="37">5</text><text class="chip" x="360" y="60">A=3</text>
-<path class="line" d="M340,82 L340,106" marker-end="url(#d2)"/>
-<text class="label" x="10" y="108">컴팩션 후</text>
-<rect class="box dash" x="12" y="120" width="56" height="52" rx="6"/><text class="small" x="40" y="146">0</text>
-<rect class="box dash" x="76" y="120" width="56" height="52" rx="6"/><text class="small" x="104" y="146">1</text>
-<rect class="box dash" x="140" y="120" width="56" height="52" rx="6"/><text class="small" x="168" y="146">2</text>
-<rect class="kafka" x="204" y="120" width="56" height="52" rx="6"/><text class="small" x="232" y="133">3</text><text class="chip" x="232" y="156">B=2</text>
-<rect class="kafka" x="268" y="120" width="56" height="52" rx="6"/><text class="small" x="296" y="133">4</text><text class="chip" x="296" y="156">C=1</text>
-<rect class="kafka" x="332" y="120" width="56" height="52" rx="6"/><text class="small" x="360" y="133">5</text><text class="chip" x="360" y="156">A=3</text>
-<text class="small" x="200" y="195">남은 레코드의 순서와 오프셋은 유지돼요</text>
-</svg>
-<p class="point">컴팩션은 레코드를 지울 뿐 번호를 다시 매기지 않아요.</p>
-<p class="explain">키는 같은 동네처럼 관련된 메시지를 묶는 이름이고 레코드는 저장된 메시지 한 건이에요. 브로커가 컴팩션으로 같은 키의 옛 레코드를 지우면 번호가 비는 자리가 생겨요. 이 번호인 오프셋은 남은 레코드에서 바뀌지 않아서 컨슈머가 기록해 둔 읽기 위치도 같은 기준을 유지해요.</p>
-</section>
-
-<section class="slide">
-<h3>어떤 선반에 어떤 방법을 쓸까요?</h3>
+<h3>실제로는: 브로커가 세그먼트 단위로 지워요</h3>
 <table>
-<thead><tr><th>선반에 쌓이는 것</th><th>정리 방법</th><th>예</th></tr></thead>
+<thead><tr><th>로그의 부분</th><th>브로커가 하는 일</th></tr></thead>
 <tbody>
-<tr><td>지나간 일의 기록</td><td>기간이 지난 단 폐기</td><td>주문 이력, 클릭 기록</td></tr>
-<tr><td>동네별 지금 상태</td><td>동네별 최신만 남기기</td><td>회원별 주소, 팀 장부</td></tr>
+<tr><td>활성 세그먼트</td><td>새 메시지를 적는 파일이며 크기나 시간 기준으로 새 파일을 열어요</td></tr>
+<tr><td>오래된 세그먼트</td><td>delete 정책에서 기간 또는 파티션별 용량 한도를 넘으면 묶음째 지워요</td></tr>
 </tbody>
 </table>
-<p class="point">기록이면 기간으로 상태면 최신만 남겨요.</p>
-<p class="explain">주문 이력은 하나하나가 "그때 있었던 일"이라서 오래되면 버려도 되지만 중간을 골라 지우면 안 돼요. 회원 주소는 지금 값만 중요해서 옛 값을 지워도 아쉬울 게 없어요. 선반에 무엇이 쌓이는지부터 보면 어떤 방법을 쓸지 정할 수 있어요.</p>
+<p class="point">보관 한도는 개별 메시지의 정확한 삭제 시각을 약속하지 않아요.</p>
+<p class="explain">선반 한 단처럼 파티션 로그를 나눈 파일 묶음이 <b>세그먼트</b>예요. 브로커가 시간·용량에 따라 보관하는 기준을 <b>보관 정책(retention)</b>이라고 하며 용량 한도는 토픽 전체가 아닌 파티션마다 적용돼요. 별도로 바꾸지 않은 Kafka 4.1의 토픽 정책은 <code>delete</code>이고 보관 기간은 7일이며 용량 한도는 없어요. 실제 삭제는 세그먼트 단위의 주기적 작업이어서 각 메시지가 한도에 닿는 순간 없어지는 것은 아니에요.</p>
 </section>
 
-<section class="slide">
-<h3>실제로는: cleanup.policy로 세 가지 정리 방법을 골라요</h3>
-<table>
-<thead><tr><th></th><th><code>delete</code></th><th><code>compact</code></th><th><code>delete,compact</code></th></tr></thead>
-<tbody>
-<tr><td>정리 방식</td><td>한도를 넘긴 오래된 세그먼트 삭제</td><td>같은 키의 더 최신 레코드가 있으면 오래된 레코드를 백그라운드로 정리</td><td>오래된 세그먼트를 삭제하고 남은 범위를 컴팩션</td></tr>
-<tr><td>정리 기준</td><td><code>retention.ms</code>, <code>retention.bytes</code></td><td>키</td><td>보관 한도와 키</td></tr>
-<tr><td>남는 것</td><td>한도 안의 모든 레코드</td><td>키마다 최신 값 (정리 전에는 옛 값도 남아 있음)</td><td>한도 안에서 키마다 최신 값</td></tr>
-<tr><td>잘 맞는 데이터</td><td>이벤트 기록</td><td>키별 현재 상태 (예: <code>__consumer_offsets</code>)</td><td>최근 것만 의미 있는 키별 상태</td></tr>
-</tbody>
-</table>
-<p class="point">기록은 <code>delete</code>, 상태는 <code>compact</code>, 둘 다 필요하면 합쳐요.</p>
-<p class="explain"><code>cleanup.policy</code>는 브로커가 토픽의 기록을 어떤 기준으로 치울지 정하는 설정이에요. <code>delete</code>는 오래된 단을 버리고 <code>compact</code>는 동네별 최신 택배를 남기는 방식이에요. 컴팩션은 뒤에서 따로 진행하는 백그라운드 작업이라 같은 키의 옛 값이 한동안 함께 남을 수 있어요.</p>
+<section class="slide" data-retention-playground="retention" hidden>
+<h3>직접 해 보기: 보관 기간을 바꾸면 몇 단이 남을까요?</h3>
+<div class="rc-controls"><label for="rc-retention-choice">보관 기간</label><select id="rc-retention-choice"><option value="6">짧게 보관</option><option value="12">길게 보관</option></select></div>
+<div class="pp-body"></div>
+<p class="point">한 단에 세 건씩 담고 시간을 줄인 설명용 예시이며 실제 Kafka도 오래된 세그먼트를 묶음째 지워요.</p>
+<p class="explain">소식은 누르지 않아도 계속 도착해요. 조건을 바꾸면 이미 남아 있는 기록에 다음 정리부터 새 기준이 적용돼요. 단계 문장으로 도착과 정리를 함께 확인해요.</p>
 </section>
 
-</div>
+<p>참고: <a href="https://kafka.apache.org/41/implementation/log/">Apache Kafka 4.1: 로그 파일과 정리</a> · <a href="https://kafka.apache.org/41/configuration/topic-configs/#retention.ms">시간·용량 보관 한도와 기본값</a></p></div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">삭제 표시: 폐기 표지도 새 택배로 보내요</h2>
+<h2 class="slide-group-title">키별 최신 상태: 바뀐 결과를 복구할 만큼 남겨요</h2>
 
 <section class="slide">
-<h3>동네를 지우려면 폐기 표지를 붙여요</h3>
-<svg class="dg" viewBox="0 0 400 245" role="img" aria-label="A동 택배를 지우려고 마지막에 A동 폐기 표지를 붙이면 정리 후 A동 택배가 사라지고 폐기 표지만 남았다가 한참 뒤에는 표지도 치워지고 B동 택배만 남는 그림">
-<text class="label" x="10" y="14">① 정리 전: 마지막에 폐기 표지</text>
-<rect class="kafka" x="20" y="26" width="80" height="44" rx="6"/><text class="small" x="60" y="39">0</text><text class="chip" x="60" y="58">A동</text>
-<rect class="kafka" x="110" y="26" width="80" height="44" rx="6"/><text class="small" x="150" y="39">1</text><text class="chip" x="150" y="58">B동</text>
-<rect class="kafka" x="200" y="26" width="80" height="44" rx="6"/><text class="small" x="240" y="39">2</text><text class="chip" x="240" y="58">A동</text>
-<rect class="bad" x="290" y="26" width="80" height="44" rx="6"/><text class="small" x="330" y="39">3</text><text class="chip" x="330" y="58">A동 폐기</text>
-<text class="label" x="10" y="94">② 컴팩션 후: A동 택배가 사라져요</text>
-<rect class="box dash" x="20" y="106" width="80" height="44" rx="6"/><text class="small" x="60" y="128">0</text>
-<rect class="kafka" x="110" y="106" width="80" height="44" rx="6"/><text class="small" x="150" y="119">1</text><text class="chip" x="150" y="138">B동</text>
-<rect class="box dash" x="200" y="106" width="80" height="44" rx="6"/><text class="small" x="240" y="128">2</text>
-<rect class="bad" x="290" y="106" width="80" height="44" rx="6"/><text class="small" x="330" y="119">3</text><text class="chip" x="330" y="138">A동 폐기</text>
-<text class="label" x="10" y="174">③ 한참 뒤: 표지도 치워져요</text>
-<rect class="box dash" x="20" y="186" width="80" height="44" rx="6"/><text class="small" x="60" y="208">0</text>
-<rect class="kafka" x="110" y="186" width="80" height="44" rx="6"/><text class="small" x="150" y="199">1</text><text class="chip" x="150" y="218">B동</text>
-<rect class="box dash" x="200" y="186" width="80" height="44" rx="6"/><text class="small" x="240" y="208">2</text>
-<rect class="box dash" x="290" y="186" width="80" height="44" rx="6"/><text class="small" x="330" y="208">3</text>
+<h3>같은 동네의 새 소식이 있으면 옛것을 덜어내요</h3>
+<svg class="dg" viewBox="0 0 400 235" role="img" aria-label="정리 전 용산 0 강남 1 용산 2 강남 3이 있고 정리 뒤에는 용산 2와 강남 3이 원래 순서와 번호로 남은 그림">
+<text class="label center" x="200" y="20">같은 선반 칸의 택배</text><circle class="bad" cx="56" cy="63" r="18"/><use class="ic" href="#i-package" x="43" y="50" width="26" height="26"/><text class="chip" x="56" y="98">0 · 용산</text><circle class="bad" cx="152" cy="63" r="18"/><use class="ic" href="#i-package" x="139" y="50" width="26" height="26"/><text class="chip" x="152" y="98">1 · 강남</text><circle class="new" cx="248" cy="63" r="18"/><use class="ic" href="#i-package" x="235" y="50" width="26" height="26"/><text class="chip" x="248" y="98">2 · 용산</text><circle class="new" cx="344" cy="63" r="18"/><use class="ic" href="#i-package" x="331" y="50" width="26" height="26"/><text class="chip" x="344" y="98">3 · 강남</text>
+<text class="label center" x="200" y="130">옛 소식을 덜어 낸 뒤</text><circle class="new" cx="248" cy="173" r="18"/><use class="ic" href="#i-package" x="235" y="160" width="26" height="26"/><text class="chip" x="248" y="208">2 · 용산</text><circle class="new" cx="344" cy="173" r="18"/><use class="ic" href="#i-package" x="331" y="160" width="26" height="26"/><text class="chip" x="344" y="208">3 · 강남</text>
 </svg>
-<p class="point">동네 하나를 지우는 일도 "폐기 표지"라는 택배를 새로 맡기는 거예요.</p>
-<p class="explain">회원이 탈퇴해서 그 동네 택배를 모두 없애고 싶다고 해 봐요. 선반에서 택배를 직접 빼낼 수는 없어요. 대신 "A동 폐기"라고 적힌 택배를 맨 끝에 새로 맡기면 다음 정리 때 A동의 옛 택배가 사라져요. 폐기 표지도 택배라서 처음엔 남아 있다가 한참 뒤 정리 때 함께 치워져요.</p>
+<p class="point">현재 상태가 목적이면 동네마다 마지막으로 온 택배가 필요해요.</p>
+<p class="explain">이 선반에는 동네별 배송 안내가 바뀔 때마다 새 소식을 맡긴다고 해 봐요. 담당자가 지금 안내를 복구하려면 전체 동네의 최신 소식이 필요해요. 전체 선반에서 맨 마지막 택배 하나만 읽으면 다른 동네의 안내를 알 수 없어요.</p>
 </section>
 
 <section class="slide">
-<h3>실제로는: 프로듀서가 null 값을 보내 삭제를 표시해요</h3>
+<h3>실제로는: 컴팩션은 파티션 안에서 같은 키의 옛 값을 치워요</h3>
+<svg class="dg" viewBox="0 0 400 165" role="img" aria-label="오프셋 0과 1의 옛 값은 사라지고 2번 용산 새 안내와 3번 강남 새 안내가 원래 번호로 남은 파티션">
+<text class="label center" x="200" y="20">같은 파티션의 남은 메시지</text>
+<circle class="line dash" cx="56" cy="65" r="18"/><text class="chip" x="56" y="108">0 · 빈 자리</text>
+<circle class="line dash" cx="152" cy="65" r="18"/><text class="chip" x="152" y="108">1 · 빈 자리</text>
+<circle class="new" cx="248" cy="65" r="18"/><use class="ic" href="#i-package" x="235" y="52" width="26" height="26"/><text class="chip" x="248" y="108">2 · 용산</text>
+<circle class="new" cx="344" cy="65" r="18"/><use class="ic" href="#i-package" x="331" y="52" width="26" height="26"/><text class="chip" x="344" y="108">3 · 강남</text>
+<text class="small" x="200" y="145">남은 순서와 번호는 바꾸지 않아요</text>
+</svg>
+<p class="point">로그 컴팩션은 키마다 최신 값을 남기며 남은 메시지의 순서와 오프셋은 바꾸지 않아요.</p>
+<p class="explain"><b>로그 컴팩션(log compaction)</b>은 같은 키의 더 새 메시지가 있을 때 옛 메시지를 덜어내는 작업이에요. 브로커가 뒤에서 따로 진행하므로 같은 키의 옛 값도 한동안 남고 쓰는 중인 활성 세그먼트는 컴팩션하지 않아요. 동네 이름 같은 <b>키(key)</b>와 안내 내용인 <b>값(value)</b>을 보내며 같은 키는 같은 파티션에 모아야 해요. 컨슈머가 지워진 번호부터 꺼내 읽으면 그 뒤에 남아 있는 메시지부터 받아요.</p>
+</section>
+
+<section class="slide" data-retention-playground="compact" hidden>
+<h3>직접 해 보기: 기간 기준과 키 기준을 바꿔 봐요</h3>
+<div class="rc-controls"><label for="rc-compact-choice">정리 정책</label><select id="rc-compact-choice"><option value="compact">키별 최신 값</option><option value="delete">기간이 지난 단</option></select></div>
+<div class="pp-body"></div>
+<p class="point">간격과 단 크기는 설명용이며 실제 Kafka도 키별 최신 상태를 남기는 정책과 오래된 세그먼트를 버리는 정책을 구분해요.</p>
+<p class="explain">소식은 누르지 않아도 계속 도착해요. 조건을 바꾸면 이미 남아 있는 기록에 다음 정리부터 새 기준이 적용돼요. 단계 문장으로 도착과 정리를 함께 확인해요.</p>
+</section>
+
+<section class="slide">
+<h3>이럴 땐 조심해요: 모든 변경 이력이 필요한가요?</h3>
 <table>
-<thead><tr><th>항목</th><th>동작</th></tr></thead>
+<thead><tr><th>다시 읽으려는 목적</th><th>맞는 정책과 남는 범위</th></tr></thead>
 <tbody>
-<tr><td>정의</td><td>키가 있고 value가 <code>null</code>인 레코드</td></tr>
-<tr><td>역할</td><td>그 키의 과거 값을 컴팩션 때 제거하도록 표시</td></tr>
-<tr><td>톰스톤 자신</td><td>나중에 컴팩션이 제거 (보관 시간은 <code>delete.retention.ms</code>, 기본 24시간)</td></tr>
-<tr><td>흔한 실수</td><td>value가 문자열 <code>"null"</code>인 레코드는 톰스톤이 아님</td></tr>
+<tr><td>주문이 들어온 순서와 개별 내역</td><td><code>delete</code>: 보관 한도 안의 이력을 남겨요</td></tr>
+<tr><td>대상별 현재 상태 복구</td><td><code>compact</code>: 삭제 표시가 없는 키의 최신 값을 남겨요</td></tr>
+<tr><td>최근 범위의 상태만 필요</td><td><code>delete,compact</code>: 오래된 단을 버리고 남은 범위를 컴팩션해요</td></tr>
 </tbody>
 </table>
-<p class="point">키를 지우는 건 "삭제 명령"이 아니라 "value가 null인 레코드"를 쓰는 일이에요.</p>
-<p class="explain">택배를 맡기는 앱인 프로듀서가 키를 쓰고 값을 <code>null</code>로 비운 레코드를 보내면 이것이 톰스톤이라는 폐기 표지가 돼요. 브로커는 컴팩션 때 그 키의 과거 값을 지우고 톰스톤도 보관 시간이 지난 뒤 정리해요. 글자로 쓴 <code>"null"</code>은 값이 있는 문자열이므로 폐기 표지가 아니에요.</p>
+<p class="point">기간 삭제와 컴팩션을 함께 쓰면 키의 최신 값도 영원히 남지는 않아요.</p>
+<p class="explain">주문 번호가 같은 변경 기록을 모두 추적해야 한다면 옛 값을 없애는 정책은 맞지 않아요. 반대로 컴팩션만 쓰더라도 서로 다른 키가 계속 늘면 남겨야 할 상태도 늘어요. 먼저 필요한 이력의 범위를 정해야 보관량과 다시 읽을 수 있는 범위를 함께 판단할 수 있어요.</p>
 </section>
 
-</div>
+<p>참고: <a href="https://kafka.apache.org/41/design/design/#log-compaction">Apache Kafka 4.1: 컴팩션과 오프셋 보장</a> · <a href="https://kafka.apache.org/41/configuration/topic-configs/#cleanup.policy">정리 정책의 조합</a></p></div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">정리: 보관의 한계와 원격 저장을 알아봐요</h2>
+<h2 class="slide-group-title">삭제 표시: 남겨 둔 상태도 없앨 수 있어야 해요</h2>
 
 <section class="slide">
-<h3>보관과 정리의 진짜 이름: 세그먼트·컴팩션·톰스톤</h3>
-<table>
-<thead><tr><th>물류센터 이야기</th><th>카프카 용어</th></tr></thead>
-<tbody>
-<tr><td>선반의 한 단</td><td>세그먼트 (Segment)</td></tr>
-<tr><td>보관 기간이 지나면 오래된 단 폐기</td><td>보관 정책 (Retention)</td></tr>
-<tr><td>동네별 최신 택배만 남기기</td><td>로그 컴팩션 (Log Compaction)</td></tr>
-<tr><td>"이 동네 택배 폐기" 표지</td><td>톰스톤 (Tombstone)</td></tr>
-<tr><td>송장에 적힌 받는 동네</td><td>키 (Key)</td></tr>
-</tbody>
-</table>
-<p class="point">선반 단은 세그먼트, 동네별 최신만 남기는 정리는 컴팩션, 폐기 표지는 톰스톤이에요.</p>
+<h3>동네 안내를 없애려면 폐기 표지를 맡겨요</h3>
+<svg class="dg" viewBox="0 0 400 340" role="img" aria-label="용산 택배 뒤에 용산 폐기 표지를 맡기고 컴팩션 뒤에는 강남과 폐기 표지가 남다가 나중에는 강남만 남는 그림">
+<text class="label center" x="200" y="18">폐기 표지도 맨 끝에 맡겨요</text><circle class="new" cx="56" cy="61" r="18"/><use class="ic" href="#i-package" x="43" y="48" width="26" height="26"/><text class="chip" x="56" y="96">0 · 용산</text><circle class="new" cx="152" cy="61" r="18"/><use class="ic" href="#i-package" x="139" y="48" width="26" height="26"/><text class="chip" x="152" y="96">1 · 강남</text><circle class="new" cx="248" cy="61" r="18"/><use class="ic" href="#i-package" x="235" y="48" width="26" height="26"/><text class="chip" x="248" y="96">2 · 용산</text><circle class="bad" cx="344" cy="61" r="18"/><use class="ic" href="#i-package" x="331" y="48" width="26" height="26"/><text class="chip" x="344" y="96">3 · 용산 폐기</text>
+<text class="label center" x="200" y="126">컴팩션 뒤에는 표지도 잠시 남아요</text><circle class="new" cx="152" cy="169" r="18"/><use class="ic" href="#i-package" x="139" y="156" width="26" height="26"/><text class="chip" x="152" y="204">1 · 강남</text><circle class="bad" cx="344" cy="169" r="18"/><use class="ic" href="#i-package" x="331" y="156" width="26" height="26"/><text class="chip" x="344" y="204">3 · 용산 폐기</text>
+<text class="label center" x="200" y="234">나중에는 표지도 치워요</text><circle class="new" cx="152" cy="277" r="18"/><use class="ic" href="#i-package" x="139" y="264" width="26" height="26"/><text class="chip" x="152" y="312">1 · 강남</text>
+</svg>
+<p class="point">새 소식이 없는 동네를 지우려면 그 동네의 폐기 표지를 새로 보내요.</p>
+<p class="explain">센터는 소식이 더 오지 않는다는 이유만으로 동네가 폐지됐는지 알 수 없어요. 가게가 폐기 표지를 보내야 담당자도 갖고 있던 안내를 지울 수 있어요. 센터는 담당자가 표지를 읽을 여유를 둔 뒤 표지 자체도 치워요.</p>
 </section>
 
 <section class="slide">
-<h3>보관의 확장: 티어드 스토리지의 버전별 변화</h3>
+<h3>실제로는: 키가 있고 값이 null인 메시지가 톰스톤이에요</h3>
 <table>
-<thead><tr><th>시점</th><th>달라진 점</th></tr></thead>
+<thead><tr><th>보내는 값</th><th>컴팩션 토픽에서의 의미</th></tr></thead>
 <tbody>
-<tr><td>Kafka 3.6</td><td>티어드 스토리지(KIP-405) 도입. 로컬과 원격 저장 계층을 함께 사용</td></tr>
-<tr><td>Kafka 3.9 이후</td><td>티어드 스토리지가 운영 사용 가능한 정식 기능(GA)</td></tr>
-<tr><td>예전 글의 설명</td><td>"보관 기간을 늘리려면 로컬 디스크를 계속 늘려야 한다"는 3.9 이후에는 원격 계층이라는 선택지가 있어서 그대로 맞지 않음</td></tr>
+<tr><td>키=용산, 값=<code>null</code></td><td>용산의 과거 값을 지우도록 표시해요</td></tr>
+<tr><td>키=용산, 값=<code>"null"</code></td><td>글자 네 개가 든 값이므로 삭제 표시가 아니에요</td></tr>
 </tbody>
 </table>
-<p class="point">티어드 스토리지는 오래된 데이터를 원격 계층에 두는 선택지이고 세부 동작은 이 글에서 다루지 않아요.</p>
-<p class="explain">티어드 스토리지는 가까운 로컬 디스크와 원격 저장소를 함께 쓰는 방식이에요. 물류센터에서 오래된 선반 단을 두는 곳을 늘리는 선택지라고 생각하면 돼요. 그래서 보관 기간을 늘릴 때 로컬 디스크만 늘려야 한다는 옛 설명은 표의 버전 이후에는 그대로 맞지 않아요.</p>
+<p class="point">프로듀서가 보낸 톰스톤을 브로커가 컴팩션하면서 과거 값과 함께 정리해요.</p>
+<p class="explain">폐기 표지에 해당하는 메시지를 <b>톰스톤(tombstone)</b>이라고 해요. 프로듀서가 같은 키와 <code>null</code> 값을 보내면 브로커가 그 키의 과거 값을 제거하고 나중에는 톰스톤도 치워요. Kafka 4.1의 컴팩션 토픽에서 톰스톤 보관 기준인 <code>delete.retention.ms</code>의 기본값은 24시간이며 정확히 그 시각에 삭제된다는 뜻은 아니에요. 컨슈머 서비스는 톰스톤을 읽었을 때 자신이 보관하던 그 키의 상태도 지워야 해요.</p>
+</section>
+
+<section class="slide" data-retention-playground="tombstone" hidden>
+<h3>직접 해 보기: 폐기 표지를 보내면 무엇이 사라질까요?</h3>
+<div class="rc-controls"><label for="rc-tombstone-choice">용산 폐기 표지</label><select id="rc-tombstone-choice"><option value="off">보내지 않아요</option><option value="on">보내요</option></select></div>
+<div class="pp-body"></div>
+<p class="point">용산 갱신이 멈춘 뒤 강남 소식만 계속 오는 설명용 예시이며 실제 Kafka도 톰스톤을 영원히 보관하지 않아요.</p>
+<p class="explain">처음에는 표지 없이 용산의 최신 안내를 남겨요. 표지를 보내도록 바꾸면 새 폐기 소식이 도착하고 다음 정리에서 옛 안내가 사라져요. 다시 보내지 않기로 바꿔도 이미 지워진 안내는 돌아오지 않아요.</p>
 </section>
 
 <section class="slide">
-<h3>보관과 정리에서 조심할 점: 삭제 시각과 전체 이력</h3>
+<h3>이럴 땐 조심해요: 오래 멈춘 서비스는 삭제 표시를 놓쳐요</h3>
 <table>
-<thead><tr><th>오해</th><th>실제</th></tr></thead>
+<thead><tr><th>상황</th><th>남을 수 있는 문제</th></tr></thead>
 <tbody>
-<tr><td>컨슈머가 다 읽어야 지워진다</td><td>보관은 소비 완료 여부와 무관해요</td></tr>
-<tr><td><code>retention.ms</code>가 지나면 그 시각에 지워진다</td><td>세그먼트 단위 삭제라서 개별 레코드의 정확한 삭제 시각은 아니에요</td></tr>
-<tr><td>컴팩션하면 키마다 바로 하나만 남는다</td><td>백그라운드 작업이라 같은 키의 여러 레코드가 한동안 남아 있어요</td></tr>
-<tr><td>컴팩션하면 오프셋이 다시 매겨진다</td><td>남은 레코드의 오프셋은 그대로예요</td></tr>
-<tr><td>값이 <code>"null"</code>이면 삭제된다</td><td>null 값과 문자열 <code>"null"</code>은 달라요</td></tr>
+<tr><td>서비스가 옛 용산 안내를 저장한 뒤 오래 멈춰요</td><td>복귀 전에 톰스톤까지 정리되면 삭제 사실을 못 읽어요</td></tr>
+<tr><td>처음부터 상태를 복구해요</td><td>빈 상태에서 시작해 남은 키들의 최신 상태를 다시 모아야 해요</td></tr>
 </tbody>
 </table>
-<p class="point">보관 기간은 "이 시간 뒤에 지워도 된다"는 한도이지 지우는 시각이 아니에요.</p>
-<p class="explain">컨슈머가 아직 읽지 못한 택배도 보관 기간이 지나면 없어질 수 있으므로 멈춰 있을 시간을 고려해 기간을 정해요. 브로커는 단위별로 정리해서 정확한 시각의 삭제를 보장하지 않아요. 동네별 전체 이력이 필요하면 옛 값을 지우는 컴팩션 대신 기간 폐기 방식을 써요.</p>
+<p class="point">삭제 표시를 놓친 컨슈머의 낡은 상태를 Kafka가 저절로 지워 주지는 않아요.</p>
+<p class="explain">컨슈머가 자기 저장소에 상태를 쌓아 두고 이어 읽기만 하면 없어진 키를 발견하지 못할 수 있어요. 복구할 때는 삭제 표시의 보관 범위 안에 읽기를 끝내거나 낡은 상태를 비우고 다시 만드는 방식을 마련해야 해요. 기간 삭제 역시 외부 저장소의 데이터를 대신 지우는 기능은 아니에요.</p>
 </section>
 
-<section class="slide end">
-<h3>보관과 정리 한 줄 정리</h3>
-<p class="point">브로커가 오래된 세그먼트를 통째로 지우거나<br>키마다 최신 값만 남기는 백그라운드 정리로 선반을 비워요.</p>
+<section class="slide">
+<h3>한눈에 다시 보기</h3>
+<svg class="dg" viewBox="0 0 400 205" role="img" aria-label="세그먼트 보관 한도 로그 컴팩션 톰스톤의 역할을 아이콘과 한 줄씩 보여 주는 네 줄 요약">
+<circle class="box" cx="30" cy="28" r="18"/><use class="ic" href="#i-shelving-unit" x="17" y="15" width="26" height="26"/><text class="label" x="62" y="19">세그먼트</text><text class="small" x="62" y="38" style="text-anchor:start">파티션 로그를 나눠 보관하는 파일 묶음</text><circle class="bad" cx="30" cy="76" r="18"/><use class="ic" href="#i-shelving-unit" x="17" y="63" width="26" height="26"/><text class="label" x="62" y="67">보관 한도</text><text class="small" x="62" y="86" style="text-anchor:start">기간·파티션별 용량으로 오래된 묶음을 삭제</text><circle class="new" cx="30" cy="124" r="18"/><use class="ic" href="#i-package" x="17" y="111" width="26" height="26"/><text class="label" x="62" y="115">로그 컴팩션</text><text class="small" x="62" y="134" style="text-anchor:start">파티션 안에서 키마다 최신 상태를 보관</text><circle class="bad" cx="30" cy="172" r="18"/><use class="ic" href="#i-package" x="17" y="159" width="26" height="26"/><text class="label" x="62" y="163">톰스톤</text><text class="small" x="62" y="182" style="text-anchor:start">키와 null 값으로 삭제를 표시하는 메시지</text>
+</svg>
+<p class="point">무엇을 다시 읽어야 하는지에 맞춰 오래된 이력을 버리거나 키별 최신 상태를 남겨요.</p>
 </section>
+
+<p>참고: <a href="https://kafka.apache.org/41/design/design/#log-compaction-basics">Apache Kafka 4.1: 삭제 표시와 컴팩션</a> · <a href="https://kafka.apache.org/41/configuration/topic-configs/#delete.retention.ms">톰스톤 보관과 컨슈머의 복구 범위</a></p></div>
 
 </div>
-
-</div>
+<link rel="stylesheet" href="{{ '/assets/css/retention-compaction-playground.css' | relative_url }}">
+<script defer src="{{ '/assets/js/retention-compaction-playground.js' | relative_url }}"></script>

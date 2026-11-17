@@ -30,7 +30,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <div class="intro">
 <p class="q">내 컴퓨터에서 잘 되던 앱이 왜 서버에서는 안 될까요?</p>
 <p>Docker 시리즈의 첫 편이에요. 바이브 코딩으로 만든 앱이 내 노트북에서는 잘 돌아가는데 서버(앱을 늘 켜 두고 다른 사람이 쓰게 하는 컴퓨터)나 동료의 컴퓨터로 옮기면 오류가 나는 일이 자주 있어요. 코드는 똑같아도 그 코드를 돌리는 언어 버전과 라이브러리 같은 준비물이 컴퓨터마다 다르기 때문이에요.</p>
-<p>이 글을 다 읽으면 Docker(앱을 상자에 담아 어디서나 실행하게 해 주는 프로그램)가 앱과 준비물을 <b>이미지</b>라는 상자에 담고 그 상자를 <b>컨테이너</b>로 실행해서 이 문제를 어떻게 푸는지 알 수 있어요. 이미지가 <b>레지스트리</b>를 거쳐 서버까지 가는 흐름과 컨테이너가 <b>가상 머신</b>과 무엇이 다른지도 함께 봐요.</p>
+<p>이 글을 다 읽으면 Docker(앱을 상자에 담아 어디서나 실행하게 해 주는 프로그램)가 앱과 준비물을 <b>이미지</b>라는 상자에 담고 그 상자를 <b>컨테이너</b>로 실행해서 이 문제를 어떻게 푸는지 알 수 있어요. 이미지가 <b>레지스트리</b>를 거쳐 서버까지 가는 흐름과 <b>가상 머신</b>(한 컴퓨터 안에 운영체제까지 갖춘 가짜 컴퓨터를 따로 만드는 것)과의 차이도 봐요. 운영체제(OS)는 Windows나 리눅스처럼 컴퓨터의 자원을 관리하고 프로그램을 실행해 주는 기본 소프트웨어예요.</p>
 </div>
 
 <div class="slide-group">
@@ -43,11 +43,11 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <path class="line" d="M108,78 L292,78" marker-end="url(#m1)"/>
 <circle class="box" cx="65" cy="78" r="42"/><use class="ic" href="#i-pot" x="39" y="52" width="52" height="52"/>
 <circle class="box" cx="200" cy="78" r="32"/><use class="ic" href="#i-doc" x="178" y="56" width="44" height="44"/>
-<circle class="bad" cx="335" cy="78" r="42"/><use class="ic" href="#i-pot" x="309" y="52" width="52" height="52"/>
+<circle class="box" cx="335" cy="78" r="42"/><use class="ic" href="#i-pot" x="309" y="52" width="52" height="52"/>
 <text class="alert big" x="335" y="46">?</text>
-<text class="big" x="65" y="144">친구 주방</text><text class="small" x="65" y="163">맛있어요</text>
+<text class="big" x="65" y="144">친구 주방</text><text class="small" x="65" y="163">내 노트북</text>
 <text class="small" x="200" y="128">레시피만</text>
-<text class="big" x="335" y="144">우리 주방</text><text class="alert" x="335" y="163">맛이 달라요</text>
+<text class="big" x="335" y="144">우리 주방</text><text class="alert" x="335" y="163">서버 · 맛이 달라요</text>
 <g transform="translate(0,10)">
 <rect class="line" x="10" y="174" width="380" height="108" rx="12"/>
 <text class="label center" x="200" y="194">두 주방에서 달랐던 것</text>
@@ -56,7 +56,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="chip" x="70" y="260">간장 종류</text>
 <circle class="kafka" cx="174" cy="226" r="19"/><use class="ic" href="#i-bowl" x="160" y="212" width="28" height="28"/>
 <circle class="line dash" cx="226" cy="226" r="19"/><path class="line" d="M213,239 L239,213"/>
-<text class="chip" x="200" y="260">고춧가루 없음</text>
+<text class="chip" x="200" y="260">고춧가루 · 있음 / 없음</text>
 <circle class="kafka" cx="304" cy="226" r="19"/><use class="ic" href="#i-flame" x="288" y="210" width="32" height="32"/>
 <circle class="bad" cx="356" cy="226" r="19"/><use class="ic" href="#i-flame" x="347" y="217" width="18" height="18"/>
 <text class="chip" x="330" y="260">불 세기</text>
@@ -74,7 +74,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <tbody>
 <tr><td>언어 실행기 (런타임)</td><td>Python 3.12</td><td>Python 3.10</td></tr>
 <tr><td>라이브러리</td><td>설치돼 있음</td><td>버전이 다르거나 없음</td></tr>
-<tr><td>운영체제 프로그램</td><td>이미지 변환 도구 있음</td><td>없음</td></tr>
+<tr><td>앱이 따로 쓰는 도구</td><td>PDF 변환 도구 있음</td><td>없음</td></tr>
 <tr><td>설정 값</td><td>환경 변수 있음</td><td>빠짐</td></tr>
 </tbody>
 </table>
@@ -122,32 +122,29 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <div class="slide-with-question">
 <section class="slide">
 <h3>실제로는: Dockerfile대로 층을 쌓아 이미지를 만들어요</h3>
-<svg class="dg" viewBox="0 0 400 230" role="img" aria-label="왼쪽 Dockerfile의 FROM python:3.12, COPY 라이브러리 목록, RUN 라이브러리 설치, COPY 앱 코드 네 줄이 각각 오른쪽 이미지의 층 하나가 되어 읽기 전용 이미지로 쌓이는 그림">
+<svg class="dg" viewBox="0 0 400 230" role="img" aria-label="왼쪽 Dockerfile의 FROM python:3.12, COPY requirements.txt, RUN 라이브러리 설치, COPY 앱 코드 네 줄을 따라 오른쪽 이미지의 바닥부터 층을 얹어 읽기 전용 이미지로 쌓이는 그림">
 <defs><marker id="m3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <text class="label" x="10" y="14">Dockerfile</text>
 <text class="label" x="210" y="14">이미지 (읽기 전용)</text>
 <rect class="box" x="10" y="30" width="160" height="34" rx="5"/><text class="chip" x="90" y="47">FROM python:3.12</text>
-<rect class="box" x="10" y="74" width="160" height="34" rx="5"/><text class="chip" x="90" y="91">COPY 라이브러리 목록</text>
+<rect class="box" x="10" y="74" width="160" height="34" rx="5"/><text class="chip" x="90" y="91">COPY requirements.txt</text>
 <rect class="box" x="10" y="118" width="160" height="34" rx="5"/><text class="chip" x="90" y="135">RUN 라이브러리 설치</text>
 <rect class="box" x="10" y="162" width="160" height="34" rx="5"/><text class="chip" x="90" y="179">COPY 앱 코드</text>
-<path class="line" d="M170,47 L206,47" marker-end="url(#m3)"/>
-<path class="line" d="M170,91 L206,91" marker-end="url(#m3)"/>
-<path class="line" d="M170,135 L206,135" marker-end="url(#m3)"/>
-<path class="line" d="M170,179 L206,179" marker-end="url(#m3)"/>
-<rect class="kafka" x="210" y="30" width="180" height="34" rx="5"/><text class="chip" x="300" y="47">기본 이미지 (Python)</text>
-<rect class="kafka" x="210" y="74" width="180" height="34" rx="5"/><text class="chip" x="300" y="91">라이브러리 목록 층</text>
-<rect class="kafka" x="210" y="118" width="180" height="34" rx="5"/><text class="chip" x="300" y="135">설치한 라이브러리 층</text>
-<rect class="kafka" x="210" y="162" width="180" height="34" rx="5"/><text class="chip" x="300" y="179">앱 코드 층</text>
-<text class="small" x="200" y="217">명령 한 줄이 층 하나가 돼요</text>
+<path class="line" d="M174,112 L206,112" marker-end="url(#m3)"/>
+<rect class="kafka" x="210" y="162" width="180" height="34" rx="5"/><text class="chip" x="300" y="179">기본 이미지 (Python)</text>
+<rect class="kafka" x="210" y="118" width="180" height="34" rx="5"/><text class="chip" x="300" y="135">라이브러리 목록 층</text>
+<rect class="kafka" x="210" y="74" width="180" height="34" rx="5"/><text class="chip" x="300" y="91">설치한 라이브러리 층</text>
+<rect class="kafka" x="210" y="30" width="180" height="34" rx="5"/><text class="chip" x="300" y="47">앱 코드 층</text>
+<text class="small" x="200" y="217">파일을 바꾸는 명령이 층을 더해요</text>
 </svg>
 <p class="point">이미지는 앱 코드와 실행에 필요한 준비물을 층층이 담아 봉인한 꾸러미예요.</p>
-<p class="explain">이미지는 앱을 실행하는 데 필요한 파일과 라이브러리와 설정을 모두 담은 꾸러미이고 Dockerfile은 그 이미지를 만드는 포장 지시서예요. 개발자가 빌드(build)를 하면 Docker가 Dockerfile을 위에서부터 읽으며 이미 만들어진 Python 이미지를 바닥에 깔고 명령마다 층(레이어)을 하나씩 쌓아요. 완성된 이미지는 고칠 수 없어서 바꾸려면 Dockerfile을 고쳐 새로 빌드해요. Dockerfile의 FROM은 바닥에 깔 기본 이미지를 고르고 COPY는 파일을 이미지 안에 복사하고 RUN은 명령(여기서는 라이브러리 설치)을 실행하는 줄이에요.</p>
+<p class="explain">Dockerfile은 코드와 준비물을 담는 포장 지시서이고 빌드(build)는 이 지시서대로 이미지를 만드는 일이에요. Docker는 <code>FROM python:3.12</code>로 고른 기본 이미지가 없으면 레지스트리에서 받아 바닥에 두고 파일을 바꾸는 명령마다 층(레이어)을 얹어요. <code>COPY</code>는 파일 복사, <code>RUN</code>은 명령 실행이며 <code>requirements.txt</code>는 필요한 라이브러리 이름을 적은 파일이에요. 층을 쌓으면 바뀐 부분부터 다시 만들고 같은 층을 나눠 쓸 수 있으며 여러 컨테이너가 함께 쓰므로 원본은 읽기 전용으로 두고 수정하려면 새로 빌드해요(자세한 재사용은 5편).</p>
 </section>
 
 <aside class="author-questions" aria-label="초보 독자 질문 목록">
 <details class="author-question">
 <summary>초보 독자 Q. Dockerfile은 어디에 어떤 이름으로 만들고, 빌드는 어떻게 하나요?</summary>
-<p>A. 앱 코드 폴더 맨 위에 <code>Dockerfile</code>이라는 이름의 글자 파일로 만들어요. 빌드는 터미널에서 그 폴더로 가서 <code>docker build -t 이미지이름 .</code>을 직접 입력해요.</p>
+<p>A. 앱 코드 폴더 맨 위에 <code>Dockerfile</code>이라는 이름의 글자 파일로 만들어요. 터미널(명령을 입력하는 창)에서 그 폴더로 가서 <code>docker build -t 이미지이름 .</code>을 입력해요. <code>-t</code>는 이미지에 이름 붙이기이고 마지막 <code>.</code>은 빌드할 파일이 있는 이 폴더를 뜻해요.</p>
 <p>이미지를 레지스트리에 올리고 받고 실행하는 것도 <code>docker push</code>, <code>docker pull</code>, <code>docker run</code>처럼 터미널에 입력하는 명령이에요.</p>
 </details>
 </aside>
@@ -155,17 +152,17 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 </div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">컨테이너: 상자를 뜯어 요리하고 어디로든 보내기</h2>
+<h2 class="slide-group-title">컨테이너: 같은 상자로 따로 요리하고 어디로든 보내기</h2>
 
 <section class="slide">
-<h3>같은 상자를 여러 조리대에서 뜯어요</h3>
-<svg class="dg" viewBox="0 0 400 288" role="img" aria-label="밀키트 상자 하나에서 화살표가 조리대 세 곳으로 이어져 각각 요리가 진행되고 다 쓰고 치우면 흔적은 사라지고 남길 음식은 냉장고에 넣는다는 그림">
+<h3>상자는 그대로 두고 조리대마다 따로 요리해요</h3>
+<svg class="dg" viewBox="0 0 400 288" role="img" aria-label="밀키트 상자 하나에서 화살표가 조리대 세 곳으로 이어져 원본은 남겨 둔 채 각각 요리가 진행되고 조리대를 치우면 흔적은 사라지고 남길 음식은 냉장고에 넣는다는 그림">
 <defs><marker id="m4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <path class="line" d="M188,64 L82,106" marker-end="url(#m4)"/>
 <path class="line" d="M200,68 L200,100" marker-end="url(#m4)"/>
 <path class="line" d="M212,64 L318,106" marker-end="url(#m4)"/>
 <circle class="kafka" cx="200" cy="38" r="28"/><use class="ic" href="#i-box" x="182" y="20" width="36" height="36"/>
-<text class="small" x="240" y="38" style="text-anchor:start">같은 상품</text>
+<text class="small" x="240" y="38" style="text-anchor:start">원본은 그대로</text>
 <circle class="box" cx="70" cy="134" r="30"/><use class="ic" href="#i-pot" x="50" y="114" width="40" height="40"/>
 <circle class="box" cx="200" cy="134" r="30"/><use class="ic" href="#i-pot" x="180" y="114" width="40" height="40"/>
 <circle class="box" cx="330" cy="134" r="30"/><use class="ic" href="#i-pot" x="310" y="114" width="40" height="40"/>
@@ -179,13 +176,14 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.4s" repeatCount="indefinite" path="M200,68 L200,100"/></circle>
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.8s" repeatCount="indefinite" path="M212,64 L318,106"/></circle>
 </svg>
-<p class="point">같은 상자를 여러 조리대에서 동시에 뜯어 따로따로 요리할 수 있어요.</p>
-<p class="explain">손님이 여럿이면 요리사는 각자의 주문을 동시에 준비해야 해요. 조리대 사이의 칸막이 덕분에 한쪽에서 양념을 더해도 옆 사람의 요리에 섞이지 않아요. 다음에도 쓸 음식이 있는지는 치우기 전에 요리사가 챙겨야 해요.</p>
+<p class="point">원본 상자는 그대로 두고 조리대마다 같은 상자를 보며 각자 요리한다고 생각해 봐요.</p>
+<p class="explain">손님이 여럿이면 요리사는 같은 상품을 기준으로 각자의 주문을 동시에 준비해요. 조리대 사이의 칸막이 덕분에 한쪽에서 양념을 더해도 옆 사람의 요리에 섞이지 않아요. 주문이 끝나 필요 없어진 조리대를 치우는 것이 컨테이너를 지우는 일이고 남길 음식은 치우기 전에 냉장고에 넣어요.</p>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>실제로는: 컨테이너는 이미지를 실행한 앱이에요</h3>
-<svg class="dg" viewBox="0 0 400 230" role="img" aria-label="읽기 전용 이미지 하나로 컨테이너 A, B, C 세 개를 실행하고 컨테이너를 지우면 안에 쓴 파일은 사라지므로 남길 데이터는 바깥의 볼륨에 저장하는 그림">
+<svg class="dg" viewBox="0 0 400 250" role="img" aria-label="읽기 전용 이미지 하나로 컨테이너 A, B, C 세 개를 실행하고 컨테이너를 지우면 안에 쓴 파일은 사라지므로 남길 데이터는 바깥의 볼륨에 저장하는 그림">
 <defs><marker id="m5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="kafka" x="10" y="53" width="110" height="70" rx="8"/><text x="65" y="78">이미지</text><text class="small" x="65" y="102">읽기 전용</text>
 <path class="line" d="M120,88 L226,32" marker-end="url(#m5)"/>
@@ -196,11 +194,23 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <rect class="box" x="230" y="122" width="160" height="44" rx="6"/><text class="chip" x="310" y="144">컨테이너 C · 실행 중</text>
 <path class="line dash" d="M310,166 L310,182"/>
 <rect class="new" x="230" y="182" width="160" height="40" rx="6"/><text class="chip" x="310" y="202">볼륨 (바깥 보관함)</text>
-<text class="alert" x="112" y="202">지우면 안에 쓴 파일은 사라져요</text>
+<text class="small" x="120" y="200">남길 데이터가 있는 C만 연결</text>
+<text class="alert" x="200" y="242">컨테이너를 지우면 안에 쓴 파일도 사라져요</text>
 </svg>
 <p class="point">컨테이너는 이미지를 바탕으로 실행된 앱이고 한 이미지로 여러 개를 띄울 수 있어요.</p>
-<p class="explain">Docker는 앱을 시작할 때 컨테이너마다 전용 쓰기 공간을 마련해요. 컨테이너는 다른 컨테이너와 서버의 나머지 부분에서 칸막이로 나뉜(격리된) 프로세스이고 프로세스는 실행 중인 프로그램 하나를 뜻해요. 실행 중에 생기는 주문 기록까지 이미지에 담겨 있는 것은 아니어서 개발자가 데이터의 보관 장소를 따로 정해야 해요.</p>
+<p class="explain">Docker는 이미지를 통째로 복사하지 않고 함께 읽는 이미지 위에 컨테이너마다 전용 쓰기 공간을 얹어요. 컨테이너는 칸막이로 나뉜 실행 중인 프로그램(프로세스)이고 앱이 만든 파일은 이 공간에 쌓여요. 앱을 바꾸려고 컨테이너를 새로 만들 때도 남길 데이터는 볼륨이라는 별도 저장 공간에 쓰도록 정하며 자세한 연결은 볼륨 편에서 봐요.</p>
 </section>
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. 컨테이너를 멈추는 것과 지우는 것은 다른가요?</summary>
+<p>A. 멈추면 실행만 끝나고 전용 쓰기 공간은 남아서 다시 시작할 수 있어요. 지우면 그 공간도 사라지지만 연결한 이름 있는 볼륨은 남아요.</p>
+</details>
+<details class="author-question">
+<summary>초보 독자 Q. 이미지에 비밀번호를 넣어도 되나요?</summary>
+<p>A. 넣지 않아요. 이미지에 담으면 받아 간 사람에게도 전달되므로 실행할 때 외부에서 넘겨요. 앱이 지원하는 비밀 파일 전달 방식 등을 쓰고 Dockerfile에 적지 않아요. <a href="https://docs.docker.com/compose/how-tos/use-secrets/">Docker 비밀 정보 안내</a>를 참고해요.</p>
+</details>
+</aside>
+</div>
 
 <section class="slide">
 <h3>공장에서 포장하고 마트에서 받아 가요</h3>
@@ -213,7 +223,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="big" x="55" y="148">포장 공장</text>
 <text class="chip" x="127" y="80">납품</text>
 <circle class="kafka" cx="200" cy="96" r="36"/><use class="ic" href="#i-store" x="178" y="74" width="44" height="44"/>
-<text class="big" x="200" y="148">마트 진열대</text>
+<text class="big" x="200" y="148">마트 진열대</text><text class="small" x="200" y="164">레지스트리</text>
 <circle class="box" cx="350" cy="36" r="26"/><use class="ic" href="#i-pot" x="334" y="20" width="32" height="32"/>
 <text class="chip" x="350" y="76">우리 주방</text>
 <circle class="box" cx="350" cy="116" r="26"/><use class="ic" href="#i-pot" x="334" y="100" width="32" height="32"/>
@@ -224,7 +234,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.9s" repeatCount="indefinite" path="M232,106 L316,110"/></circle>
 </svg>
 <p class="point">공장이 포장한 상자를 마트에 두면 어느 주방이든 같은 상품을 사 갈 수 있어요.</p>
-<p class="explain">새 주방이 생길 때마다 공장이 그곳에 가서 재료를 준비할 필요는 없어요. 받는 쪽이 필요한 때에 상품을 가져오면 되니 만드는 일과 사용하는 일을 따로 할 수 있어요.</p>
+<p class="explain">마트는 이미지를 나눠 주는 레지스트리이고 우리 주방은 첫 그림처럼 이미지를 받아 실행하는 서버예요. 새 주방이 생길 때마다 공장이 그곳에 가서 재료를 준비할 필요는 없어요. 받는 쪽이 필요한 때에 상품을 가져오면 되니 만드는 일과 사용하는 일을 따로 할 수 있어요.</p>
 </section>
 
 <section class="slide">
@@ -246,7 +256,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.8s" repeatCount="indefinite" path="M240,90 L320,126"/></circle>
 </svg>
 <p class="point">개발자가 이미지를 레지스트리에 올리면 서버와 동료는 같은 이미지를 받아 실행해요.</p>
-<p class="explain">개발자가 노트북에서 이미지를 빌드하고 레지스트리에 올려요(push). 레지스트리는 이미지를 보관하고 나눠 주는 저장소이고 Docker Hub는 누구나 쓸 수 있는 공개 레지스트리예요. Docker가 설치된 서버와 동료의 노트북은 이미지 이름으로 받아(pull) 컨테이너로 실행해요(run). 모두가 같은 이미지를 쓰니까 "내 컴퓨터에선 되는데" 문제가 줄어요.</p>
+<p class="explain">개발자가 노트북에서 이미지를 빌드해 레지스트리라는 이미지 보관소에 올려요(push). Docker Hub는 공개 이미지도 나눠 주는 레지스트리이고 서버와 동료는 필요한 때 같은 이미지의 사본을 받아요(pull). 받아 가도 레지스트리의 원본은 그대로 남으므로 비유의 마트는 물건을 하나씩 소진하는 가게와는 달라요. 받는 서버에도 Docker가 설치돼 있어야 하며 받은 이미지를 컨테이너로 실행(run)하면 준비물을 맞추는 수고가 줄어요.</p>
 </section>
 </div>
 
@@ -255,11 +265,10 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 
 <section class="slide">
 <h3>건물을 통째로 짓기와 칸막이 치기</h3>
-<svg class="dg" viewBox="0 0 400 210" role="img" aria-label="왼쪽은 요리마다 건물과 배관과 조리대를 따로 지은 세 채의 건물로 무겁고 오래 걸리고 오른쪽은 건물 하나의 공용 가스·수도 위에 칸막이로 나눈 조리대 세 개가 있어 가볍고 바로 시작하는 그림">
+<svg class="dg" viewBox="0 0 400 210" role="img" aria-label="왼쪽은 요리마다 건물과 배관과 조리대를 따로 지은 두 채의 건물로 무겁고 오래 걸리고 오른쪽은 건물 하나의 공용 가스·수도 위에 칸막이로 나눈 조리대 세 개가 있어 가볍고 바로 시작하는 그림">
 <rect class="line" x="10" y="14" width="185" height="182" rx="12"/>
-<text class="label center" x="102" y="38">건물째 짓기</text>
+<text class="label center" x="102" y="38">건물째 짓기</text><text class="small" x="102" y="56">가상 머신</text>
 <circle class="box" cx="48" cy="86" r="20"/><use class="ic" href="#i-building" x="35" y="73" width="26" height="26"/>
-<circle class="box" cx="102" cy="86" r="20"/><use class="ic" href="#i-building" x="89" y="73" width="26" height="26"/>
 <circle class="box" cx="156" cy="86" r="20"/><use class="ic" href="#i-building" x="143" y="73" width="26" height="26"/>
 <text class="small" x="102" y="134">요리마다 따로 지어요</text>
 <text class="alert" x="102" y="166">무겁고 오래 걸려요</text>
@@ -273,7 +282,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="small" x="297" y="176">가볍고 금방 시작해요</text>
 </svg>
 <p class="point">요리마다 건물을 새로 지으면 무겁고 건물 하나에 칸막이를 치면 가벼워요.</p>
-<p class="explain">주방 주인은 새 요리를 시작할 때마다 공용 설비까지 새로 마련해야 하는지 생각해요. 설비를 따로 갖추면 서로 확실히 떨어뜨릴 수 있고 이미 있는 설비를 활용하면 한 건물에서 더 많은 요리를 준비할 수 있어요.</p>
+<p class="explain">주방 주인은 새 요리를 시작할 때마다 공용 가스·수도까지 새로 마련해야 하는지 생각해요. 설비를 따로 갖추면 서로 확실히 떨어뜨릴 수 있고 이미 있는 설비를 활용하면 한 건물에서 더 많은 요리를 준비할 수 있어요.</p>
 </section>
 
 <section class="slide">
@@ -295,7 +304,7 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <text class="small" x="300" y="224">이미지는 보통 수십 MB</text>
 </svg>
 <p class="point">가상 머신은 운영체제를 통째로 담고 컨테이너는 서버의 커널 하나를 함께 써요.</p>
-<p class="explain">커널은 운영체제(OS)의 핵심으로 CPU와 메모리와 파일을 프로그램들에게 나눠 주는 부분이고 비유의 가스·수도 배관이에요. 가상 머신(VM)은 하이퍼바이저라는 프로그램이 컴퓨터 하드웨어를 흉내 내고 그 안에 OS를 하나씩 통째로 설치해서 무겁고 켜는 데 오래 걸려요. 컨테이너는 서버의 커널 하나를 함께 쓰고 리눅스 커널의 네임스페이스(namespace)라는 칸막이로 각자 볼 수 있는 범위만 나눠서 가볍고 금방 켜져요. 대신 커널을 함께 쓰니까 컨테이너 안의 프로그램은 그 서버의 커널과 CPU에서 돌 수 있는 것이어야 해요.</p>
+<p class="explain">커널은 운영체제(OS)의 핵심으로 CPU와 메모리와 파일을 프로그램에 나눠 주며 비유의 공용 가스·수도에 해당해요. 가상 머신은 하드웨어를 흉내 내는 하이퍼바이저 위에 게스트 OS(가상 머신마다 따로 설치한 OS)를 두어요. 컨테이너에도 기본 이미지에 든 앱에 필요한 OS 파일 일부는 있지만 커널은 호스트 OS(서버에 원래 깔린 OS)의 것을 함께 쓰고 네임스페이스라는 칸막이로 각자 볼 수 있는 범위를 나눠요. 그래서 새 컨테이너를 띄울 때 OS까지 하나씩 켤 필요가 없어요.</p>
 </section>
 
 <div class="slide-with-question">
@@ -304,8 +313,8 @@ summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 어
 <table>
 <thead><tr><th>오해</th><th>실제</th></tr></thead>
 <tbody>
-<tr><td>한 번 만든 이미지는 어떤 컴퓨터에서도 돈다</td><td>CPU 종류(amd64, arm64)가 맞아야 해요. 여러 종류용으로 함께 빌드한 멀티 플랫폼 이미지라면 Docker가 맞는 것을 골라 받아요</td></tr>
-<tr><td>Mac·Windows에서는 리눅스 없이 돈다</td><td>Docker Desktop이 리눅스 가상 머신을 띄우고 그 안에서 리눅스 컨테이너를 돌려요</td></tr>
+<tr><td>한 번 만든 이미지는 어떤 컴퓨터에서도 돈다고 생각하기 쉬워요</td><td>컴퓨터 칩 종류가 맞아야 해요(대부분 PC·서버는 amd64, 애플 M 칩 맥은 arm64). 여러 종류용으로 함께 빌드한 멀티 플랫폼 이미지라면 Docker가 맞는 것을 골라 받아요</td></tr>
+<tr><td>Mac·Windows에서는 리눅스 커널 없이 리눅스 컨테이너를 돌린다고 생각하기 쉬워요</td><td>리눅스 컨테이너는 리눅스 커널이 필요해요. 그래서 Mac·Windows의 Docker Desktop은 리눅스 가상 머신 하나 위에 컨테이너 여럿을 돌려요. 컨테이너마다 가상 머신을 만드는 부담은 없어요</td></tr>
 </tbody>
 </table>
 <p class="point">컨테이너는 가볍지만 서버의 커널과 CPU 종류에 맞아야 해요.</p>
