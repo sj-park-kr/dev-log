@@ -23,9 +23,9 @@
 | Python | [공식 로고 페이지](https://www.python.org/community/logos/)의 [python-logo-only.svg](https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/files/python-logo-only.svg) |
 | TypeScript | [공식 브랜드 페이지](https://www.typescriptlang.org/branding/)의 [디자인 자료 ZIP](https://www.typescriptlang.org/branding/typescript-design-assets.zip), `ts-logo-128.svg` |
 | React | [공식 사이트 저장소 SVG](https://raw.githubusercontent.com/reactjs/react.dev/main/public/images/brand/logo_dark.svg) |
-| Java | [공식 개발자 사이트](https://dev.java/)의 [로고 PNG](https://dev.java/assets/images/java-logo-vector.png) |
+| Java | 다크: [공식 개발자 사이트](https://dev.java/)의 [로고 PNG](https://dev.java/assets/images/java-logo-vector.png) · 라이트: [Oracle Java 페이지](https://www.oracle.com/java/)의 [로고 PNG](https://www.oracle.com/a/ocom/img/rc30v1-java-se.png) |
 | Spring | [공식 사이트 SVG](https://spring.io/favicon.svg) |
 
-MSSQL 배포본의 흰색 바탕 경로 하나는 제거하고 로고 본체와 그라데이션은 그대로 유지한다. TypeScript의 파란 사각형, Redis의 빨간 사각형, Java의 흰색 부분 등 원본 로고에 포함된 요소는 유지한다.
+MSSQL 배포본의 흰색 바탕 경로 하나는 제거하고 로고 본체와 그라데이션은 그대로 유지한다. TypeScript의 파란 사각형, Redis의 빨간 사각형, Java의 흰색 부분 등 원본 로고에 포함된 요소는 유지한다. Java PNG에는 "Java" 글자가 함께 들어 있어 컵이 작게 보이므로, `viewBox`로 컵 부분만 잘라 표시한다. dev.java 로고는 컵이 흰색이라 라이트 테마에서는 Oracle의 청록색 로고(`java-light.svg`)로 바꿔 표시한다.
 
 Git 로고는 Jason Long의 작품이며 [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)으로 배포된다. 각 로고와 상표의 권리는 해당 권리자에게 있다.

@@ -75,6 +75,20 @@
     return selected.dataset.cursor;
   }
 
+  // An SVG loaded through <img> cannot see the site's theme toggle, so logos with a light variant are swapped here.
+  const themed = [...picker.querySelectorAll('img[data-light-src]')];
+  themed.forEach(image => { image.dataset.darkSrc = image.src; });
+  function applyTheme() {
+    const light = document.documentElement.dataset.theme === 'light';
+    themed.forEach(image => { image.src = light ? image.dataset.lightSrc : image.dataset.darkSrc; });
+  }
+  applyTheme();
+  new MutationObserver(() => {
+    applyTheme();
+    const current = options.find(option => option.getAttribute('aria-pressed') === 'true');
+    if (current?.querySelector('img[data-light-src]')) selectCursor(current.dataset.cursor);
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
   try {
     selectCursor(localStorage.getItem(storageKey));
   } catch {
