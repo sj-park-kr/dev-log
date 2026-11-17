@@ -66,6 +66,27 @@ img, video, svg { max-width: 100%; height: auto; }
 .home-section { padding: 28px 0 48px; }
 .section-heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px; margin-bottom: 25px; }
 .section-heading .eyebrow { margin-bottom: 6px; }
+/* 슬롯머신 레버: 손잡이가 축 위에서 아래로 넘어갔다 돌아온다 */
+.series-stage { position: relative; }
+/* 넓은 화면에서는 캐러셀 바깥 오른쪽 여백에, 좁으면 안쪽 가장자리에 둔다 */
+@media (min-width: 1240px) { .series-stage .series-lever { right: -72px; } }
+.series-lever { position: absolute; top: 50%; right: 6px; z-index: 3000; width: 44px; height: 230px; margin-top: -115px; /* 상자 한가운데(115px)가 축이고, 축이 카드 세로 중앙에 온다 */ padding: 0; border: 0; background: none; cursor: grab; touch-action: none; user-select: none; }
+.series-lever:active { cursor: grabbing; }
+/* 레버 툴팁: 레버 왼쪽 위에 말풍선으로 뜬다 */
+.series-lever::after { content: attr(data-tip); position: absolute; right: calc(100% + 12px); top: 0; width: max-content; max-width: 220px; padding: 9px 14px; border-radius: 12px 12px 2px 12px; background: var(--ink); color: var(--bg); font: inherit; font-size: 13px; font-weight: 700; line-height: 1.5; text-align: left; box-shadow: 0 8px 20px #0004; opacity: 0; transform: translateX(6px); transition: opacity .18s ease, transform .18s ease; pointer-events: none; }
+.series-lever:hover:not(:disabled)::after, .series-lever:focus-visible:not(:disabled)::after { opacity: 1; transform: none; }
+.series-lever:disabled { cursor: progress; }
+.series-lever:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 12px; }
+/* 축(받침)은 카드 세로 중앙, 막대는 그 위로 선다. 당기면 축을 중심으로 화면 앞쪽으로 넘어오며 원근 때문에 짧아지고 손잡이가 커진다. */
+.series-lever { --lever-angle: 0deg; perspective: 360px; perspective-origin: 50% 50%; transform-style: preserve-3d; }
+.lever-base { position: absolute; left: 50%; top: 93px; width: 30px; height: 44px; margin-left: -15px; border-radius: 10px; background: var(--ink); box-shadow: inset 0 -5px 0 #0005, 0 6px 12px #0004; }
+.lever-arm { position: absolute; left: 50%; top: 15px; width: 8px; height: 100px; margin-left: -4px; border-radius: 4px; background: linear-gradient(90deg, #8a939d, #e8ecf0, #8a939d); transform-origin: 50% 100%; transform-style: preserve-3d; transform: translateZ(14px) rotateX(calc(var(--lever-angle) * -1)); /* 받침 앞면에 붙어 처음부터 받침보다 앞에 있다 */ }
+.lever-knob { position: absolute; left: 50%; top: -15px; width: 30px; height: 30px; margin-left: -15px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ff8a8a, #d92c2c 60%, #a01818); box-shadow: 0 4px 8px #0005; transform: rotateX(var(--lever-angle)); /* 손잡이는 늘 정면을 본다 */ }
+.lever-arm, .lever-knob { transition: transform .5s cubic-bezier(.3, 1.5, .5, 1); }
+.series-lever.is-dragging .lever-arm, .series-lever.is-dragging .lever-knob { transition: none; }
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.series-card.is-picked { animation: series-picked 1.2s ease-out 2; }
+@keyframes series-picked { 0%, 100% { box-shadow: 0 18px 30px -18px #0007; } 40% { box-shadow: 0 0 0 6px #ffd54a, 0 0 36px 10px #ffd54aaa; } }
 h2 { font-size: 25px; font-weight: 800; }
 .series-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 .series-card { display: flex; flex-direction: column; min-width: 0; padding: 28px; border-radius: 18px; background: var(--series-color); color: #fff; text-decoration: none; transition: transform .15s ease; }
@@ -154,6 +175,8 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
   .series-card:hover { transform: none; }
 }
 
+  .series-card.is-picked { animation: none; box-shadow: 0 0 0 6px #ffd54a; }
+  .lever-arm, .lever-knob { transition: none; }
 /* ===== 개념 노트 글: 탭 + 슬라이드 + 그림. 틀은 _drafts/lesson-template.md ===== */
 :root { --hl: #fff4d6; --hl-line: #d99a00; --bad: #fff0f0; --bad-line: #d33; --good: #eefaf0; --good-line: #2e9e55; }
 @media (prefers-color-scheme: dark) {
