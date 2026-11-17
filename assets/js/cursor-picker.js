@@ -5,6 +5,9 @@
   const options = [...picker.querySelectorAll('[data-cursor]')];
   const search = picker.querySelector('.cursor-search');
   const storageKey = 'dev-log-cursor';
+  const sizeKey = 'dev-log-cursor-size';
+  const sizeInput = picker.querySelector('.cursor-size input');
+  let size = 32;
   const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
   const cursor = document.createElement('img');
   cursor.className = 'logo-cursor';
@@ -22,7 +25,7 @@
 
   function showCursor() {
     if (!cursorReady || !pointer || !finePointer.matches) return;
-    cursor.style.transform = `translate3d(${pointer.x - 16}px, ${pointer.y - 16}px, 0)`;
+    cursor.style.transform = `translate3d(${pointer.x - size / 2}px, ${pointer.y - size / 2}px, 0)`;
     cursor.showPopover();
     document.documentElement.classList.add('logo-cursor-active');
   }
@@ -88,6 +91,27 @@
     const current = options.find(option => option.getAttribute('aria-pressed') === 'true');
     if (current?.querySelector('img[data-light-src]')) selectCursor(current.dataset.cursor);
   }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  function setSize(value) {
+    size = Math.min(64, Math.max(24, Number(value) || 32));
+    cursor.style.width = cursor.style.height = `${size}px`;
+    sizeInput.value = size;
+    sizeInput.nextElementSibling.textContent = `${size}px`;
+    showCursor();
+  }
+  sizeInput.addEventListener('input', () => {
+    setSize(sizeInput.value);
+    try {
+      localStorage.setItem(sizeKey, size);
+    } catch {
+      // The size still applies for this page when browser storage is unavailable.
+    }
+  });
+  try {
+    setSize(localStorage.getItem(sizeKey));
+  } catch {
+    setSize(32);
+  }
 
   try {
     selectCursor(localStorage.getItem(storageKey));

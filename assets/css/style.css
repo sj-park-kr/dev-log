@@ -26,6 +26,9 @@ a:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; border-
 .cursor-picker p { margin: 6px 0 16px; color: var(--muted); font-size: 12px; }
 .cursor-search { display: block; width: 100%; margin-bottom: 14px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font: inherit; font-size: 12px; }
 .cursor-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.cursor-size { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; color: var(--muted); font-size: 12px; }
+.cursor-size input { flex: 1; min-width: 0; accent-color: var(--accent); }
+.cursor-size output { width: 4ch; text-align: right; }
 .cursor-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-height: 340px; overflow-y: auto; padding: 3px; }
 .cursor-options button[hidden] { display: none; }
 .cursor-options button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 96px; padding: 12px 8px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); font: inherit; font-size: 12px; cursor: pointer; }
