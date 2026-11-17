@@ -37,7 +37,7 @@ layout: default
     {% if previous_episode or next_episode %}
       <nav class="episode-nav" aria-label="시리즈 이어 읽기">
         {% if previous_episode %}<a href="{{ previous_episode.url | relative_url }}"><span>← 이전 편 · #{{ previous_episode.episode }}</span><strong>{{ previous_episode.title | escape }}</strong></a>{% endif %}
-        {% if next_episode %}<a href="{{ next_episode.url | relative_url }}"><span>다음 편 · #{{ next_episode.episode }} →</span><strong>{{ next_episode.title | escape }}</strong></a>{% endif %}
+        {% if next_episode %}<a class="next" href="{{ next_episode.url | relative_url }}"><span>다음 편 · #{{ next_episode.episode }} →</span><strong>{{ next_episode.title | escape }}</strong></a>{% endif %}
       </nav>
     {% endif %}
   {% endif %}
