@@ -43,9 +43,9 @@
     }
     return { select, source, status, progress, node, fly, reset };
   }
-  const ack = setup('producer-acks', '저장 확인 기준 ', [['1', '리더만 확인 (acks=1)'], ['all', '사본까지 확인 (acks=all)'], ['0', '응답 기다리지 않기 (acks=0)']]);
+  const ack = setup('producer-acks', '저장 확인 기준 ', [['1', '리더만 확인 (acks=1)'], ['all', '리더와 다른 사본까지 확인 (acks=all)'], ['0', '응답 기다리지 않기 (acks=0)']]);
   if (ack) {
-    const leader = ack.node('리더'), replica = ack.node('최신 사본을 가진 건물');
+    const leader = ack.node('리더 건물 · 사본 1'), replica = ack.node('다른 사본 건물 · 사본 2');
     let step = 0, count = 0, timer;
     function tick() {
       if (document.hidden) return;
@@ -63,7 +63,7 @@
         ack.fly(leader.box, replica.box, `사본 ${count}`);
         if (!all && !none) ack.fly(leader.box, ack.source, '접수증');
         ack.progress.textContent = all
-          ? '사본이 아직 복사 중이라 접수증은 없어요. 지금 리더가 멈추면 이 소식은 잃을 수 있어요.'
+          ? '다른 사본이 아직 복사 중이라 접수증은 없어요. 지금 리더가 멈추면 가게는 접수 완료로 여기지 않고 전송 시간 한도 안에서 다시 보내요.'
           : none
             ? '리더에 도착했어도 확인을 받지 않아요. 지금 리더가 멈추면 아직 복사되지 않은 소식을 잃을 수 있어요.'
             : '리더가 접수증을 돌려줘요. 지금 리더가 멈추면 아직 복사되지 않은 소식을 잃을 수 있어요.';
@@ -71,7 +71,7 @@
         replica.last.textContent = '저장됨';
         if (all) ack.fly(leader.box, ack.source, '접수증');
         ack.progress.textContent = all
-          ? '사본도 확인해 접수증이 돌아와요. 이 예에서는 이제 리더가 멈춰도 다른 건물에 같은 소식이 있어요.'
+          ? '다른 사본도 확인해 접수증이 돌아와요. 이 예에서는 이제 리더가 멈춰도 다른 건물에 같은 소식이 있어요.'
           : none
             ? '이 예에서는 사본까지 저장했지만 보내는 쪽은 응답을 받지 않으므로 그 사실을 확인할 수 없어요.'
             : '사본도 이제 저장했어요. 접수증을 받은 때부터 이 순간까지는 리더가 멈추면 잃을 위험이 있었어요.';
@@ -82,7 +82,7 @@
       clearInterval(timer);
       ack.reset(); step = 0;
       ack.status.textContent = ack.select.value === 'all'
-        ? '사본까지 확인해요. 접수증을 받으면 이 예에서는 리더가 멈춰도 다른 건물에 소식이 남아요.'
+        ? '리더와 다른 사본까지 확인해요. 접수증을 받으면 이 예에서는 리더가 멈춰도 다른 건물에 소식이 남아요.'
         : ack.select.value === '0'
           ? '응답을 기다리지 않아요. 도착 여부를 확인하지 못하고 사본 복사 전에 리더가 멈추면 소식을 잃을 수 있어요.'
           : '리더만 확인해요. 접수증을 받아도 사본 복사 전에 리더가 멈추면 소식을 잃을 수 있어요.';

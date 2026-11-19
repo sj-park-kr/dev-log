@@ -1,0 +1,13 @@
+#delivery-playground .pp-body { display: grid; gap: 12px; }
+#delivery-playground select { justify-self: start; padding: 6px 12px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 6px; font: inherit; }
+#delivery-playground select:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+#delivery-playground .pp-shelf { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+#delivery-playground .pp-col { min-width: 0; }
+#delivery-playground .delivery-missed { border-color: var(--bad-line); background: var(--bad); }
+#delivery-playground .pp-src, #delivery-playground .pp-box { display: flex; align-items: center; gap: 6px; }
+#delivery-playground svg { width: 24px; height: 24px; flex: none; }
+#delivery-playground .ic { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+#delivery-playground .pp-sum { min-height: 6.4em; }
+#delivery-playground .delivery-read { padding: 4px 8px; border: 1.5px solid var(--ink); border-radius: 6px; color: var(--ink); background: var(--surface); }
+#delivery-playground .delivery-saved { padding: 4px 8px; border: 1.5px dashed var(--good-line); border-radius: 6px; background: var(--good); }
+#delivery-playground .delivery-packages { display: flex; gap: 4px; }

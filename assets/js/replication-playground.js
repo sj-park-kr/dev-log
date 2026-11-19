@@ -4,6 +4,7 @@
   const NS = 'http://www.w3.org/2000/svg';
   const make = (tag, cls, content) => Object.assign(document.createElement(tag), { className: cls, textContent: content ?? '' });
   document.querySelectorAll('.rp-widget').forEach((root, widgetIndex) => {
+    const leaderMode = root.dataset.mode === 'leader';
     const online = [true, true, true], ready = [true, true, true];
     const logs = [[], [], []];
     let leader = 0, lastLeader = 0, sequence = 0;
@@ -12,13 +13,14 @@
     stage.setAttribute('viewBox', '0 0 400 285');
     stage.setAttribute('class', 'dg rp-stage');
     stage.setAttribute('role', 'img');
-    stage.setAttribute('aria-label', '주문 서비스에서 현재 리더로 요청하고 ISR 사본에 복제하는 흐름');
+    stage.setAttribute('aria-label', '가게가 현재 리더에 소식을 맡기고 팔로워가 리더에게 가져오기를 요청하는 흐름');
     const points = [[70, 170], [200, 170], [330, 170]];
-    stage.innerHTML = '<circle class="box" cx="200" cy="40" r="25"/><use class="ic" href="#i-store" x="182" y="22" width="36" height="36"/><text class="chip" x="200" y="85">주문 서비스 · 계속 요청</text>';
+    stage.innerHTML = `<defs><marker id="rp-arrow-${widgetIndex}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs><circle class="box" cx="200" cy="40" r="25"/><use class="ic" href="#i-store" x="182" y="22" width="36" height="36"/><text class="chip" x="200" y="85">주문 가게 · 계속 맡겨요</text><text class="small" x="200" y="275">건물 사이 화살표: 가져오기 요청</text>`;
     const paths = [], packets = [];
     for (let i = 0; i < 3; i++) {
       const path = document.createElementNS(NS, 'path');
       path.setAttribute('class', 'line');
+      path.setAttribute('marker-end', `url(#rp-arrow-${widgetIndex})`);
       stage.append(path);
       paths.push(path);
       const dot = document.createElementNS(NS, 'circle');
@@ -46,14 +48,14 @@
       input.checked = true;
       input.id = `rp-${widgetIndex}-broker-${i}`;
       label.htmlFor = input.id;
-      label.append(input, document.createTextNode(`건물 ${i + 1} 켜기`));
-      controls.append(label);
+      label.append(input, document.createTextNode(leaderMode ? '처음 리더인 건물 B1 켜기' : `건물 B${i + 1} 켜기`));
+      if (!leaderMode || i === 0) controls.append(label);
       return input;
     });
     const status = make('p', 'pp-sum');
     status.setAttribute('aria-live', 'polite');
     const stream = make('p', 'rp-stream');
-    const caption = make('p', 'rp-caption', '파티션 하나 · 복제 계수 3 · acks=all · 최소 ISR 2');
+    const caption = make('p', 'rp-caption', leaderMode ? '칸 A 하나 · 건물 B1만 끄고 켜요 · B2와 B3는 계속 켜져 있어요' : '칸 A 하나 · 사본 3개 · acks=all · 최소 ISR 2');
     root.append(stage, controls, caption, status, stream);
     function elect() {
       if (leader !== -1 && online[leader] && ready[leader]) return;
@@ -66,7 +68,7 @@
         g.querySelector('circle').setAttribute('class', !online[i] ? 'bad' : i === leader ? 'kafka' : 'box');
         const texts = g.querySelectorAll('text');
         texts[0].textContent = `B${i + 1} · ${!online[i] ? '꺼짐' : !ready[i] ? '따라잡기' : i === leader ? '리더' : '팔로워'}`;
-        texts[1].textContent = logs[i].length ? logs[i].join(' · ') : '아직 기록 없음';
+        texts[1].textContent = logs[i].length ? logs[i].join(' · ') : '아직 소식 없음';
       });
       const target = leader === -1 ? [200, 120] : points[leader];
       const active = [true, count >= 2 && leader !== -1, count >= 2 && leader !== -1];
@@ -74,7 +76,8 @@
       const routes = [`M200,95 L${target[0]},${target[1] - 32}`];
       for (let i = 0; i < 2; i++) {
         const dest = followers[i];
-        routes.push(dest ? `M${target[0]},${target[1]} Q${(target[0] + dest[0]) / 2},110 ${dest[0]},${dest[1]}` : 'M0,0 L0,0');
+        const direction = dest && dest[0] > target[0] ? 1 : -1;
+        routes.push(dest ? `M${dest[0] - 24 * direction},${dest[1] - 18} Q${(target[0] + dest[0]) / 2},110 ${target[0] + 24 * direction},${target[1] - 18}` : 'M0,0 L0,0');
         active[i + 1] = active[i + 1] && !!dest;
       }
       paths.forEach((path, i) => {
@@ -83,20 +86,23 @@
         packets[i][0].style.display = active[i] ? '' : 'none';
         if (packets[i][1].getAttribute('path') !== routes[i]) packets[i][1].setAttribute('path', routes[i]);
       });
-      if (message) status.textContent = message + ` ISR ${count}개 · ` + (leader === -1 ? '리더 복구 대기예요.' : count < 2 ? '최소 ISR 미달로 쓰기를 거절해요.' : `B${leader + 1} 브로커가 현재 ISR 전체의 복제 뒤 성공 응답을 보내요.`);
+      if (message) status.textContent = message + (leader === -1 ? ` 이 모형은 뒤처진 건물을 리더로 세우지 않아 마지막 리더 B${lastLeader + 1}이 돌아오기를 기다려요(자세한 건 4묶음).` : leaderMode ? ` 다음 소식은 현재 리더인 건물 B${leader + 1}로 가요.` : ` 명단(ISR) ${count}곳 · ` + (count < 2 ? '최소 두 곳이 안 되어 접수를 거절해요.' : `건물 B${leader + 1}이 명단 전체의 복제 뒤 접수증을 줘요.`));
     }
     function catchUp(i) {
       if (!online[i] || ready[i]) return;
       if (leader === -1) {
         // 모든 사본이 멈췄다면 마지막 리더가 돌아올 때까지 기다려요.
-        if (i !== lastLeader) return;
+        if (i !== lastLeader) {
+          render(`건물 B${i + 1}은 켜졌지만 소식을 가져올 리더가 없어요.`);
+          return;
+        }
         ready[i] = true;
         elect();
       } else {
         logs[i] = [...logs[leader]];
         ready[i] = true;
       }
-      render(`B${i + 1} 브로커가 기록을 따라잡고 ISR에 돌아왔어요.`);
+      render(`건물 B${i + 1}이 소식을 따라잡고 명단(ISR)에 돌아왔어요.`);
       online.forEach((on, j) => { if (on && !ready[j]) schedule(j); });
     }
     function schedule(i) {
@@ -109,19 +115,19 @@
       clearTimeout(timers[i]);
       const wasLeader = leader;
       elect();
-      render(!online[i] ? `B${i + 1} 브로커가 멈춰 ISR에서 빠졌어요.${wasLeader === i && leader !== -1 ? ` B${leader + 1} 브로커가 리더를 이어받았어요.` : ''}` : `B${i + 1} 브로커가 켜져 기록을 따라잡아요.`);
+      render(!online[i] ? `건물 B${i + 1}이 멈춰 명단(ISR)에서 빠졌어요.${wasLeader === i && leader !== -1 ? ` 건물 B${leader + 1}이 칸 A의 리더를 이어받았어요.` : ''}` : `건물 B${i + 1}이 켜졌어요.${leader !== -1 ? ' 리더에게서 소식을 가져와 따라잡아요.' : ''}`);
       if (online[i]) schedule(i);
     }));
     function send() {
       sequence++;
       const count = ready.filter((r, i) => r && online[i]).length;
-      if (leader === -1) stream.textContent = `직전 소식 ${sequence}: 요청을 시도하지만 리더가 없어 대기해요.`;
-      else if (count < 2) stream.textContent = `직전 소식 ${sequence}: ISR이 1개라 새 기록을 받지 않고 거절해요.`;
+      if (leader === -1) stream.textContent = `직전 소식 ${sequence}: 리더가 없어 다시 보내기를 시도해요.`;
+      else if (count < 2) stream.textContent = `직전 소식 ${sequence}: 명단이 한 곳뿐이라 거절돼요. 가게는 다시 보내기를 시도해요.`;
       else {
         online.forEach((on, i) => {
           if (on && ready[i]) { logs[i].push(sequence); logs[i] = logs[i].slice(-3); }
         });
-        stream.textContent = `직전 소식 ${sequence}: 리더 접수 → ISR ${count}곳 복제 → 성공 응답`;
+        stream.textContent = leaderMode ? `직전 소식 ${sequence}: 가게가 건물 B${leader + 1}에 맡기면 팔로워들이 가져와요 → 접수증` : `직전 소식 ${sequence}: 리더 접수 → 명단 ${count}곳이 모두 보관 → 접수증`;
       }
       render();
     }

@@ -1,4 +1,4 @@
-// 직접 해 보기: 택배가 계속 도착하고, 독자는 칸 수만 바꿔 동네별로 가는 칸이 달라지는 모습을 봐요.
+// 직접 해 보기: 소식이 계속 도착하고, 독자는 칸 수만 바꿔 동네별로 가는 칸이 달라지는 모습을 봐요.
 // 설명용 규칙: 칸이 2개면 첫 글자가 ㄱ인 동네는 칸 1, 나머지는 칸 0. 실제 기본 키 분배는 해시를 음수가 아니게 바꾼 뒤 칸 수로 나눈 나머지를 써요.
 (() => {
   const root = document.getElementById('pp');
@@ -37,14 +37,15 @@
         old.style.fontSize = '.85em';
         col.append(old);
       }
+      if (n === 2) col.append(el('span', 'pp-col-name', '새 소식'));
       col.append(el('span', 'pp-last', records[k].join(' · ')));
       return col;
     });
     shelf.replaceChildren(...cols);
     btn.textContent = n === 1 ? '칸 하나 늘리기' : '처음처럼 칸 1개로 보기';
     sum.textContent = n === 1
-      ? '칸이 1개라 어느 동네 택배든 칸 0으로 가요.'
-      : '칸이 2개가 되자 새 강남·관악은 칸 1로 가고 옛 소식은 칸 0에 그대로 남아요.';
+      ? '칸이 1개라 어느 동네 소식이든 칸 0으로 가요.'
+      : '칸이 2개가 되자 강남·관악의 새 소식은 칸 1로, 용산·은평의 새 소식은 칸 0으로 가고 옛 소식은 칸 0에 그대로 남아요.';
   }
 
   function arrive(target, t, sentCount) {
