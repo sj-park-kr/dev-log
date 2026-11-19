@@ -6,14 +6,27 @@
     const root = document.getElementById(id);
     if (!root) return null;
     const body = root.querySelector('.pp-body');
-    const label = el('label', '', caption);
-    const select = el('select', 'pp-btn');
-    select.style.color = 'var(--ink)';
-    select.style.backgroundColor = 'var(--surface)';
-    select.id = `${id}-choice`;
-    label.htmlFor = select.id;
-    options.forEach(([value, name]) => { const option = el('option', '', name); option.value = value; select.append(option); });
-    const stage = el('div', 'pp-stage');
+    const label = el('p', 'pp-sum', caption);
+    label.id = `${id}-choice-label`;
+    // select처럼 value와 change 이벤트를 주는 버튼 묶음이라 아래 코드는 그대로 써요.
+    const select = el('div', 'pp-choices');
+    select.setAttribute('role', 'group');
+    select.setAttribute('aria-labelledby', label.id);
+    select.value = options[0][0];
+    options.forEach(([value, name]) => {
+      const button = el('button', 'pp-btn', name);
+      button.type = 'button';
+      button.dataset.value = value;
+      button.setAttribute('aria-pressed', String(value === select.value));
+      button.addEventListener('click', () => {
+        if (select.value === value) return;
+        select.value = value;
+        select.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+        select.dispatchEvent(new Event('change'));
+      });
+      select.append(button);
+    });
+    const stage = el('div', 'pp-stage pp-card');
     const source = el('span', 'pp-src', '주문 서비스');
     const shelf = el('div', 'pp-shelf');
     stage.append(source, shelf);
@@ -43,7 +56,7 @@
     }
     return { select, source, status, progress, node, fly, reset };
   }
-  const ack = setup('producer-acks', '저장 확인 기준 ', [['1', '리더만 확인 (acks=1)'], ['all', '리더와 다른 사본까지 확인 (acks=all)'], ['0', '응답 기다리지 않기 (acks=0)']]);
+  const ack = setup('producer-acks', '저장 확인 기준 ', [['1', '리더만 확인\n(acks=1)'], ['all', '리더와 다른 사본까지 확인\n(acks=all)'], ['0', '응답 기다리지 않기\n(acks=0)']]);
   if (ack) {
     const leader = ack.node('리더 건물 · 사본 1'), replica = ack.node('다른 사본 건물 · 사본 2');
     let step = 0, count = 0, timer;
