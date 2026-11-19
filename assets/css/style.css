@@ -268,6 +268,7 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 .dg text { font-size: 16px; fill: var(--ink); text-anchor: middle; dominant-baseline: middle; }
 .dg .small { font-size: 13px; fill: var(--muted); }
 .dg .chip { font-size: 13px; }
+.dg .mono { font-family: ui-monospace, Consolas, monospace; }
 .dg .label { text-anchor: start; font-size: 15px; font-weight: 700; }
 .dg .alert { font-size: 13px; fill: var(--bad-line); }
 .dg .box { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
