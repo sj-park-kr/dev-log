@@ -6,6 +6,7 @@ date: 2026-11-15 13:00:00 +0900
 series: kafka
 episode: 2
 summary: "파티션은 같은 팀이 나눠 읽는 토픽 안의 칸이에요. 같은 키의 소식은 같은 칸에 모이지만 칸 수를 늘리면 새 소식의 목적지가 바뀔 수 있어요."
+youtube: KgLt0RLMcHM
 ---
 
 <div class="lesson lesson-hierarchy">
