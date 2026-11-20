@@ -37,79 +37,18 @@
     });
   }
 
-  let onFinish = null;
-  function settle(next, duration = 420, done = null) {
+  function settle(next, duration = 420) {
     cancelAnimationFrame(frame);
-    if (onFinish) onFinish(false); // A drag, wheel or key cut the previous spin short.
-    onFinish = done;
     target = Math.round(next);
     const start = position;
     const started = performance.now();
-    const ease = duration > 1000 ? 4 : 3;
     function animate(now) {
       const progress = reducedMotion.matches ? 1 : Math.min((now - started) / duration, 1);
-      position = start + (target - start) * (1 - Math.pow(1 - progress, ease));
+      position = start + (target - start) * (1 - Math.pow(1 - progress, 3));
       render();
       if (progress < 1) frame = requestAnimationFrame(animate);
-      else if (onFinish) { const finish = onFinish; onFinish = null; finish(true); }
     }
     frame = requestAnimationFrame(animate);
-  }
-
-  const lever = document.querySelector('.series-lever');
-  const gachaResult = document.getElementById('series-gacha-result');
-  if (lever) {
-    const ready = cards.filter(card => Number(card.dataset.hasPosts) > 0);
-    const pool = ready.length ? ready : cards;
-    const PULL_DISTANCE = 110; // px of downward drag for a full pull
-    const MAX_ANGLE = 115; // degrees the arm swings toward the viewer
-    let pull = null;
-    lever.hidden = false;
-    // CSS turns --lever-angle into a 3D swing; .is-dragging turns off the spring transition.
-    const setArm = (angle, springBack) => {
-      lever.classList.toggle('is-dragging', !springBack);
-      lever.style.setProperty('--lever-angle', `${angle}deg`);
-    };
-    function endPull(event) {
-      if (!pull || event.pointerId !== pull.id) return;
-      pull = null;
-      setArm(0, true); // let go early: the lever springs back up
-    }
-    lever.addEventListener('pointerdown', event => {
-      if (!event.isPrimary || event.button !== 0) return;
-      lever.setPointerCapture(event.pointerId);
-      pull = { id: event.pointerId, y: event.clientY };
-    });
-    lever.addEventListener('pointermove', event => {
-      if (!pull || event.pointerId !== pull.id) return;
-      const progress = Math.min(1, Math.max(0, (event.clientY - pull.y) / PULL_DISTANCE));
-      setArm(progress * MAX_ANGLE, false);
-      if (progress === 1) { endPull(event); spin(); }
-    });
-    lever.addEventListener('pointerup', endPull);
-    lever.addEventListener('pointercancel', endPull);
-    // Keyboard (Enter/Space) has no drag, so play the full pull for it.
-    lever.addEventListener('click', event => {
-      if (event.detail !== 0) return;
-      setArm(MAX_ANGLE, true);
-      setTimeout(() => setArm(0, true), 350);
-      spin();
-    });
-    function spin() {
-      const picked = pool[Math.floor(Math.random() * pool.length)];
-      const index = cards.indexOf(picked);
-      lever.disabled = true;
-      cards.forEach(card => card.classList.remove('is-picked'));
-      gachaResult.textContent = '';
-      // Three full turns, then forward to the picked card.
-      settle(position + wrap(index - position) + count * 3, 3200, completed => {
-        lever.disabled = false;
-        if (!completed) return;
-        picked.classList.add('is-picked');
-        gachaResult.textContent = `${picked.querySelector('h3').textContent} 시리즈가 뽑혔어요!`;
-        picked.focus({ preventScroll: true });
-      });
-    }
   }
 
   carousel.addEventListener('keydown', event => {

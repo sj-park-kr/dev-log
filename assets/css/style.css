@@ -59,34 +59,39 @@ img, video, svg { max-width: 100%; height: auto; }
 .eyebrow { color: var(--muted); font-size: 12px; font-weight: 700; letter-spacing: .06em; margin-bottom: 14px; }
 .hero h1 { font-size: clamp(32px, 5.4vw, 58px); font-weight: 900; line-height: 1.5; letter-spacing: -.065em; }
 .hero h1 span { color: var(--accent); }
+.hero h1 .hero-title-first { color: var(--ink); }
 .hero-description { margin: 24px 0 18px; max-width: 530px; color: var(--muted); font-size: 16px; }
 .text-link { display: inline-block; color: var(--accent); font-weight: 700; font-size: 13px; text-decoration: none; }
 .text-link span { margin-left: 5px; }
-.hero-doodle { display: none; }
+.hero-doodle { display: flex; align-items: center; position: absolute; right: 18px; bottom: 8px; z-index: -1; color: var(--line); font-family: ui-monospace, monospace; font-size: 84px; font-weight: 700; line-height: 1; transform: rotate(9deg); user-select: none; }
+.hero { padding-bottom: 120px; }
+.hero-mark { position: relative; display: inline-grid; color: var(--accent); }
+.hero-jump { display: inline-flex; align-items: center; }
+.hero-jump svg { width: .62em; height: .93em; overflow: visible; fill: currentColor; }
+.hero-curve { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-mark.is-animated { animation: hero-travel 4s cubic-bezier(.25, .1, .75, .9) both; }
+  .is-animated .hero-jump { animation: hero-hop 4s linear both; }
+  .is-animated .hero-curve { animation: hero-straighten 4s ease-in-out both; }
+}
+@keyframes hero-travel {
+  0%, 15% { transform: translate(var(--hero-start-x), var(--hero-start-y)); }
+  80%, 100% { transform: translate(0, 0); }
+}
+@keyframes hero-hop {
+  0%, 15% { transform: translateY(0) scale(.48); animation-timing-function: cubic-bezier(.33, .67, .67, 1); }
+  31.25% { transform: translateY(-45px) scale(.6); animation-timing-function: cubic-bezier(.33, 0, .67, .33); }
+  47.5% { transform: translateY(0) scale(.72); animation-timing-function: cubic-bezier(.33, .67, .67, 1); }
+  63.75% { transform: translateY(-45px) scale(.86); animation-timing-function: cubic-bezier(.33, 0, .67, .33); }
+  80%, 100% { transform: translateY(0) scale(1); }
+}
+@keyframes hero-straighten {
+  0%, 80% { d: path("M 6 12 C 6 1 26 1 26 12 C 26 20 16 20 16 30"); }
+  100% { d: path("M 16 5 C 16 5 16 13 16 17 C 16 22 16 25 16 30"); }
+}
 .home-section { padding: 28px 0 48px; }
 .section-heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 14px; margin-bottom: 25px; }
 .section-heading .eyebrow { margin-bottom: 6px; }
-/* 슬롯머신 레버: 손잡이가 축 위에서 아래로 넘어갔다 돌아온다 */
-.series-stage { position: relative; }
-/* 넓은 화면에서는 캐러셀 바깥 오른쪽 여백에, 좁으면 안쪽 가장자리에 둔다 */
-@media (min-width: 1240px) { .series-stage .series-lever { right: -72px; } }
-.series-lever { position: absolute; top: 50%; right: 6px; z-index: 3000; width: 44px; height: 230px; margin-top: -115px; /* 상자 한가운데(115px)가 축이고, 축이 카드 세로 중앙에 온다 */ padding: 0; border: 0; background: none; cursor: grab; touch-action: none; user-select: none; }
-.series-lever:active { cursor: grabbing; }
-/* 레버 툴팁: 레버 왼쪽 위에 말풍선으로 뜬다 */
-.series-lever::after { content: attr(data-tip); position: absolute; right: calc(100% + 12px); top: 0; width: max-content; max-width: 220px; padding: 9px 14px; border-radius: 12px 12px 2px 12px; background: var(--ink); color: var(--bg); font: inherit; font-size: 13px; font-weight: 700; line-height: 1.5; text-align: left; box-shadow: 0 8px 20px #0004; opacity: 0; transform: translateX(6px); transition: opacity .18s ease, transform .18s ease; pointer-events: none; }
-.series-lever:hover:not(:disabled)::after, .series-lever:focus-visible:not(:disabled)::after { opacity: 1; transform: none; }
-.series-lever:disabled { cursor: progress; }
-.series-lever:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 12px; }
-/* 축(받침)은 카드 세로 중앙, 막대는 그 위로 선다. 당기면 축을 중심으로 화면 앞쪽으로 넘어오며 원근 때문에 짧아지고 손잡이가 커진다. */
-.series-lever { --lever-angle: 0deg; perspective: 360px; perspective-origin: 50% 50%; transform-style: preserve-3d; }
-.lever-base { position: absolute; left: 50%; top: 93px; width: 30px; height: 44px; margin-left: -15px; border-radius: 10px; background: var(--ink); box-shadow: inset 0 -5px 0 #0005, 0 6px 12px #0004; }
-.lever-arm { position: absolute; left: 50%; top: 15px; width: 8px; height: 100px; margin-left: -4px; border-radius: 4px; background: linear-gradient(90deg, #8a939d, #e8ecf0, #8a939d); transform-origin: 50% 100%; transform-style: preserve-3d; transform: translateZ(14px) rotateX(calc(var(--lever-angle) * -1)); /* 받침 앞면에 붙어 처음부터 받침보다 앞에 있다 */ }
-.lever-knob { position: absolute; left: 50%; top: -15px; width: 30px; height: 30px; margin-left: -15px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ff8a8a, #d92c2c 60%, #a01818); box-shadow: 0 4px 8px #0005; transform: rotateX(var(--lever-angle)); /* 손잡이는 늘 정면을 본다 */ }
-.lever-arm, .lever-knob { transition: transform .5s cubic-bezier(.3, 1.5, .5, 1); }
-.series-lever.is-dragging .lever-arm, .series-lever.is-dragging .lever-knob { transition: none; }
-.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.series-card.is-picked { animation: series-picked 1.2s ease-out 2; }
-@keyframes series-picked { 0%, 100% { box-shadow: 0 18px 30px -18px #0007; } 40% { box-shadow: 0 0 0 6px #ffd54a, 0 0 36px 10px #ffd54aaa; } }
 h2 { font-size: 25px; font-weight: 800; }
 .series-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; }
 .series-card { display: flex; flex-direction: column; min-width: 0; padding: 28px; border-radius: 18px; background: var(--series-color); color: #fff; text-decoration: none; transition: transform .15s ease; }
@@ -155,7 +160,7 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
   .wrapper { width: min(1080px, calc(100% - 80px)); }
   .site-header { min-height: 104px; }
   .site-header nav { gap: 32px; }
-  .hero { padding: 90px 0 86px; }
+  .hero { padding: 90px 0 140px; }
   .hero-description { font-size: 18px; }
   .series-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .series-card { padding: 26px; }
@@ -165,8 +170,8 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
   .episode-nav .next { grid-column: 2; }
 }
 @media (min-width: 1000px) {
-  .hero-doodle { display: block; position: absolute; right: 30px; top: 110px; z-index: -1; color: var(--line); font-family: ui-monospace, monospace; font-size: 138px; font-weight: 700; transform: rotate(9deg); letter-spacing: -.18em; user-select: none; }
-  .hero-doodle span { color: var(--accent); }
+  .hero { padding-bottom: 86px; }
+  .hero-doodle { right: 30px; top: 110px; bottom: auto; font-size: 138px; line-height: 1.8; }
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) { color-scheme: dark; --bg: #171b21; --surface: #20262e; --ink: #eef0f3; --muted: #afb7c2; --line: #39414c; --accent: #8bbaff; --soft: #242e3b; --series-color: #185bba; }
@@ -175,8 +180,6 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 @media (prefers-reduced-motion: reduce) {
   .series-card { transition: none; }
   .series-card:hover { transform: none; }
-  .series-card.is-picked { animation: none; box-shadow: 0 0 0 6px #ffd54a; }
-  .lever-arm, .lever-knob { transition: none; }
 }
 
 /* ===== 개념 노트 글: 탭 + 슬라이드 + 그림. 틀은 _drafts/lesson-template.md ===== */
