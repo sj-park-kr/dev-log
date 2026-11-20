@@ -78,8 +78,7 @@ summary: "HTTP는 클라이언트와 서버가 함께 쓰는 편지 양식이에
 <text class="chip" x="200" y="126">응답</text>
 <text class="big" x="70" y="150">클라이언트</text><text class="small" x="70" y="170">브라우저 · 앱</text>
 <text class="big" x="330" y="150">서버</text><text class="small" x="330" y="170">일을 처리하는 컴퓨터</text>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M110,70 L288,70"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.9s" repeatCount="indefinite" path="M290,110 L112,110"/></circle>
+<circle class="packet" r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M110,70 L290,70 L290,110 L112,110"/></circle>
 </svg>
 <p class="point">HTTP에서는 보통 클라이언트가 먼저 요청을 보내고 서버가 그 요청에 응답해요.</p>
 <p class="explain">클라이언트는 브라우저나 앱처럼 일을 부탁하는 쪽으로 편지를 쓰는 사람이고 서버는 부탁을 받아 처리하는 답장 담당자예요. 둘이 메시지를 주고받는 방식을 미리 정해 둔 약속을 프로토콜이라고 하고 웹에서 쓰는 약속이 HTTP(HyperText Transfer Protocol)예요. 클라이언트가 HTTP 양식에 맞춰 요청을 보내면 서버는 같은 양식으로 응답을 돌려줘요. 서버가 먼저 알림을 보내야 할 때는 WebSocket(연결을 열어 두고 양쪽이 자유롭게 보내는 방식) 같은 별도 방법을 써요.</p>
@@ -264,8 +263,7 @@ summary: "HTTP는 클라이언트와 서버가 함께 쓰는 편지 양식이에
 <rect class="bad" x="205" y="136" width="185" height="96" rx="12"/>
 <text class="label center" x="297" y="156">5xx면 이쪽</text>
 <text class="chip" x="297" y="180">서버 로그</text><text class="chip" x="297" y="200">점검 · 과부하</text><text class="chip" x="297" y="220">서버 코드 오류</text>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M106,48 L290,48"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.9s" repeatCount="indefinite" path="M294,74 L110,74"/></circle>
+<circle class="packet" r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M106,48 L294,48 L294,74 L110,74"/></circle>
 </svg>
 <p class="point">상태 코드가 4로 시작하면 보낸 요청을 5로 시작하면 서버를 먼저 살펴요.</p>
 <p class="explain">AI가 만든 앱에서 오류가 나면 먼저 응답의 상태 코드부터 확인해요. 4xx는 서버가 편지를 읽어 보고 보낸 쪽 잘못으로 처리할 수 없다고 돌려보낸 것이라 보통 요청을 고치면 풀려요. 5xx는 요청이 제대로여도 서버가 처리하다 실패한 것이라 서버의 로그(서버가 남긴 작업 기록)를 봐야 해요.</p>
@@ -340,9 +338,7 @@ summary: "HTTP는 클라이언트와 서버가 함께 쓰는 편지 양식이에
 <text class="chip mono" x="200" y="96">POST /login</text>
 <text class="chip" x="200" y="146">200 + 확인표</text>
 <rect class="new" x="112" y="184" width="176" height="24" rx="5"/><text class="chip mono" x="200" y="196">GET /orders + 확인표</text>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="0s" repeatCount="indefinite" path="M64,110 L334,110"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="0.8s" repeatCount="indefinite" path="M336,160 L66,160"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="1.6s" repeatCount="indefinite" path="M64,210 L334,210"/></circle>
+<circle class="packet" r="5"><animateMotion dur="4.8s" repeatCount="indefinite" path="M64,110 L340,110 L340,160 L60,160 L60,210 L334,210"/></circle>
 </svg>
 <p class="point">HTTP는 요청 사이를 저절로 기억하지 않아서 클라이언트가 필요한 정보를 요청마다 함께 보내요.</p>
 <p class="explain">HTTP가 무상태(stateless)라는 말은 서버가 각 요청을 앞뒤 요청 없이 그 메시지만으로 이해할 수 있다는 뜻이에요. 명세(HTTP를 적은 공식 문서)는 같은 연결(두 컴퓨터가 이어 둔 통신 통로)로 온 두 요청이라도 같은 사용자의 것이라고 서버가 함부로 가정하면 안 된다고 정해요. 그래서 로그인할 때 서버가 건넨 확인표를 브라우저는 쿠키(서버가 맡긴 작은 기록을 저장했다가 다음 요청에 붙여 보내는 것)로 보관하고 앱은 토큰(로그인했다는 증명 문자열)으로 <code>Authorization</code> 헤더에 붙여 보내기도 해요. 쿠키와 토큰이 어떻게 만들어지고 지켜지는지는 다음 편에서 봐요.</p>

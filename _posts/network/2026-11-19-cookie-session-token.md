@@ -120,9 +120,7 @@ summary: "서버는 로그인할 때 한 번만 확인하고 확인표를 건네
 <text class="chip" x="214" y="150">확인표를 건네요</text>
 <circle class="new" cx="118" cy="200" r="13"/><use class="ic" href="#i-key" x="110" y="192" width="16" height="16"/>
 <text class="chip" x="214" y="200">다음부터는 확인표만</text>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="0s" repeatCount="indefinite" path="M64,118 L334,118"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="0.8s" repeatCount="indefinite" path="M336,168 L66,168"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="1.6s" repeatCount="indefinite" path="M64,218 L334,218"/></circle>
+<circle class="packet" r="5"><animateMotion dur="4.8s" repeatCount="indefinite" path="M64,118 L340,118 L340,168 L60,168 L60,218 L334,218"/></circle>
 </svg>
 <p class="point">담당자가 처음 한 번만 비밀번호를 확인하고 확인표를 건네면 다음 편지부터는 확인표만 넣으면 돼요.</p>
 <p class="explain">편지 쓴 사람은 처음 한 통에서 이름과 비밀번호로 자기가 누구인지 밝혀요. 담당자는 맞는지 확인한 뒤 이 사람만 쓸 확인표를 만들어 답장에 넣어 줘요. 이후에는 비밀번호가 오가지 않아서 엿볼 기회도 담당자의 확인 수고도 줄어요.</p>
@@ -145,8 +143,7 @@ summary: "서버는 로그인할 때 한 번만 확인하고 확인표를 건네
 <text class="chip" x="110" y="216">세션 ID</text><text class="small" x="110" y="234">서버 저장소에서 찾아요</text>
 <circle class="new" cx="290" cy="182" r="20"/><use class="ic" href="#i-stamp" x="277" y="169" width="26" height="26"/>
 <text class="chip" x="290" y="216">토큰</text><text class="small" x="290" y="234">서명을 검증해요</text>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M94,46 L302,46"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.9s" repeatCount="indefinite" path="M306,68 L98,68"/></circle>
+<circle class="packet" r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M94,46 L306,46 L306,68 L98,68"/></circle>
 </svg>
 <p class="point">로그인 요청 한 번에 비밀번호를 확인하고 그 뒤 요청에서는 서버가 건넨 확인표가 비밀번호를 대신해요.</p>
 <p class="explain">로그인은 아이디와 비밀번호처럼 나만 아는 정보로 내가 누구인지 서버에 밝히는 일이에요. 서버는 비밀번호가 맞으면 확인표를 만들어 응답에 담고 클라이언트는 그 뒤 요청마다 비밀번호 대신 확인표를 보내요. 확인표를 만드는 방식은 크게 서버가 기억해 두는 세션과 서버가 서명(서버만 찍을 수 있는 도장 같은 표시)해 건네는 토큰으로 나뉘고 이어지는 묶음에서 차례로 봐요. 1편에서 다음 편으로 미뤄 둔 쿠키는 확인표를 나르는 방법이고 토큰은 확인표의 한 종류예요.</p>
@@ -175,8 +172,7 @@ summary: "서버는 로그인할 때 한 번만 확인하고 확인표를 건네
 <rect class="kafka" x="96" y="184" width="284" height="26" rx="5"/>
 <text class="chip" x="108" y="197" style="text-anchor:start">4821번 · 민지 · 로그인했어요</text>
 <text class="chip" x="108" y="227" style="text-anchor:start">9037번 · 서준 · 로그인했어요</text>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M302,60 L86,60"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.9s" repeatCount="indefinite" path="M86,94 L302,94"/></circle>
+<circle class="packet" r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M302,60 L86,60 L86,94 L302,94"/></circle>
 </svg>
 <p class="point">담당자는 장부에 누가 몇 번인지 적어 두고 편지에 번호표가 오면 장부에서 그 번호를 찾아 누구인지 알아요.</p>
 <p class="explain">첫 편지에서 비밀번호를 확인한 담당자는 장부 빈 줄에 번호와 이름을 적고 같은 번호가 적힌 번호표를 건네요. 번호표에는 이름이 없고 번호만 있어서 번호표만 봐서는 누구 것인지 알 수 없어요. 장부는 담당자만 갖고 있으니 번호를 맞춰 볼 수 있는 것도 담당자뿐이에요.</p>
@@ -201,8 +197,7 @@ summary: "서버는 로그인할 때 한 번만 확인하고 확인표를 건네
 <rect class="kafka" x="180" y="150" width="200" height="26" rx="5"/>
 <text class="chip mono" x="190" y="163" style="text-anchor:start">8f3kq9…</text><text class="chip" x="262" y="163" style="text-anchor:start">민지 · 로그인함</text>
 <text class="chip mono" x="190" y="199" style="text-anchor:start">p2xm7a…</text><text class="chip" x="262" y="199" style="text-anchor:start">서준 · 로그인함</text>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M92,40 L306,40"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.9s" repeatCount="indefinite" path="M306,64 L92,64"/></circle>
+<circle class="packet" r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M92,40 L306,40 L306,64 L92,64"/></circle>
 </svg>
 <p class="point">세션 방식에서는 사용자 정보를 서버가 저장소에 두고 클라이언트는 아무 뜻 없는 세션 ID만 들고 다녀요.</p>
 <p class="explain">세션(session)은 로그인한 사용자의 상태를 서버가 기억해 두는 것으로 비유의 장부에 해당해요. 로그인에 성공하면 서버는 남이 추측하기 어려운 무작위 값으로 세션 ID를 새로 만들고 저장소에 그 사용자의 정보와 짝지어 적어요. 요청에 세션 ID가 오면 서버는 저장소에서 같은 ID를 찾아 누구의 요청인지 알아내요. 로그아웃하면 서버가 저장소에서 그 줄을 지워서 같은 세션 ID가 다시 와도 더는 알아보지 않아요.</p>
@@ -234,9 +229,7 @@ summary: "서버는 로그인할 때 한 번만 확인하고 확인표를 건네
 <text class="small" x="22" y="192">보관</text>
 <rect class="new" x="104" y="184" width="192" height="24" rx="5"/><text class="chip mono" x="200" y="196">Cookie: sid=8f3kq9…</text>
 <text class="small mono" x="200" y="234">GET /orders</text>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="0s" repeatCount="indefinite" path="M64,110 L334,110"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="0.8s" repeatCount="indefinite" path="M336,166 L66,166"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.2s" begin="1.6s" repeatCount="indefinite" path="M64,216 L334,216"/></circle>
+<circle class="packet" r="5"><animateMotion dur="4.8s" repeatCount="indefinite" path="M64,110 L340,110 L340,166 L60,166 L60,216 L334,216"/></circle>
 </svg>
 <p class="point">서버가 Set-Cookie 헤더로 세션 ID를 건네면 브라우저가 쿠키로 저장해 두고 조건에 맞는 다음 요청의 Cookie 헤더에 알아서 붙여요.</p>
 <p class="explain">쿠키(cookie)는 서버가 응답에 실어 보낸 <code>이름=값</code> 꼴의 작은 기록을 브라우저가 저장해 둔 것으로 비유에서 번호표(세션 ID)를 넣어 두는 주머니예요. 서버는 쿠키와 함께 어느 사이트의 어떤 주소로 언제까지 보낼지 같은 조건을 정할 수 있고 브라우저는 요청을 보낼 때 조건에 맞는 쿠키를 골라 <code>Cookie</code> 헤더에 이름과 값만 실어요. 덕분에 앱 코드가 세션 ID를 직접 챙기지 않아도 로그인이 이어져요. 쿠키는 확인표를 나르는 방법이고 세션은 서버가 기억하는 방법이라서 둘은 보통 함께 쓰여요.</p>
@@ -402,8 +395,7 @@ summary: "서버는 로그인할 때 한 번만 확인하고 확인표를 건네
 <text class="chip" x="64" y="168" style="text-anchor:start">세션은 로그아웃 때 서버에서 지워요</text>
 <circle class="kafka" cx="40" cy="198" r="14"/><use class="ic" href="#i-clock" x="31" y="189" width="18" height="18"/>
 <text class="chip" x="64" y="198" style="text-anchor:start">토큰은 만료 시각을 짧게 잡아요</text>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M82,44 L306,44"/></circle>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0.9s" repeatCount="indefinite" path="M306,68 L82,68"/></circle>
+<circle class="packet" r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M82,44 L306,44 L306,68 L82,68"/></circle>
 </svg>
 <p class="point">서버는 확인표가 유효한지만 볼 뿐 누가 보냈는지는 가리지 못해서 유효한 세션 ID나 토큰을 가진 사람은 그 사용자 행세를 할 수 있어요.</p>
 <p class="explain">남의 세션 ID나 토큰을 손에 넣어 그 사용자인 척 요청하는 공격자의 수법을 세션 하이재킹(hijacking·가로채기)이라고 해요. 브라우저에서 쿠키만 지워서는 공격자가 이미 베껴 간 세션 ID가 서버 저장소에 남아 계속 통하니까 서버가 저장소에서 지워야 해요. 로그인 전에도 서버는 방문자에게 세션 ID를 줄 수 있어서 로그인 때 새로 만들어 주는 것도 공격자가 미리 심어 둔 ID가 그대로 로그인 상태가 되는 일을 막기 위해서예요. 토큰은 서버가 기억하지 않아 지울 수 없으니 훔쳐 가도 오래 쓰지 못하게 짧은 만료가 필요해요.</p>
