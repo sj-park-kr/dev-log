@@ -4,6 +4,7 @@
 | 작업 | 모델 | 비고 |
 |---|---|---|
 | 글 작성·수정 | Opus (`model: "opus"`) | 본문 구성, 비유, 슬라이드 문장, 검토 지적을 반영해 본문을 고치는 일 포함 |
+| 영상 제작 | Opus (`model: "opus"`, effort `xhigh`) | 최소 `high`. 자세한 내용은 [영상 제작과 유튜브 업로드](12-youtube-video.md) |
 | 자료 조사 | Sonnet (`model: "sonnet"`) | 공식 문서·릴리스 노트·날짜·버전·기본값 확인. 조사 결과는 [사실 확인](07-fact-checking.md) 기준으로 출처와 함께 보고하게 한다 |
 | 초보자 페르소나 검토 | Sonnet (`model: "sonnet"`) | [초보자 페르소나 검토](08-review.md) |
 

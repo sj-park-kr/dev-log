@@ -18,6 +18,9 @@ exclude:
   - CLAUDE.md
   - AGENTS.md
   - docs/
+  - node_modules/
+  - package.json
+  - package-lock.json
 
 locale: ko_KR
 author:

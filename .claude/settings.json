@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(_motion/client_secret*)",
+      "Read(_motion/youtube-token*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Grep|Glob|Edit|Write|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/block-secrets.mjs"
+          }
+        ]
+      }
+    ]
+  }
+}

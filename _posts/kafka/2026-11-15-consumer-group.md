@@ -16,6 +16,7 @@ summary: "같은 팀은 칸을 나눠 맡고 다른 팀은 따로 읽어요. 팀
 <symbol id="i-warehouse" viewBox="0 0 24 24"><path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/></symbol>
 <symbol id="i-user-round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
 <symbol id="i-shelving-unit" viewBox="0 0 24 24"><path d="M12 12V9a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/><path d="M16 20v-3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/><path d="M20 22V2"/><path d="M4 12h16"/><path d="M4 20h16"/><path d="M4 2v20"/><path d="M4 4h16"/></symbol>
+<symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
 <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></symbol>
 </defs>
 </svg>
@@ -52,24 +53,26 @@ summary: "같은 팀은 칸을 나눠 맡고 다른 팀은 따로 읽어요. 팀
 
 <section class="slide">
 <h3>실제로는: 파티션을 나눠야 여러 컨슈머가 함께 읽어요</h3>
-<svg class="dg" viewBox="0 0 400 325" role="img" aria-label="재고 그룹의 C1과 C2와 C3이 파티션 P0과 P1과 P2를 하나씩 맡는 그림">
-<rect class="line" x="245" y="5" width="148" height="303" rx="12"/>
-<text class="label center" x="319" y="25">재고 그룹</text>
-<circle class="new" cx="57" cy="62" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="44" width="36" height="36"/>
-<text class="chip" x="57" y="110">P0(칸 0)</text>
-<path class="line" d="M87,62 L288,62"/>
-<circle class="new" cx="57" cy="145" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="127" width="36" height="36"/>
-<text class="chip" x="57" y="193">P1(칸 1)</text>
-<path class="line" d="M87,145 L288,163"/>
-<circle class="new" cx="57" cy="228" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="210" width="36" height="36"/>
-<text class="chip" x="57" y="276">P2(칸 2)</text>
-<path class="line" d="M87,228 L288,264"/>
-<circle class="box" cx="322" cy="62" r="28"/><use class="ic" href="#i-user-round" x="304" y="44" width="36" height="36"/>
-<text class="chip" x="322" y="110">C1(담당 1)</text>
-<circle class="box" cx="322" cy="163" r="28"/><use class="ic" href="#i-user-round" x="304" y="145" width="36" height="36"/>
-<text class="chip" x="322" y="211">C2(담당 2)</text>
-<circle class="box" cx="322" cy="264" r="28"/><use class="ic" href="#i-user-round" x="304" y="246" width="36" height="36"/>
-<text class="chip" x="322" y="312">C3(담당 3)</text>
+<svg class="dg" viewBox="0 0 400 325" role="img" aria-label="주문 토픽의 파티션 P0과 P1과 P2를 같은 재고 서비스 프로그램 세 개인 컨슈머 C1과 C2와 C3이 하나씩 읽는 그림">
+<rect class="line" x="5" y="5" width="150" height="315" rx="12"/>
+<text class="label center" x="80" y="25">주문 토픽</text>
+<rect class="line" x="245" y="5" width="148" height="315" rx="12"/>
+<text class="label center" x="319" y="25">재고 서비스</text>
+<circle class="new" cx="80" cy="62" r="28"/><use class="ic" href="#i-shelving-unit" x="62" y="44" width="36" height="36"/>
+<text class="chip" x="80" y="110">P0(칸 0)</text>
+<path class="line" d="M112,62 L288,62"/>
+<circle class="new" cx="80" cy="165" r="28"/><use class="ic" href="#i-shelving-unit" x="62" y="147" width="36" height="36"/>
+<text class="chip" x="80" y="213">P1(칸 1)</text>
+<path class="line" d="M112,165 L288,165"/>
+<circle class="new" cx="80" cy="268" r="28"/><use class="ic" href="#i-shelving-unit" x="62" y="250" width="36" height="36"/>
+<text class="chip" x="80" y="316">P2(칸 2)</text>
+<path class="line" d="M112,268 L288,268"/>
+<circle class="box" cx="322" cy="62" r="28"/><use class="ic" href="#i-server" x="304" y="44" width="36" height="36"/>
+<text class="chip" x="322" y="110">컨슈머 C1</text>
+<circle class="box" cx="322" cy="165" r="28"/><use class="ic" href="#i-server" x="304" y="147" width="36" height="36"/>
+<text class="chip" x="322" y="213">컨슈머 C2</text>
+<circle class="box" cx="322" cy="268" r="28"/><use class="ic" href="#i-server" x="304" y="250" width="36" height="36"/>
+<text class="chip" x="322" y="316">컨슈머 C3</text>
 </svg>
 <p class="point">컨슈머를 늘려 파티션을 나누면 여러 주문을 동시에 처리할 수 있어요.</p>
 <p class="explain">2편의 선반 칸인 <b>파티션</b>은 컨슈머에게 일을 나누는 단위이기도 해요. 같은 재고 서비스 프로그램을 한 컴퓨터에서든 여러 대에서든 여러 개 켜서 같은 그룹에 넣을 수 있어요. 각 컨슈머는 이 토픽을 읽겠다고 신청하는 <b>구독</b>을 하고 배정받은 파티션을 읽어요. 뒤에서는 일을 나누는 다른 방식도 짧게 살펴봐요.</p>
@@ -102,24 +105,24 @@ summary: "같은 팀은 칸을 나눠 맡고 다른 팀은 따로 읽어요. 팀
 
 <section class="slide">
 <h3>실제로는: 같은 group.id로 파티션을 나눠 맡아요</h3>
-<svg class="dg" viewBox="0 0 400 325" role="img" aria-label="재고 그룹의 C1과 C2와 C3이 파티션 P0과 P1과 P2를 하나씩 맡는 그림">
-<rect class="line" x="245" y="5" width="148" height="303" rx="12"/>
-<text class="label center" x="319" y="25">재고 그룹</text>
-<circle class="new" cx="57" cy="62" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="44" width="36" height="36"/>
-<text class="chip" x="57" y="110">P0</text>
-<path class="line" d="M87,62 L288,62"/>
-<circle class="new" cx="57" cy="145" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="127" width="36" height="36"/>
-<text class="chip" x="57" y="193">P1</text>
-<path class="line" d="M87,145 L288,163"/>
-<circle class="new" cx="57" cy="228" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="210" width="36" height="36"/>
-<text class="chip" x="57" y="276">P2</text>
-<path class="line" d="M87,228 L288,264"/>
-<circle class="box" cx="322" cy="62" r="28"/><use class="ic" href="#i-user-round" x="304" y="44" width="36" height="36"/>
-<text class="chip" x="322" y="110">C1</text>
-<circle class="box" cx="322" cy="163" r="28"/><use class="ic" href="#i-user-round" x="304" y="145" width="36" height="36"/>
-<text class="chip" x="322" y="211">C2</text>
-<circle class="box" cx="322" cy="264" r="28"/><use class="ic" href="#i-user-round" x="304" y="246" width="36" height="36"/>
-<text class="chip" x="322" y="312">C3</text>
+<svg class="dg" viewBox="0 0 400 335" role="img" aria-label="컨슈머 C1과 C2와 C3이 각자 설정에 같은 group.id inventory를 적어 한 그룹이 되고 파티션 P0과 P1과 P2를 하나씩 맡는 그림">
+<rect class="line" x="215" y="5" width="178" height="325" rx="12"/>
+<text class="label center" x="304" y="25">같은 group.id = 한 그룹</text>
+<circle class="new" cx="57" cy="60" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="42" width="36" height="36"/>
+<text class="chip" x="57" y="108">P0</text>
+<path class="line" d="M87,60 L272,60"/>
+<circle class="new" cx="57" cy="156" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="138" width="36" height="36"/>
+<text class="chip" x="57" y="204">P1</text>
+<path class="line" d="M87,156 L272,156"/>
+<circle class="new" cx="57" cy="252" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="234" width="36" height="36"/>
+<text class="chip" x="57" y="300">P2</text>
+<path class="line" d="M87,252 L272,252"/>
+<circle class="box" cx="304" cy="60" r="28"/><use class="ic" href="#i-server" x="286" y="42" width="36" height="36"/>
+<text class="chip" x="304" y="105">C1</text><text class="small mono" x="304" y="121">group.id=inventory</text>
+<circle class="box" cx="304" cy="156" r="28"/><use class="ic" href="#i-server" x="286" y="138" width="36" height="36"/>
+<text class="chip" x="304" y="201">C2</text><text class="small mono" x="304" y="217">group.id=inventory</text>
+<circle class="box" cx="304" cy="252" r="28"/><use class="ic" href="#i-server" x="286" y="234" width="36" height="36"/>
+<text class="chip" x="304" y="297">C3</text><text class="small mono" x="304" y="313">group.id=inventory</text>
 </svg>
 <p class="point">같은 그룹 안에서 파티션 하나는 한 컨슈머에게만 배정돼요.</p>
 <p class="explain"><code>group.id</code>는 컨슈머 프로그램 설정에 적는 그룹 이름으로 팀 이름표에 해당해요. 여러 컨슈머가 동시에 일하는 정도를 <b>병렬성</b>이라고 해요. 인원을 늘리면 여러 주문을 나눠 처리할 수 있지만 주문 한 건의 재고 반영 자체가 느린 문제까지 빨라지는 것은 아니에요.</p>

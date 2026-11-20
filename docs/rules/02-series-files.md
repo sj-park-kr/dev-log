@@ -13,6 +13,7 @@
   series: <시리즈id>
   episode: <숫자, 따옴표 없이>
   summary: "글 상단과 목록에 보일 한 줄 요약"
+  youtube: 영상ID   # 선택. 영상을 올린 뒤에만 넣는다. [영상 제작과 유튜브 업로드](12-youtube-video.md)
   ```
 - 이전 편/다음 편 링크는 `_layouts/post.html`이 자동으로 붙인다. 본문에 직접 쓰지 않는다.
 - 스타일은 `assets/css/style.css` 하나에 모은다. 색은 테마 변수(`--ink`, `--surface`, `--line`, `--muted`, `--hl`, `--bad`, `--good` …)만 쓴다. 다크 모드 때문이다.

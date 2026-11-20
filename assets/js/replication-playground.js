@@ -1,5 +1,5 @@
 ﻿// 설명용 파티션: 복제 계수 3, acks=all, min.insync.replicas=2.
-// 장애 감지와 따라잡기는 축약하며 ELR/unclean 선출은 재현하지 않아요.
+// 장애 감지와 따라잡기는 축약해요. 접수된 마지막 소식을 가진 건물만 리더가 될 수 있고(ELR과 비슷한 축약) unclean 선출은 재현하지 않아요.
 (() => {
   const NS = 'http://www.w3.org/2000/svg';
   const make = (tag, cls, content) => Object.assign(document.createElement(tag), { className: cls, textContent: content ?? '' });
@@ -7,7 +7,8 @@
     const leaderMode = root.dataset.mode === 'leader';
     const online = [true, true, true], ready = [true, true, true];
     const logs = [[], [], []];
-    let leader = 0, lastLeader = 0, sequence = 0;
+    const lastSeq = [0, 0, 0];
+    let leader = 0, sequence = 0, lastAccepted = 0;
     const timers = [null, null, null];
     const stage = document.createElementNS(NS, 'svg');
     stage.setAttribute('viewBox', '0 0 400 285');
@@ -60,7 +61,6 @@
     function elect() {
       if (leader !== -1 && online[leader] && ready[leader]) return;
       leader = online.findIndex((on, i) => on && ready[i]);
-      if (leader !== -1) lastLeader = leader;
     }
     function render(message) {
       const count = ready.filter((r, i) => r && online[i]).length;
@@ -77,7 +77,9 @@
       for (let i = 0; i < 2; i++) {
         const dest = followers[i];
         const direction = dest && dest[0] > target[0] ? 1 : -1;
-        routes.push(dest ? `M${dest[0] - 24 * direction},${dest[1] - 18} Q${(target[0] + dest[0]) / 2},110 ${target[0] + 24 * direction},${target[1] - 18}` : 'M0,0 L0,0');
+        // 먼 팔로워는 높고 바깥쪽으로, 가까운 팔로워는 낮게 그려 곡선이 서로 포개지게 해요.
+        const far = dest && Math.abs(dest[0] - target[0]) > 150;
+        routes.push(dest ? `M${dest[0] - 24 * direction},${dest[1] - 18} Q${(target[0] + dest[0]) / 2},${far ? 85 : 128} ${target[0] + (far ? 22 : 24) * direction},${target[1] - (far ? 24 : 18)}` : 'M0,0 L0,0');
         active[i + 1] = active[i + 1] && !!dest;
       }
       paths.forEach((path, i) => {
@@ -86,20 +88,21 @@
         packets[i][0].style.display = active[i] ? '' : 'none';
         if (packets[i][1].getAttribute('path') !== routes[i]) packets[i][1].setAttribute('path', routes[i]);
       });
-      if (message) status.textContent = message + (leader === -1 ? ` 이 모형은 뒤처진 건물을 리더로 세우지 않아 마지막 리더 B${lastLeader + 1}이 돌아오기를 기다려요(자세한 건 4묶음).` : leaderMode ? ` 다음 소식은 현재 리더인 건물 B${leader + 1}로 가요.` : ` 명단(ISR) ${count}곳 · ` + (count < 2 ? '최소 두 곳이 안 되어 접수를 거절해요.' : `건물 B${leader + 1}이 명단 전체의 복제 뒤 접수증을 줘요.`));
+      if (message) status.textContent = message + (leader === -1 ? ` 이 모형은 접수된 마지막 소식을 가진 건물만 리더로 세워서 그런 건물이 돌아오기를 기다려요(자세한 건 4묶음).` : leaderMode ? ` 다음 소식은 현재 리더인 건물 B${leader + 1}로 가요.` : ` 명단(ISR) ${count}곳 · ` + (count < 2 ? '최소 두 곳이 안 되어 접수를 거절해요.' : `건물 B${leader + 1}이 명단 전체의 복제 뒤 접수증을 줘요.`));
     }
     function catchUp(i) {
       if (!online[i] || ready[i]) return;
       if (leader === -1) {
-        // 모든 사본이 멈췄다면 마지막 리더가 돌아올 때까지 기다려요.
-        if (i !== lastLeader) {
-          render(`건물 B${i + 1}은 켜졌지만 소식을 가져올 리더가 없어요.`);
+        // 모든 사본이 멈췄다면 접수된 마지막 소식까지 가진 건물만 리더가 될 수 있어요.
+        if (lastSeq[i] !== lastAccepted) {
+          render(`건물 B${i + 1}은 켜졌지만 최신 소식이 없어 리더가 될 수 없고 가져올 리더도 없어요.`);
           return;
         }
         ready[i] = true;
         elect();
       } else {
         logs[i] = [...logs[leader]];
+        lastSeq[i] = lastSeq[leader];
         ready[i] = true;
       }
       render(`건물 B${i + 1}이 소식을 따라잡고 명단(ISR)에 돌아왔어요.`);
@@ -119,13 +122,15 @@
       if (online[i]) schedule(i);
     }));
     function send() {
-      sequence++;
+      // 거절된 소식은 번호를 올리지 않고 같은 소식을 다시 보내요.
+      const next = sequence + 1;
       const count = ready.filter((r, i) => r && online[i]).length;
-      if (leader === -1) stream.textContent = `직전 소식 ${sequence}: 리더가 없어 다시 보내기를 시도해요.`;
-      else if (count < 2) stream.textContent = `직전 소식 ${sequence}: 명단이 한 곳뿐이라 거절돼요. 가게는 다시 보내기를 시도해요.`;
+      if (leader === -1) stream.textContent = `소식 ${next}: 리더가 없어 접수되지 않았어요. 같은 소식을 다시 보내기를 시도해요.`;
+      else if (count < 2) stream.textContent = `소식 ${next}: 명단이 한 곳뿐이라 거절돼요. 가게는 같은 소식을 다시 보내기를 시도해요.`;
       else {
+        sequence = lastAccepted = next;
         online.forEach((on, i) => {
-          if (on && ready[i]) { logs[i].push(sequence); logs[i] = logs[i].slice(-3); }
+          if (on && ready[i]) { logs[i].push(sequence); logs[i] = logs[i].slice(-3); lastSeq[i] = sequence; }
         });
         stream.textContent = leaderMode ? `직전 소식 ${sequence}: 가게가 건물 B${leader + 1}에 맡기면 팔로워들이 가져와요 → 접수증` : `직전 소식 ${sequence}: 리더 접수 → 명단 ${count}곳이 모두 보관 → 접수증`;
       }

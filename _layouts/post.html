@@ -15,6 +15,9 @@ layout: default
     <h1>{{ page.title | escape }}</h1>
     <time class="post-meta" datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%Y.%m.%d' }}</time>
   </header>
+  {% if page.youtube %}
+    <div class="post-video"><iframe src="https://www.youtube-nocookie.com/embed/{{ page.youtube | escape }}" title="{{ page.title | escape }} 영상" loading="lazy" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe></div>
+  {% endif %}
   {% if page.summary and page.summary != empty %}
     <aside class="summary" aria-label="한 줄 요약"><strong>한 줄 요약</strong><p>{{ page.summary | escape }}</p></aside>
   {% endif %}
