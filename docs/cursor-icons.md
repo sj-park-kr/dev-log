@@ -4,7 +4,7 @@
 
 로고마다 여백이 달라 크기가 들쭉날쭉하므로, 각 SVG의 `viewBox`를 실제 그려진 영역(투명하지 않은 부분)에 맞춰 정사각형으로 잘라 긴 변이 32px을 거의 채우게 한다(약 4% 여백). 이미지 내용은 건드리지 않는다. 새 로고를 추가할 때도 같은 방식으로 맞춘다.
 
-기본 커서 크기는 32×32이며(메뉴의 슬라이더로 24~64px 사이에서 바꿀 수 있고 `localStorage`에 저장한다) 원본의 비율·색상·투명도를 유지한다. 색상 필터, 밝기 보정, 반투명 효과, 배경 또는 테두리를 추가하지 않는다. PNG 배포본은 원본을 SVG의 data URL로 포함해 크기만 지정한다.
+기본 커서 크기는 32×32이며(메뉴의 슬라이더로 24~64px 사이에서 바꿀 수 있고 `localStorage`에 저장한다) 원본의 비율·색상·투명도를 유지한다. 색상 필터, 밝기 보정, 반투명 효과, 배경 또는 테두리를 추가하지 않는다. 다만 Helm은 다크 모드에서 잘 보이도록 흰 배경을 추가한다. PNG 배포본은 원본을 SVG의 data URL로 포함해 크기만 지정한다.
 
 선택한 로고는 OS의 커서 이미지 대신 페이지의 32×32 이미지로 표시한다. 메뉴와 동일한 파일을 그대로 사용하며 포인터 위치를 따라 이동한다. 메뉴 위에서도 보이도록 수동 popover로 최상위에 배치하고 마우스 이벤트는 통과시킨다. 로고 표시 중에는 링크·버튼·드래그 영역을 포함한 페이지 전체에서 기본 커서를 숨긴다. 기본 화살표를 선택하거나 포인터가 창을 벗어나면 브라우저의 커서로 돌아온다. Python 원본의 `pt` 크기는 96/72 배율로 픽셀 영역에 환산한다.
 
@@ -29,7 +29,7 @@
 | Svelte | [공식 브랜드 저장소 SVG](https://github.com/sveltejs/branding/blob/master/svelte-logo.svg) |
 | webpack | [공식 미디어 저장소 SVG](https://github.com/webpack/media/blob/master/logo/icon.svg) |
 | Vite | [공식 사이트 저장소 SVG](https://github.com/vitejs/vite/blob/main/docs/images/vite.svg) |
-| Helm | [CNCF 공식 아트워크 SVG](https://github.com/cncf/artwork/blob/main/projects/helm/icon/color/helm-icon-color.svg) |
+| Helm | [CNCF 공식 아트워크 SVG](https://github.com/cncf/artwork/blob/main/projects/helm/icon/color/helm-icon-color.svg) · 다크: 흰 배경 추가, 라이트: 원본 |
 | Argo | [CNCF 공식 아트워크 SVG](https://github.com/cncf/artwork/blob/main/projects/argo/icon/color/argo-icon-color.svg) |
 | Prometheus | [CNCF 공식 아트워크 SVG](https://github.com/cncf/artwork/blob/main/projects/prometheus/icon/color/prometheus-icon-color.svg) |
 | Grafana | [공식 저장소 SVG](https://github.com/grafana/grafana/blob/main/public/img/grafana_icon.svg) |
