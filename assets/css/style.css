@@ -270,6 +270,14 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 .lesson-hierarchy .slide h3::before { content: counter(slide-group) "-" counter(subslide); display: block; margin-bottom: 2px; color: var(--muted); font-size: 12px; letter-spacing: .1em; }
 .lesson-hierarchy .slide.end h3::before { color: inherit; opacity: .6; }
 
+/* 동화책 페이지: 큰 그림 + 큰 한 문장 + 번호 줄 */
+.storybook .slide svg { max-width: 560px; }
+.post-content .storybook .slide h3 { font-size: 22px; text-align: center; text-wrap: balance; }
+.storybook .steps { list-style: none; counter-reset: step; max-width: 440px; margin: 20px auto 0; padding: 0; }
+.storybook .steps li { counter-increment: step; display: flex; gap: 10px; align-items: baseline; margin: 8px 0; font-size: 17px; line-height: 1.6; }
+.storybook .steps li::before { content: counter(step); flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--hl-line); border-radius: 50%; background: var(--hl); color: var(--ink); font-size: 13px; font-weight: 700; }
+.storybook .more { margin: 14px 0 0; color: var(--muted); font-size: 14px; text-align: center; }
+
 /* 슬라이드 안 SVG 그림 */
 .dg text { font-size: 16px; fill: var(--ink); text-anchor: middle; dominant-baseline: middle; }
 .dg .small { font-size: 13px; fill: var(--muted); }
