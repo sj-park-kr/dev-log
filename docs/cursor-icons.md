@@ -24,6 +24,15 @@
 | GitHub | [공식 로고 페이지](https://github.com/logos)의 [로고 ZIP](https://brand.github.com/GitHub_Logos.zip), `GitHub_Invertocat_Black.svg` |
 | Python | [공식 로고 페이지](https://www.python.org/community/logos/)의 [python-logo-only.svg](https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/files/python-logo-only.svg) |
 | TypeScript | [공식 브랜드 페이지](https://www.typescriptlang.org/branding/)의 [디자인 자료 ZIP](https://www.typescriptlang.org/branding/typescript-design-assets.zip), `ts-logo-128.svg` |
+| Node.js | [공식 브랜드 페이지](https://nodejs.org/en/about/branding/)의 [육각형 로고 SVG](https://nodejs.org/static/logos/nodejsHex.svg) |
+| Vue | [공식 사이트 로고 SVG](https://vuejs.org/logo.svg) |
+| Svelte | [공식 브랜드 저장소 SVG](https://github.com/sveltejs/branding/blob/master/svelte-logo.svg) |
+| webpack | [공식 미디어 저장소 SVG](https://github.com/webpack/media/blob/master/logo/icon.svg) |
+| Vite | [공식 사이트 저장소 SVG](https://github.com/vitejs/vite/blob/main/docs/images/vite.svg) |
+| Helm | [CNCF 공식 아트워크 SVG](https://github.com/cncf/artwork/blob/main/projects/helm/icon/color/helm-icon-color.svg) |
+| Argo | [CNCF 공식 아트워크 SVG](https://github.com/cncf/artwork/blob/main/projects/argo/icon/color/argo-icon-color.svg) |
+| Prometheus | [CNCF 공식 아트워크 SVG](https://github.com/cncf/artwork/blob/main/projects/prometheus/icon/color/prometheus-icon-color.svg) |
+| Grafana | [공식 저장소 SVG](https://github.com/grafana/grafana/blob/main/public/img/grafana_icon.svg) |
 | React | [공식 사이트 저장소 SVG](https://raw.githubusercontent.com/reactjs/react.dev/main/public/images/brand/logo_dark.svg) |
 | Java | 다크: [공식 개발자 사이트](https://dev.java/)의 [로고 PNG](https://dev.java/assets/images/java-logo-vector.png) · 라이트: [Oracle Java 페이지](https://www.oracle.com/java/)의 [로고 PNG](https://www.oracle.com/a/ocom/img/rc30v1-java-se.png) |
 | JavaScript | [logo.js 저장소](https://github.com/voodootikigod/logo.js)의 `js.svg` (MIT). JavaScript는 공식 로고가 없어 사실상 표준으로 쓰는 이 로고를 사용 |
@@ -40,6 +49,6 @@
 | Lua | [공식 사이트 로고 PNG](https://www.lua.org/images/lua.png) · 흰 바탕이 있는 로고라 파란 원 부분만 원형으로 잘라 표시(작은 위성 원과 "the programming language" 글자 제외) |
 | Spring | [공식 사이트 SVG](https://spring.io/favicon.svg) |
 
-MSSQL 배포본의 흰색 바탕 경로 하나는 제거하고 로고 본체와 그라데이션은 그대로 유지한다. TypeScript의 파란 사각형, Redis의 빨간 사각형, Java의 흰색 부분 등 원본 로고에 포함된 요소는 유지한다. Dart PNG에도 "Dart" 글자가 들어 있어 아이콘 부분만 잘라 표시한다. C, C#, Elixir, Node.js는 정사각형에 쓸 만한 공식 로고를 찾지 못해 넣지 않았다. Java PNG에는 "Java" 글자가 함께 들어 있어 컵이 작게 보이므로, `viewBox`로 컵 부분만 잘라 표시한다. dev.java 로고는 컵이 흰색이라 라이트 테마에서는 Oracle의 청록색 로고(`java-light.svg`)로 바꿔 표시한다.
+MSSQL 배포본의 흰색 바탕 경로 하나는 제거하고 로고 본체와 그라데이션은 그대로 유지한다. TypeScript의 파란 사각형, Redis의 빨간 사각형, Java의 흰색 부분 등 원본 로고에 포함된 요소는 유지한다. Dart PNG에도 "Dart" 글자가 들어 있어 아이콘 부분만 잘라 표시한다. C, C#, Elixir는 정사각형에 쓸 만한 공식 로고를 찾지 못해 넣지 않았다. Java PNG에는 "Java" 글자가 함께 들어 있어 컵이 작게 보이므로, `viewBox`로 컵 부분만 잘라 표시한다. dev.java 로고는 컵이 흰색이라 라이트 테마에서는 Oracle의 청록색 로고(`java-light.svg`)로 바꿔 표시한다.
 
 Git 로고는 Jason Long의 작품이며 [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)으로 배포된다. 각 로고와 상표의 권리는 해당 권리자에게 있다.
