@@ -6,6 +6,7 @@ date: 2026-11-15 14:00:00 +0900
 series: kafka
 episode: 4
 summary: "같은 팀은 칸을 나눠 맡고 다른 팀은 따로 읽어요. 팀원이 바뀌면 담당을 다시 나누고 커밋한 위치에서 이어 가요."
+youtube: g97ZCCTyKf0
 ---
 
 <div class="lesson lesson-hierarchy">
