@@ -9,313 +9,444 @@ summary: "같은 팀은 칸을 나눠 맡고 다른 팀은 따로 읽어요. 팀
 youtube: g97ZCCTyKf0
 ---
 
-<div class="lesson lesson-hierarchy">
+<div class="lesson lesson-hierarchy storybook">
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
 <defs>
-<!-- 아이콘 원본: https://cdn.jsdelivr.net/npm/lucide-static@1.25.0/icons/ (ISC). 라이선스: assets/icons/LICENSE-lucide.txt. -->
+<!-- 아이콘 원본: https://cdn.jsdelivr.net/npm/lucide-static@1.25.0/icons/ (ISC). 라이선스: assets/icons/LICENSE-lucide.txt. 공통 사물은 Kafka 1~3편과 같은 아이콘이며 장부(notebook-pen), 시계(timer), 사무실(clipboard-list)을 추가. -->
 <symbol id="i-warehouse" viewBox="0 0 24 24"><path d="M18 21V10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v11"/><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 1.132-1.803l7.95-3.974a2 2 0 0 1 1.837 0l7.948 3.974A2 2 0 0 1 22 8z"/><path d="M6 13h12"/><path d="M6 17h12"/></symbol>
+<symbol id="i-package" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></symbol>
 <symbol id="i-user-round" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></symbol>
-<symbol id="i-shelving-unit" viewBox="0 0 24 24"><path d="M12 12V9a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/><path d="M16 20v-3a1 1 0 0 0-1-1h-2a1 1 0 0 0-1 1v3"/><path d="M20 22V2"/><path d="M4 12h16"/><path d="M4 20h16"/><path d="M4 2v20"/><path d="M4 4h16"/></symbol>
-<symbol id="i-server" viewBox="0 0 24 24"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><path d="M6 6h.01"/><path d="M6 18h.01"/></symbol>
 <symbol id="i-notebook-pen" viewBox="0 0 24 24"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></symbol>
+<symbol id="i-clipboard-list" viewBox="0 0 24 24"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></symbol>
+<symbol id="i-timer" viewBox="0 0 24 24"><line x1="10" x2="14" y1="2" y2="2"/><line x1="12" x2="15" y1="14" y2="11"/><circle cx="12" cy="14" r="8"/></symbol>
 </defs>
 </svg>
 
-<div class="intro">
-<p class="q">읽는 서비스를 늘리면 쌓인 주문을 더 빨리 처리할 수 있을까요?</p>
-<p>3편에서는 주문 서비스가 소식을 안전하게 보내는 쪽을 봤어요. 이제 읽는 쪽의 차례예요. 1편에서 만난 재고 팀도 주문이 많아지면 담당자 한 명으로는 재고 처리 속도를 따라가기 어려워요.</p>
-<p>나눌 파티션이 남아 있다면 컨슈머를 늘려 여러 주문을 더 빨리 처리할 수 있어요. 이번에는 이미 본 <b>컨슈머 그룹</b>이 파티션을 어떻게 나누는지 살펴봐요. 컨슈머를 늘려도 효과가 없는 경우와 담당 변경 때 이어 읽는 방법을 이해할 수 있어요.</p>
+<div class="slide-group">
+<h2 class="slide-group-title">문제: 혼자 읽으면 밀리고 멈춰요</h2>
+
+<section class="slide">
+<h3>한 명이 세 칸을 모두 맡으면 일이 밀려요</h3>
+<svg class="dg" viewBox="0 0 400 250" role="img" aria-label="주문 선반(토픽)의 칸 0, 칸 1, 칸 2에 상자가 쌓여 있고 담당자(컨슈머) 한 명이 세 칸을 모두 돌아가며 읽느라 바쁜 그림">
+<defs><marker id="cg1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="8" y="8" width="222" height="234" rx="12"/>
+<text class="label center" x="119" y="28">주문 선반 (토픽)</text>
+<text class="chip" x="40" y="72">칸 0</text>
+<circle class="new" cx="96" cy="72" r="18"/><use class="ic" href="#i-package" x="83" y="59" width="26" height="26"/>
+<circle class="new" cx="146" cy="72" r="18"/><use class="ic" href="#i-package" x="133" y="59" width="26" height="26"/>
+<circle class="new" cx="196" cy="72" r="18"/><use class="ic" href="#i-package" x="183" y="59" width="26" height="26"/>
+<text class="chip" x="40" y="138">칸 1</text>
+<circle class="new" cx="96" cy="138" r="18"/><use class="ic" href="#i-package" x="83" y="125" width="26" height="26"/>
+<circle class="new" cx="146" cy="138" r="18"/><use class="ic" href="#i-package" x="133" y="125" width="26" height="26"/>
+<circle class="new" cx="196" cy="138" r="18"/><use class="ic" href="#i-package" x="183" y="125" width="26" height="26"/>
+<text class="chip" x="40" y="204">칸 2</text>
+<circle class="new" cx="96" cy="204" r="18"/><use class="ic" href="#i-package" x="83" y="191" width="26" height="26"/>
+<circle class="new" cx="146" cy="204" r="18"/><use class="ic" href="#i-package" x="133" y="191" width="26" height="26"/>
+<circle class="new" cx="196" cy="204" r="18"/><use class="ic" href="#i-package" x="183" y="191" width="26" height="26"/>
+<path class="line" d="M294,112 L222,78" marker-end="url(#cg1)"/>
+<path class="line" d="M292,130 L222,138" marker-end="url(#cg1)"/>
+<path class="line" d="M294,148 L222,198" marker-end="url(#cg1)"/>
+<circle class="bad" cx="330" cy="130" r="36"/><use class="ic" href="#i-user-round" x="306" y="106" width="48" height="48"/>
+<text class="big" x="330" y="194">담당자</text><text class="small" x="330" y="214">컨슈머</text>
+</svg>
+<ol class="steps">
+<li>담당자(컨슈머) 한 명이 세 칸(파티션)을 돌며 읽어요</li>
+<li>주문 처리가 느리면 다음 상자를 늦게 봐요</li>
+<li>일을 나눠 맡을 사람이 더 필요해요</li>
+</ol>
+<p class="more">칸(파티션)이 무엇인지는 <a href="{{ '/2026/11/15/topic-partition/' | relative_url }}">2편</a>에서 봐요</p>
+</section>
+
+<section class="slide">
+<h3>담당자가 멈추면 그 칸은 아무도 안 읽어요</h3>
+<svg class="dg" viewBox="0 0 400 270" role="img" aria-label="재고 팀의 담당 1, 2, 3이 칸 0, 1, 2를 하나씩 읽다가 칸 1을 맡은 담당 2가 멈춰 칸 1에만 상자가 많이 쌓이는 그림">
+<defs><marker id="cg2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="8" y="8" width="222" height="254" rx="12"/>
+<text class="label center" x="119" y="28">주문 선반 (토픽)</text>
+<text class="chip" x="40" y="72">칸 0</text>
+<circle class="new" cx="96" cy="72" r="18"/><use class="ic" href="#i-package" x="83" y="59" width="26" height="26"/>
+<text class="chip" x="40" y="138">칸 1</text>
+<circle class="bad" cx="90" cy="122" r="14"/><use class="ic" href="#i-package" x="80" y="112" width="20" height="20"/>
+<circle class="bad" cx="126" cy="122" r="14"/><use class="ic" href="#i-package" x="116" y="112" width="20" height="20"/>
+<circle class="bad" cx="162" cy="122" r="14"/><use class="ic" href="#i-package" x="152" y="112" width="20" height="20"/>
+<circle class="bad" cx="198" cy="122" r="14"/><use class="ic" href="#i-package" x="188" y="112" width="20" height="20"/>
+<circle class="bad" cx="90" cy="154" r="14"/><use class="ic" href="#i-package" x="80" y="144" width="20" height="20"/>
+<circle class="bad" cx="126" cy="154" r="14"/><use class="ic" href="#i-package" x="116" y="144" width="20" height="20"/>
+<circle class="bad" cx="162" cy="154" r="14"/><use class="ic" href="#i-package" x="152" y="144" width="20" height="20"/>
+<circle class="bad" cx="198" cy="154" r="14"/><use class="ic" href="#i-package" x="188" y="144" width="20" height="20"/>
+<text class="chip" x="40" y="204">칸 2</text>
+<circle class="new" cx="96" cy="204" r="18"/><use class="ic" href="#i-package" x="83" y="191" width="26" height="26"/>
+<text class="alert" x="119" y="248">칸 1이 쌓여요</text>
+<rect class="line" x="244" y="8" width="148" height="254" rx="12"/>
+<text class="label center" x="318" y="28">재고 팀</text>
+<path class="line" d="M270,72 L126,72" marker-end="url(#cg2)"/>
+<path class="line dash" d="M270,138 L224,138"/>
+<path class="line" d="M270,204 L126,204" marker-end="url(#cg2)"/>
+<circle class="kafka" cx="292" cy="72" r="22"/><use class="ic" href="#i-user-round" x="277" y="57" width="30" height="30"/><text class="chip" x="322" y="72" style="text-anchor:start">담당 1</text>
+<circle class="bad blink" cx="292" cy="138" r="22"/><use class="ic" href="#i-user-round" x="277" y="123" width="30" height="30"/><text class="alert" x="322" y="138" style="text-anchor:start">멈춤</text>
+<circle class="kafka" cx="292" cy="204" r="22"/><use class="ic" href="#i-user-round" x="277" y="189" width="30" height="30"/><text class="chip" x="322" y="204" style="text-anchor:start">담당 3</text>
+</svg>
+<ol class="steps">
+<li>팀(컨슈머 그룹) 안에서 칸 1은 담당 2만 맡아요</li>
+<li>다른 팀원은 칸 1을 대신 읽지 않아요</li>
+<li>누가 이어받고 어디부터 읽을지 정해야 해요</li>
+</ol>
+</section>
 </div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">일 나누기: 같은 업무를 맡은 서비스가 칸을 나눠 읽어요</h2>
+<h2 class="slide-group-title">팀: 같은 팀은 칸을 나눠 맡아요</h2>
 
 <section class="slide">
-<h3>한 사람이 여러 칸을 돌면 일이 밀려요</h3>
-<svg class="dg" viewBox="0 0 400 325" role="img" aria-label="주문 선반의 세 칸을 재고 팀의 담당자 한 명이 모두 맡아 읽는 그림">
-<rect class="line" x="245" y="5" width="148" height="303" rx="12"/>
-<text class="label center" x="319" y="25">재고 팀</text>
-<circle class="new" cx="57" cy="62" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="44" width="36" height="36"/>
-<text class="chip" x="57" y="110">칸 0</text>
-<path class="line" d="M87,62 L288,62"/>
-<circle class="new" cx="57" cy="145" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="127" width="36" height="36"/>
-<text class="chip" x="57" y="193">칸 1</text>
-<path class="line" d="M87,145 L288,62"/>
-<circle class="new" cx="57" cy="228" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="210" width="36" height="36"/>
-<text class="chip" x="57" y="276">칸 2</text>
-<path class="line" d="M87,228 L288,62"/>
-<circle class="box" cx="322" cy="62" r="28"/><use class="ic" href="#i-user-round" x="304" y="44" width="36" height="36"/>
-<text class="chip" x="322" y="110">담당 1</text>
+<h3>같은 팀 이름이면 칸을 나눠 맡아요</h3>
+<svg class="dg" viewBox="0 0 400 270" role="img" aria-label="같은 재고 프로그램 세 개가 모두 팀 이름 group.id=inventory를 적어 재고 팀(컨슈머 그룹)이 되고 칸 0, 1, 2를 한 명이 하나씩 맡는 그림">
+<defs><marker id="cg3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="8" y="8" width="200" height="254" rx="12"/>
+<text class="label center" x="108" y="28">주문 선반 (토픽)</text>
+<text class="chip" x="40" y="86">칸 0</text>
+<circle class="new" cx="96" cy="86" r="18"/><use class="ic" href="#i-package" x="83" y="73" width="26" height="26"/>
+<circle class="new" cx="146" cy="86" r="18"/><use class="ic" href="#i-package" x="133" y="73" width="26" height="26"/>
+<text class="chip" x="40" y="150">칸 1</text>
+<circle class="new" cx="96" cy="150" r="18"/><use class="ic" href="#i-package" x="83" y="137" width="26" height="26"/>
+<circle class="new" cx="146" cy="150" r="18"/><use class="ic" href="#i-package" x="133" y="137" width="26" height="26"/>
+<text class="chip" x="40" y="214">칸 2</text>
+<circle class="new" cx="96" cy="214" r="18"/><use class="ic" href="#i-package" x="83" y="201" width="26" height="26"/>
+<circle class="new" cx="146" cy="214" r="18"/><use class="ic" href="#i-package" x="133" y="201" width="26" height="26"/>
+<rect class="line" x="222" y="8" width="170" height="254" rx="12"/>
+<text class="label center" x="307" y="28">재고 팀</text><text class="small mono" x="307" y="48">group.id=inventory</text>
+<path class="line" d="M262,86 L176,86" marker-end="url(#cg3)"/>
+<path class="line" d="M262,150 L176,150" marker-end="url(#cg3)"/>
+<path class="line" d="M262,214 L176,214" marker-end="url(#cg3)"/>
+<circle class="kafka" cx="286" cy="86" r="22"/><use class="ic" href="#i-user-round" x="271" y="71" width="30" height="30"/><text class="chip" x="316" y="80" style="text-anchor:start">담당 1</text><text class="small" x="316" y="98" style="text-anchor:start">프로그램 1</text>
+<circle class="kafka" cx="286" cy="150" r="22"/><use class="ic" href="#i-user-round" x="271" y="135" width="30" height="30"/><text class="chip" x="316" y="144" style="text-anchor:start">담당 2</text><text class="small" x="316" y="162" style="text-anchor:start">프로그램 2</text>
+<circle class="kafka" cx="286" cy="214" r="22"/><use class="ic" href="#i-user-round" x="271" y="199" width="30" height="30"/><text class="chip" x="316" y="208" style="text-anchor:start">담당 3</text><text class="small" x="316" y="226" style="text-anchor:start">프로그램 3</text>
 </svg>
-<p class="point">읽는 담당자가 처리할 수 있는 양보다 소식이 빨리 오면 대기 시간이 길어져요.</p>
-<p class="explain">가게가 계속 주문 소식을 맡기는 동안 재고 담당은 읽은 주문의 재고를 반영해야 해요. 읽는 일만 빨라도 실제 업무가 느리면 다음 소식을 확인하는 시점이 늦어져요. 일을 나눌 사람이 필요해요.</p>
+<ol class="steps">
+<li>켜 둔 재고 프로그램 하나가 담당자 한 명이에요</li>
+<li>같은 이름(group.id)을 쓴 프로그램끼리 한 팀이에요</li>
+<li>팀 안에서 한 칸은 한 명에게만 배정돼요</li>
+</ol>
+<p class="more">참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Apache Kafka 4.1 KafkaConsumer: 그룹과 파티션 배정</a></p>
 </section>
 
 <section class="slide">
-<h3>실제로는: 파티션을 나눠야 여러 컨슈머가 함께 읽어요</h3>
-<svg class="dg" viewBox="0 0 400 325" role="img" aria-label="주문 토픽의 파티션 P0과 P1과 P2를 같은 재고 서비스 프로그램 세 개인 컨슈머 C1과 C2와 C3이 하나씩 읽는 그림">
-<rect class="line" x="5" y="5" width="150" height="315" rx="12"/>
-<text class="label center" x="80" y="25">주문 토픽</text>
-<rect class="line" x="245" y="5" width="148" height="315" rx="12"/>
-<text class="label center" x="319" y="25">재고 서비스</text>
-<circle class="new" cx="80" cy="62" r="28"/><use class="ic" href="#i-shelving-unit" x="62" y="44" width="36" height="36"/>
-<text class="chip" x="80" y="110">P0(칸 0)</text>
-<path class="line" d="M112,62 L288,62"/>
-<circle class="new" cx="80" cy="165" r="28"/><use class="ic" href="#i-shelving-unit" x="62" y="147" width="36" height="36"/>
-<text class="chip" x="80" y="213">P1(칸 1)</text>
-<path class="line" d="M112,165 L288,165"/>
-<circle class="new" cx="80" cy="268" r="28"/><use class="ic" href="#i-shelving-unit" x="62" y="250" width="36" height="36"/>
-<text class="chip" x="80" y="316">P2(칸 2)</text>
-<path class="line" d="M112,268 L288,268"/>
-<circle class="box" cx="322" cy="62" r="28"/><use class="ic" href="#i-server" x="304" y="44" width="36" height="36"/>
-<text class="chip" x="322" y="110">컨슈머 C1</text>
-<circle class="box" cx="322" cy="165" r="28"/><use class="ic" href="#i-server" x="304" y="147" width="36" height="36"/>
-<text class="chip" x="322" y="213">컨슈머 C2</text>
-<circle class="box" cx="322" cy="268" r="28"/><use class="ic" href="#i-server" x="304" y="250" width="36" height="36"/>
-<text class="chip" x="322" y="316">컨슈머 C3</text>
+<h3>업무가 다르면 팀 이름도 달라야 해요</h3>
+<svg class="dg" viewBox="0 0 400 310" role="img" aria-label="주문 A와 B를 두 방식으로 나란히 비교한 그림. 위는 재고와 알림이 같은 팀 이름을 써서 A는 재고만, B는 알림만 받아 알림이 A를 놓친다. 아래는 재고 팀과 알림 팀이 다른 팀 이름을 써서 두 팀 모두 A와 B를 받는다">
+<defs><marker id="cg4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="6" y="6" width="388" height="146" rx="12"/>
+<text class="label center" x="200" y="26">같은 팀 이름</text>
+<rect class="new" x="166" y="48" width="68" height="28" rx="6"/><text class="chip" x="200" y="62">주문 A</text>
+<rect class="new" x="166" y="98" width="68" height="28" rx="6"/><text class="chip" x="200" y="112">주문 B</text>
+<path class="line" d="M164,62 L84,82" marker-end="url(#cg4)"/>
+<path class="line" d="M236,112 L316,92" marker-end="url(#cg4)"/>
+<circle class="box" cx="60" cy="88" r="20"/><use class="ic" href="#i-user-round" x="46" y="74" width="28" height="28"/><text class="chip" x="60" y="124">재고</text><text class="small" x="60" y="142">한 팀</text>
+<circle class="bad" cx="340" cy="88" r="20"/><use class="ic" href="#i-user-round" x="326" y="74" width="28" height="28"/><text class="chip" x="340" y="124">알림</text><text class="small" x="340" y="142">한 팀</text>
+<text class="alert" x="200" y="144">칸을 나눠 맡아 일부만 받아요</text>
+<rect class="line" x="6" y="160" width="388" height="144" rx="12"/>
+<text class="label center" x="200" y="180">다른 팀 이름</text>
+<rect class="new" x="166" y="202" width="68" height="28" rx="6"/><text class="chip" x="200" y="216">주문 A</text>
+<rect class="new" x="166" y="252" width="68" height="28" rx="6"/><text class="chip" x="200" y="266">주문 B</text>
+<path class="line" d="M164,216 L84,236" marker-end="url(#cg4)"/>
+<path class="line" d="M164,266 L84,246" marker-end="url(#cg4)"/>
+<path class="line" d="M236,216 L316,236" marker-end="url(#cg4)"/>
+<path class="line" d="M236,266 L316,246" marker-end="url(#cg4)"/>
+<circle class="kafka" cx="60" cy="241" r="20"/><use class="ic" href="#i-user-round" x="46" y="227" width="28" height="28"/><text class="chip" x="60" y="278">재고 팀</text>
+<circle class="kafka" cx="340" cy="241" r="20"/><use class="ic" href="#i-user-round" x="326" y="227" width="28" height="28"/><text class="chip" x="340" y="278">알림 팀</text>
+<text class="small" x="200" y="296">두 팀 모두 다 받아요</text>
 </svg>
-<p class="point">컨슈머를 늘려 파티션을 나누면 여러 주문을 동시에 처리할 수 있어요.</p>
-<p class="explain">2편의 선반 칸인 <b>파티션</b>은 컨슈머에게 일을 나누는 단위이기도 해요. 같은 재고 서비스 프로그램을 한 컴퓨터에서든 여러 대에서든 여러 개 켜서 같은 그룹에 넣을 수 있어요. 각 컨슈머는 이 토픽을 읽겠다고 신청하는 <b>구독</b>을 하고 배정받은 파티션을 읽어요. 뒤에서는 일을 나누는 다른 방식도 짧게 살펴봐요.</p>
+<ol class="steps">
+<li>같은 팀이면 알림 쪽이 일부 주문을 못 받아요</li>
+<li>팀 이름이 다르면 팀마다 모든 주문을 읽어요</li>
+<li>주문을 복사하지 않고 같은 상자를 각자 읽어요</li>
+</ol>
+<p class="more">팀마다 읽은 자리를 따로 적는 그림은 <a href="{{ '/2026/11/15/why-kafka/' | relative_url }}">1편</a>에 있어요</p>
 </section>
 
 <section class="slide">
-<h3>팀에서 칸마다 담당자를 정해요</h3>
-<svg class="dg" viewBox="0 0 400 325" role="img" aria-label="재고 팀의 담당자 세 명이 주문 선반의 세 칸을 한 칸씩 나눠 맡는 그림">
-<rect class="line" x="245" y="5" width="148" height="303" rx="12"/>
-<text class="label center" x="319" y="25">재고 팀</text>
-<circle class="new" cx="57" cy="62" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="44" width="36" height="36"/>
-<text class="chip" x="57" y="110">칸 0</text>
-<path class="line" d="M87,62 L288,62"/>
-<circle class="new" cx="57" cy="145" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="127" width="36" height="36"/>
-<text class="chip" x="57" y="193">칸 1</text>
-<path class="line" d="M87,145 L288,163"/>
-<circle class="new" cx="57" cy="228" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="210" width="36" height="36"/>
-<text class="chip" x="57" y="276">칸 2</text>
-<path class="line" d="M87,228 L288,264"/>
-<circle class="box" cx="322" cy="62" r="28"/><use class="ic" href="#i-user-round" x="304" y="44" width="36" height="36"/>
-<text class="chip" x="322" y="110">담당 1</text>
-<circle class="box" cx="322" cy="163" r="28"/><use class="ic" href="#i-user-round" x="304" y="145" width="36" height="36"/>
-<text class="chip" x="322" y="211">담당 2</text>
-<circle class="box" cx="322" cy="264" r="28"/><use class="ic" href="#i-user-round" x="304" y="246" width="36" height="36"/>
-<text class="chip" x="322" y="312">담당 3</text>
+<h3>칸보다 사람이 많으면 남는 사람은 쉬어요</h3>
+<svg class="dg" viewBox="0 0 400 280" role="img" aria-label="주문 선반에 칸이 세 개인데 재고 팀에 담당자가 네 명이라 세 명은 칸을 하나씩 맡고 네 번째 담당자는 맡을 칸이 없어 쉬는 그림">
+<defs><marker id="cg5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="8" y="8" width="200" height="264" rx="12"/>
+<text class="label center" x="108" y="28">주문 선반 (토픽)</text>
+<text class="chip" x="40" y="70">칸 0</text>
+<circle class="new" cx="96" cy="70" r="18"/><use class="ic" href="#i-package" x="83" y="57" width="26" height="26"/>
+<circle class="new" cx="146" cy="70" r="18"/><use class="ic" href="#i-package" x="133" y="57" width="26" height="26"/>
+<text class="chip" x="40" y="130">칸 1</text>
+<circle class="new" cx="96" cy="130" r="18"/><use class="ic" href="#i-package" x="83" y="117" width="26" height="26"/>
+<circle class="new" cx="146" cy="130" r="18"/><use class="ic" href="#i-package" x="133" y="117" width="26" height="26"/>
+<text class="chip" x="40" y="190">칸 2</text>
+<circle class="new" cx="96" cy="190" r="18"/><use class="ic" href="#i-package" x="83" y="177" width="26" height="26"/>
+<circle class="new" cx="146" cy="190" r="18"/><use class="ic" href="#i-package" x="133" y="177" width="26" height="26"/>
+<rect class="line" x="222" y="8" width="170" height="264" rx="12"/>
+<text class="label center" x="307" y="28">재고 팀</text>
+<path class="line" d="M264,70 L176,70" marker-end="url(#cg5)"/>
+<path class="line" d="M264,130 L176,130" marker-end="url(#cg5)"/>
+<path class="line" d="M264,190 L176,190" marker-end="url(#cg5)"/>
+<circle class="kafka" cx="286" cy="70" r="20"/><use class="ic" href="#i-user-round" x="272" y="56" width="28" height="28"/><text class="chip" x="316" y="70" style="text-anchor:start">담당 1</text>
+<circle class="kafka" cx="286" cy="130" r="20"/><use class="ic" href="#i-user-round" x="272" y="116" width="28" height="28"/><text class="chip" x="316" y="130" style="text-anchor:start">담당 2</text>
+<circle class="kafka" cx="286" cy="190" r="20"/><use class="ic" href="#i-user-round" x="272" y="176" width="28" height="28"/><text class="chip" x="316" y="190" style="text-anchor:start">담당 3</text>
+<circle class="box" cx="286" cy="244" r="20"/><use class="ic" href="#i-user-round" x="272" y="230" width="28" height="28"/><text class="chip" x="316" y="236" style="text-anchor:start">담당 4</text><text class="small" x="316" y="254" style="text-anchor:start">쉬어요</text>
 </svg>
-<p class="point">같은 팀에서는 한 칸을 한 사람에게 맡겨 일을 나눠요.</p>
-<p class="explain">팀원이 제각각 읽기 시작하면 같은 주문을 각자 처리할 수 있어요. 팀은 담당할 범위를 먼저 정해 읽는 일이 겹치지 않게 해요. 다만 담당이 바뀌는 일인 <b>교대</b> 중에 이미 처리한 주문을 다시 읽는 문제는 따로 대비해야 해요.</p>
+<ol class="steps">
+<li>함께 읽는 사람 수는 칸 수까지예요</li>
+<li>쉬던 담당 4는 누가 나가면 그 칸을 이어받아요</li>
+<li>더 나눠 읽으려면 칸을 늘려야 해요</li>
+</ol>
+<p class="more">칸을 늘릴 때 조심할 점은 <a href="{{ '/2026/11/15/topic-partition/' | relative_url }}">2편</a>에서 봐요</p>
 </section>
 
 <section class="slide">
-<h3>실제로는: 같은 group.id로 파티션을 나눠 맡아요</h3>
-<svg class="dg" viewBox="0 0 400 335" role="img" aria-label="컨슈머 C1과 C2와 C3이 각자 설정에 같은 group.id inventory를 적어 한 그룹이 되고 파티션 P0과 P1과 P2를 하나씩 맡는 그림">
-<rect class="line" x="215" y="5" width="178" height="325" rx="12"/>
-<text class="label center" x="304" y="25">같은 group.id = 한 그룹</text>
-<circle class="new" cx="57" cy="60" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="42" width="36" height="36"/>
-<text class="chip" x="57" y="108">P0</text>
-<path class="line" d="M87,60 L272,60"/>
-<circle class="new" cx="57" cy="156" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="138" width="36" height="36"/>
-<text class="chip" x="57" y="204">P1</text>
-<path class="line" d="M87,156 L272,156"/>
-<circle class="new" cx="57" cy="252" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="234" width="36" height="36"/>
-<text class="chip" x="57" y="300">P2</text>
-<path class="line" d="M87,252 L272,252"/>
-<circle class="box" cx="304" cy="60" r="28"/><use class="ic" href="#i-server" x="286" y="42" width="36" height="36"/>
-<text class="chip" x="304" y="105">C1</text><text class="small mono" x="304" y="121">group.id=inventory</text>
-<circle class="box" cx="304" cy="156" r="28"/><use class="ic" href="#i-server" x="286" y="138" width="36" height="36"/>
-<text class="chip" x="304" y="201">C2</text><text class="small mono" x="304" y="217">group.id=inventory</text>
-<circle class="box" cx="304" cy="252" r="28"/><use class="ic" href="#i-server" x="286" y="234" width="36" height="36"/>
-<text class="chip" x="304" y="297">C3</text><text class="small mono" x="304" y="313">group.id=inventory</text>
+<h3>상자 단위로 나누는 공유 그룹도 있어요</h3>
+<svg class="dg" viewBox="0 0 400 250" role="img" aria-label="같은 칸 하나와 상자 세 개, 담당자 세 명을 좌우로 나란히 비교한 그림. 왼쪽 보통 팀(컨슈머 그룹)은 한 명이 세 상자를 모두 읽고 두 명은 쉰다. 오른쪽 공유 그룹(share group)은 세 명이 상자를 하나씩 나눠 읽는다">
+<defs><marker id="cg6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="6" y="6" width="190" height="238" rx="12"/>
+<text class="label center" x="101" y="28">컨슈머 그룹</text>
+<text class="small" x="101" y="46">칸</text><rect class="line dash" x="22" y="50" width="158" height="52" rx="8"/>
+<circle class="new" cx="56" cy="76" r="16"/><use class="ic" href="#i-package" x="45" y="65" width="22" height="22"/>
+<circle class="new" cx="101" cy="76" r="16"/><use class="ic" href="#i-package" x="90" y="65" width="22" height="22"/>
+<circle class="new" cx="146" cy="76" r="16"/><use class="ic" href="#i-package" x="135" y="65" width="22" height="22"/>
+<path class="line" d="M92,152 L60,96" marker-end="url(#cg6)"/>
+<path class="line" d="M101,150 L101,96" marker-end="url(#cg6)"/>
+<path class="line" d="M110,152 L142,96" marker-end="url(#cg6)"/>
+<circle class="box" cx="46" cy="176" r="20"/><use class="ic" href="#i-user-round" x="32" y="162" width="28" height="28"/><text class="chip" x="46" y="208">쉬어요</text>
+<circle class="kafka" cx="101" cy="176" r="20"/><use class="ic" href="#i-user-round" x="87" y="162" width="28" height="28"/>
+<circle class="box" cx="156" cy="176" r="20"/><use class="ic" href="#i-user-round" x="142" y="162" width="28" height="28"/><text class="chip" x="156" y="208">쉬어요</text>
+<text class="small" x="101" y="226">한 칸 = 한 명</text>
+<rect class="line" x="204" y="6" width="190" height="238" rx="12"/>
+<text class="label center" x="299" y="28">공유 그룹</text>
+<text class="small" x="299" y="46">칸</text><rect class="line dash" x="220" y="50" width="158" height="52" rx="8"/>
+<circle class="new" cx="254" cy="76" r="16"/><use class="ic" href="#i-package" x="243" y="65" width="22" height="22"/>
+<circle class="new" cx="299" cy="76" r="16"/><use class="ic" href="#i-package" x="288" y="65" width="22" height="22"/>
+<circle class="new" cx="344" cy="76" r="16"/><use class="ic" href="#i-package" x="333" y="65" width="22" height="22"/>
+<path class="line" d="M254,154 L254,96" marker-end="url(#cg6)"/>
+<path class="line" d="M299,154 L299,96" marker-end="url(#cg6)"/>
+<path class="line" d="M344,154 L344,96" marker-end="url(#cg6)"/>
+<circle class="kafka" cx="254" cy="176" r="20"/><use class="ic" href="#i-user-round" x="240" y="162" width="28" height="28"/>
+<circle class="kafka" cx="299" cy="176" r="20"/><use class="ic" href="#i-user-round" x="285" y="162" width="28" height="28"/>
+<circle class="kafka" cx="344" cy="176" r="20"/><use class="ic" href="#i-user-round" x="330" y="162" width="28" height="28"/>
+<text class="small" x="299" y="226">상자마다 나눠요</text>
 </svg>
-<p class="point">같은 그룹 안에서 파티션 하나는 한 컨슈머에게만 배정돼요.</p>
-<p class="explain"><code>group.id</code>는 컨슈머 프로그램 설정에 적는 그룹 이름으로 팀 이름표에 해당해요. 여러 컨슈머가 동시에 일하는 정도를 <b>병렬성</b>이라고 해요. 인원을 늘리면 여러 주문을 나눠 처리할 수 있지만 주문 한 건의 재고 반영 자체가 느린 문제까지 빨라지는 것은 아니에요.</p>
+<ol class="steps">
+<li>공유 그룹(share group)은 칸 대신 상자 단위로 나눠 맡겨요</li>
+<li>담당자는 상자마다 센터에 처리했다고 알려요</li>
+<li>Kafka 4.1에서는 아직 미리 보기 기능이에요</li>
+</ol>
+<p class="more">참고: <a href="https://kafka.apache.org/41/design/design/#share-groups">Apache Kafka 4.1: share group과 일반 그룹의 차이</a></p>
 </section>
-
-<section class="slide">
-<h3>이럴 땐 조심해요: 서로 다른 업무를 한 팀으로 묶지 않아요</h3>
-<table>
-<thead><tr><th>실수한 상황</th><th>빠질 수 있는 업무</th></tr></thead>
-<tbody>
-<tr><td>같은 group.id로 묶여 칸 0은 재고 서비스가 맡고 칸 1은 알림 서비스가 맡음</td><td>칸 0의 주문 A는 재고 서비스만 읽으므로 알림 처리가 빠질 수 있어요</td></tr>
-</tbody>
-</table>
-<p class="point">모든 주문이 필요한 두 업무에 같은 group.id를 쓰면 주문을 나눠 받게 돼요.</p>
-<p class="explain">모든 주문에 재고 반영과 알림 발송이 필요하다면 업무마다 다른 <code>group.id</code>를 써서 각각 전부 읽게 해요. 메시지를 두 벌 만드는 것이 아니라 같은 메시지를 각 그룹이 따로 읽는 거예요.</p>
-</section>
-
-<p>참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Apache Kafka 4.1 KafkaConsumer: 그룹과 파티션 배정</a></p>
 </div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">담당 변경: 인원이 달라지면 배정을 조정해요</h2>
+<h2 class="slide-group-title">교대: 사람이 바뀌면 칸을 다시 나눠요</h2>
 
 <section class="slide">
-<h3>사람이 드나들면 센터 사무실이 맡을 칸을 다시 정해요</h3>
-<svg class="dg" viewBox="0 0 400 325" role="img" aria-label="재고 팀의 담당 1이 칸 0과 칸 1을 맡고 담당 2가 칸 2를 맡는 그림">
-<rect class="line" x="245" y="5" width="148" height="303" rx="12"/>
-<text class="label center" x="319" y="25">재고 팀</text>
-<circle class="new" cx="57" cy="62" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="44" width="36" height="36"/>
-<text class="chip" x="57" y="110">칸 0</text>
-<path class="line" d="M87,62 L288,62"/>
-<circle class="new" cx="57" cy="145" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="127" width="36" height="36"/>
-<text class="chip" x="57" y="193">칸 1</text>
-<path class="line" d="M87,145 L288,62"/>
-<circle class="new" cx="57" cy="228" r="28"/><use class="ic" href="#i-shelving-unit" x="39" y="210" width="36" height="36"/>
-<text class="chip" x="57" y="276">칸 2</text>
-<path class="line" d="M87,228 L288,264"/>
-<circle class="box" cx="322" cy="62" r="28"/><use class="ic" href="#i-user-round" x="304" y="44" width="36" height="36"/>
-<text class="chip" x="322" y="110">담당 1</text>
-<circle class="box" cx="322" cy="264" r="28"/><use class="ic" href="#i-user-round" x="304" y="246" width="36" height="36"/>
-<text class="chip" x="322" y="312">담당 2</text>
+<h3>사무실이 팀원의 신호를 보고 칸을 정해요</h3>
+<svg class="dg" viewBox="0 0 400 210" role="img" aria-label="담당자(컨슈머)가 센터 사무실(그룹 코디네이터)에 살아 있다는 신호를 계속 보내고 센터에 읽기 요청(poll())을 하며 사무실은 담당자에게 맡을 칸을 알려 주는 양방향 그림. 사무실은 센터(브로커) 한 곳 안에서 맡는 역할이다">
+<defs><marker id="cg7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<path class="line" d="M108,70 L292,70" marker-end="url(#cg7)"/><text class="chip" x="170" y="58">살아 있어요</text>
+<path class="line" d="M108,100 L230,100" marker-end="url(#cg7)"/><text class="chip mono" x="170" y="90">poll()</text>
+<path class="line" d="M292,130 L108,130" marker-end="url(#cg7)"/><text class="chip" x="170" y="148">칸 0을 맡아요</text>
+<circle class="box" cx="70" cy="100" r="34"/><use class="ic" href="#i-user-round" x="48" y="78" width="44" height="44"/>
+<text class="big" x="70" y="158">담당자</text><text class="small" x="70" y="178">컨슈머</text>
+<rect class="line" x="236" y="10" width="158" height="190" rx="12"/>
+<use class="ic" href="#i-warehouse" x="246" y="18" width="22" height="22"/><text class="label" x="274" y="34">센터 (브로커)</text>
+<circle class="kafka" cx="316" cy="100" r="36"/><use class="ic" href="#i-clipboard-list" x="294" y="78" width="44" height="44"/>
+<text class="big" x="316" y="160">사무실</text><text class="small" x="316" y="180">그룹 코디네이터</text>
+<circle class="packet" r="5"><animateMotion dur="1.6s" repeatCount="indefinite" path="M108,70 L292,70"/></circle>
+<circle class="packet" r="5"><animateMotion dur="1.6s" begin="0.8s" repeatCount="indefinite" path="M292,130 L108,130"/></circle>
 </svg>
-<p class="point">팀원이 바뀌면 남은 사람과 새 사람이 칸을 나눠 맡아요.</p>
-<p class="explain">담당자가 사무실에 주기적으로 일하는 중이라고 알리다가 오래 응답하지 않으면 사무실은 그만둔 것으로 보고 칸을 다른 담당에게 넘길 수 있어요. 팀원이 들어오거나 나갈 때도 센터 사무실이 맡을 칸을 다시 정해요. 칸 수보다 사람이 많아지면 맡을 칸이 없어 쉬는 사람이 생기므로 더 늘려도 함께 처리할 양은 늘지 않아요.</p>
+<ol class="steps">
+<li>사무실(그룹 코디네이터)은 센터(브로커) 한 곳이 맡아요</li>
+<li>담당자는 살아 있다는 신호(하트비트)를 계속 보내요</li>
+<li>신호나 읽기 요청(poll())이 오래 끊기면 칸을 넘겨요</li>
+</ol>
+<p class="more">참고: <a href="https://kafka.apache.org/41/design/design/#the-consumer">Apache Kafka 4.1 설계: 컨슈머와 그룹 관리</a> · <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">KafkaConsumer: poll()과 그룹 탈퇴 조건</a> · 센터가 고장 나면 <a href="{{ '/2026/11/15/replication/' | relative_url }}">5편</a></p>
 </section>
 
 <div class="slide-with-question">
 <section class="slide">
-<h3>실제로는: 리밸런싱으로 파티션 배정을 바꿔요</h3>
-<svg class="dg" viewBox="0 0 400 205" role="img" aria-label="컨슈머가 브로커 중 하나인 코디네이터에게 생존 신호를 보내고 코디네이터가 담당 파티션을 안내하는 그림">
-<defs><marker id="cg-rebalance" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs><circle class="box" cx="65" cy="95" r="28"/><use class="ic" href="#i-user-round" x="47" y="77" width="36" height="36"/>
-<text class="chip" x="65" y="141">컨슈머</text><circle class="kafka" cx="300" cy="95" r="28"/><use class="ic" href="#i-warehouse" x="282" y="77" width="36" height="36"/>
-<text class="chip" x="300" y="141">코디네이터</text><path class="line" d="M96,76 L267,76" marker-end="url(#cg-rebalance)"/><path class="line" d="M267,112 L96,112" marker-end="url(#cg-rebalance)"/>
-<text class="chip" x="181" y="51">살아 있다는 신호</text>
-<text class="chip" x="181" y="138">담당 파티션 안내</text>
-<text class="small" x="300" y="161">브로커 중 하나의 역할</text>
+<h3>사람이 드나들면 칸을 다시 나눠요</h3>
+<svg class="dg" viewBox="0 0 400 300" role="img" aria-label="같은 칸 세 개와 담당자 세 명을 위아래로 나란히 비교한 그림. 위는 담당 1, 2, 3이 칸 0, 1, 2를 하나씩 맡는다. 아래는 담당 2가 나간 뒤 칸 1을 담당 1이 이어받아 담당 1이 두 칸을 맡는다">
+<defs><marker id="cg8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="6" y="6" width="388" height="138" rx="12"/>
+<text class="label center" x="200" y="26">다시 나누기 전</text>
+<rect class="new" x="50" y="40" width="60" height="30" rx="6"/><text class="chip" x="80" y="55">칸 0</text>
+<rect class="new" x="170" y="40" width="60" height="30" rx="6"/><text class="chip" x="200" y="55">칸 1</text>
+<rect class="new" x="290" y="40" width="60" height="30" rx="6"/><text class="chip" x="320" y="55">칸 2</text>
+<path class="line" d="M80,86 L80,74" marker-end="url(#cg8)"/>
+<path class="line" d="M200,86 L200,74" marker-end="url(#cg8)"/>
+<path class="line" d="M320,86 L320,74" marker-end="url(#cg8)"/>
+<circle class="kafka" cx="80" cy="108" r="20"/><use class="ic" href="#i-user-round" x="66" y="94" width="28" height="28"/><text class="chip" x="106" y="108" style="text-anchor:start">담당 1</text>
+<circle class="kafka" cx="200" cy="108" r="20"/><use class="ic" href="#i-user-round" x="186" y="94" width="28" height="28"/><text class="chip" x="226" y="108" style="text-anchor:start">담당 2</text>
+<circle class="kafka" cx="320" cy="108" r="20"/><use class="ic" href="#i-user-round" x="306" y="94" width="28" height="28"/><text class="chip" x="346" y="108" style="text-anchor:start">담당 3</text>
+<rect class="line" x="6" y="154" width="388" height="140" rx="12"/>
+<text class="label center" x="200" y="174">담당 2가 나간 뒤</text>
+<rect class="new" x="50" y="188" width="60" height="30" rx="6"/><text class="chip" x="80" y="203">칸 0</text>
+<rect class="new" x="170" y="188" width="60" height="30" rx="6"/><text class="chip" x="200" y="203">칸 1</text>
+<rect class="new" x="290" y="188" width="60" height="30" rx="6"/><text class="chip" x="320" y="203">칸 2</text>
+<path class="line" d="M80,236 L80,222" marker-end="url(#cg8)"/>
+<path class="line" d="M98,242 L180,222" marker-end="url(#cg8)"/>
+<path class="line" d="M320,236 L320,222" marker-end="url(#cg8)"/>
+<circle class="kafka" cx="80" cy="258" r="20"/><use class="ic" href="#i-user-round" x="66" y="244" width="28" height="28"/><text class="chip" x="80" y="288">담당 1</text>
+<circle class="line dash" cx="200" cy="258" r="20"/><text class="alert" x="226" y="258" style="text-anchor:start">나감</text>
+<circle class="kafka" cx="320" cy="258" r="20"/><use class="ic" href="#i-user-round" x="306" y="244" width="28" height="28"/><text class="chip" x="346" y="258" style="text-anchor:start">담당 3</text>
 </svg>
-<p class="point">리밸런싱은 그룹의 파티션 담당을 다시 조정하는 일이에요.</p>
-<p class="explain">비유의 센터 사무실에 해당하는 <b>그룹 코디네이터</b>는 브로커 중 하나가 맡는 그룹 관리 역할이에요. 컨슈머가 바뀌거나 구독 토픽의 칸이 늘면 맡은 사람이 없는 칸이 생기지 않도록 조정해요. <b>하트비트</b>는 컨슈머가 코디네이터에 주기적으로 보내는 살아 있다는 신호이며 오래 끊기면 담당을 넘길 수 있어요. <code>poll()</code>은 다음 메시지를 받고 아직 일하고 있음을 확인하게 하는 요청 함수로 너무 오래 호출하지 않으면 담당을 넘길 수 있어요.</p>
+<ol class="steps">
+<li>칸 담당을 다시 나누는 일을 리밸런싱이라고 해요</li>
+<li>팀원이 바뀌거나 읽는 선반의 칸이 늘면 일어나요</li>
+<li>사무실이 담당 없는 칸이 없게 다시 맡겨요</li>
+</ol>
+<p class="more">칸을 늘리는 이야기는 <a href="{{ '/2026/11/15/topic-partition/' | relative_url }}">2편</a>에서 봐요 · 참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Apache Kafka 4.1 KafkaConsumer: 리밸런싱 조건</a></p>
 </section>
 <aside class="author-questions" aria-label="초보 독자 질문 목록">
 <details class="author-question">
 <summary>초보 독자 Q. 리밸런싱 중에는 읽기가 멈추나요?</summary>
-<p>A. 방식에 따라 달라요. 담당을 모두 반납하고 다시 나누는 방식은 그룹 전체의 읽기가 잠깐 멈출 수 있어요. 필요한 담당만 넘기는 방식은 영향을 받는 파티션의 읽기를 멈추고 다른 파티션은 계속 읽을 수 있어요.</p>
-<p>참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/ConsumerPartitionAssignor.RebalanceProtocol.html">Apache Kafka 4.1: 전체 반납과 부분 반납의 차이</a></p>
+<p>A. 방식에 따라 달라요. 맡은 칸을 모두 내려놓고 다시 나누면 팀 전체가 잠깐 멈추고 필요한 칸만 넘기면 그 칸만 멈춰요. 기본은 모두 내려놓는 방식이에요.</p>
+<p>참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/ConsumerPartitionAssignor.RebalanceProtocol.html">Apache Kafka 4.1: 두 방식의 차이</a> · <a href="https://kafka.apache.org/41/configuration/consumer-configs/#partition.assignment.strategy">기본 배정 방식</a></p>
 </details>
 </aside>
 </div>
-
-<section class="slide" id="consumer-group-playground" hidden>
-<h3>직접 해 보기: 컨슈머 수만 바꿔 보세요</h3>
-<div class="pp-body">
-<label for="cg-count">재고 그룹의 컨슈머 수</label>
-<select id="cg-count"><option value="1">1명</option><option value="2" selected>2명</option><option value="3">3명</option><option value="4">4명</option></select>
-<svg class="dg cg-stage" viewBox="0 0 400 350" role="img" aria-label="파티션 세 개와 컨슈머 사이에서 메시지를 계속 읽는 모습"></svg>
-<p class="pp-sum cg-summary" aria-live="polite"></p>
-<p class="cg-step"></p>
-</div>
-<p class="point">앞 칸부터 컨슈머에게 고르게 나누는 설명용 예시라 두 명일 때는 2개와 1개를 맡으며 실제 배정은 구독과 배정 방식에 따라 달라요.</p>
-<p class="explain">1편에서 본 것처럼 읽어도 메시지는 파티션에서 지워지지 않으며 흐르는 점은 내용을 읽는 모습이에요. 점은 각 칸의 담당자에게만 가고 인원을 바꾸면 그 연결도 바뀌어요. 네 명이면 한 명은 맡을 칸이 없어 쉬지만 누군가 나가면 이어받을 수 있어요.</p>
-</section>
-
-<section class="slide">
-<h3>이럴 땐 조심해요: 메시지별로 나누는 share group도 있어요</h3>
-<table>
-<thead><tr><th>일을 나누는 방식</th><th>같은 파티션을 여러 명이 읽나요?</th></tr></thead>
-<tbody>
-<tr><td>이 글의 일반 컨슈머 그룹</td><td>한 컨슈머에게 배정해요</td></tr>
-<tr><td>별도 방식인 share group</td><td>메시지 단위로 나눠 처리할 수 있어요</td></tr>
-</tbody>
-</table>
-<p class="point">파티션 수만큼만 함께 읽는다는 한계는 이 글의 일반 컨슈머 그룹에 해당해요.</p>
-<p class="explain">Share group은 칸 전체를 독점하는 대신 메시지별로 작업을 나누고 메시지마다 처리했다고 알리는 방식이에요. 칸 수보다 많은 컨슈머가 메시지를 나눠 처리할 수 있으므로 일반 그룹의 인원 한계를 그대로 적용하지 않아요.</p>
-</section>
-
-<p>참고: <a href="https://kafka.apache.org/41/design/design/#the-consumer">Apache Kafka 4.1 설계: 컨슈머와 그룹 관리</a> · <a href="https://kafka.apache.org/41/design/design/#share-groups">Apache Kafka 4.1: share group과 일반 그룹의 차이(4.1에서는 미리 보기 기능)</a></p>
 </div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">교대의 기준: 커밋한 위치에서 이어 읽어요</h2>
+<h2 class="slide-group-title">장부: 적어 둔 자리에서 이어 읽어요</h2>
 
 <section class="slide">
-<h3>커밋한 위치는 보통 일을 끝낸 뒤 고쳐요</h3>
-<svg class="dg" viewBox="0 0 400 335" role="img" aria-label="담당자가 주문을 읽고 재고를 줄인 뒤 사무실에 알리며 읽은 위치는 6이고 사무실 장부에 적은 커밋한 위치는 4인 그림">
-<defs><marker id="cg-notes" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs><circle class="box" cx="55" cy="55" r="28"/><use class="ic" href="#i-user-round" x="37" y="37" width="36" height="36"/>
-<text class="chip" x="55" y="101">주문 읽기</text><circle class="box" cx="200" cy="55" r="28"/><use class="ic" href="#i-user-round" x="182" y="37" width="36" height="36"/>
-<text class="chip" x="200" y="101">재고 수 줄이기</text><circle class="kafka" cx="345" cy="55" r="28"/><use class="ic" href="#i-warehouse" x="327" y="37" width="36" height="36"/>
-<text class="chip" x="345" y="101">사무실에 알림</text><path class="line" d="M85,55 L167,55" marker-end="url(#cg-notes)"/><path class="line" d="M230,55 L312,55" marker-end="url(#cg-notes)"/>
-<rect class="line" x="10" y="135" width="380" height="185" rx="12"/>
-<text class="label center" x="200" y="156">같은 시점의 두 메모</text>
-<circle class="box" cx="100" cy="203" r="28"/><use class="ic" href="#i-notebook-pen" x="82" y="185" width="36" height="36"/>
-<text class="chip" x="100" y="249">읽은 위치 6</text>
-<text class="small" x="100" y="268">5번까지 읽음</text><circle class="new" cx="300" cy="203" r="28"/><use class="ic" href="#i-notebook-pen" x="282" y="185" width="36" height="36"/>
-<text class="chip" x="300" y="249">커밋한 위치 4</text>
-<text class="small" x="300" y="268">3번까지 끝내고 적음</text>
-<text class="small" x="200" y="294">3번까지 끝냄 · 4~5번은 읽기만 함</text>
+<h3>새 담당은 장부에 적힌 자리부터 읽어요</h3>
+<svg class="dg" viewBox="0 0 400 260" role="img" aria-label="칸 0의 상자 0번부터 7번 중 0~3번은 처리를 끝냈고 4~5번은 받았지만 아직 처리 전이다. 담당자가 읽은 자리는 6이지만 센터 장부에 적힌 자리는 4다. 새 담당은 장부를 보고 4번부터 읽는다. 번호는 설명용 예시다">
+<defs><marker id="cg9" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<text class="label" x="16" y="22">칸 0</text>
+<text class="chip" x="312" y="16">읽은 자리 6</text><path class="mark" d="M306,26 L318,26 L312,36 z"/>
+<rect class="kafka" x="16" y="42" width="40" height="38" rx="6"/><text class="chip" x="36" y="61">0</text>
+<rect class="kafka" x="62" y="42" width="40" height="38" rx="6"/><text class="chip" x="82" y="61">1</text>
+<rect class="kafka" x="108" y="42" width="40" height="38" rx="6"/><text class="chip" x="128" y="61">2</text>
+<rect class="kafka" x="154" y="42" width="40" height="38" rx="6"/><text class="chip" x="174" y="61">3</text>
+<rect class="new" x="200" y="42" width="40" height="38" rx="6"/><text class="chip" x="220" y="61">4</text>
+<rect class="new" x="246" y="42" width="40" height="38" rx="6"/><text class="chip" x="266" y="61">5</text>
+<rect class="box" x="292" y="42" width="40" height="38" rx="6"/><text class="chip" x="312" y="61">6</text>
+<rect class="box" x="338" y="42" width="40" height="38" rx="6"/><text class="chip" x="358" y="61">7</text>
+<path class="line" d="M16,86 L16,92 L194,92 L194,86"/><text class="small" x="105" y="112">처리 끝</text>
+<path class="mark" d="M214,96 L226,96 L220,86 z"/><text class="small" x="243" y="112">받았지만 처리 전</text>
+<text class="chip" x="220" y="140">장부에 적힌 자리 4</text>
+<path class="line" d="M220,168 L220,154" marker-end="url(#cg9)"/>
+<circle class="box" cx="70" cy="196" r="28"/><use class="ic" href="#i-user-round" x="52" y="178" width="36" height="36"/>
+<text class="big" x="70" y="246">새 담당</text>
+<path class="line" d="M102,196 L186,196" marker-end="url(#cg9)"/>
+<circle class="kafka" cx="220" cy="196" r="28"/><use class="ic" href="#i-notebook-pen" x="202" y="178" width="36" height="36"/>
+<text class="big" x="262" y="202" style="text-anchor:start">장부</text>
 </svg>
-<p class="point">커밋은 장부에 다음 번호를 확정해 적는 일이며 보통 일을 끝낸 뒤 적어야 해요.</p>
-<p class="explain">읽은 위치는 담당자가 손에 든 다음 번호이고 커밋한 위치는 사무실 장부에 적은 다음 번호예요. 담당자는 주문을 한 번에 여러 개 받아 차례로 처리하므로 그림의 4~5번은 읽었어도 아직 처리 중이에요. 커밋한 위치가 업무 완료를 뜻하는 것은 아니어서 담당자가 재고 반영을 끝낸 뒤 사무실에 알려 장부를 고쳐야 해요.</p>
+<ol class="steps">
+<li>읽은 자리는 담당자만 기억해서 교대하면 사라져요</li>
+<li>다음 번호를 장부에 적는 일을 커밋이라고 해요</li>
+<li>새 담당은 장부에 적힌 4번부터 읽어요 (예시)</li>
+</ol>
+<p class="more">장부(__consumer_offsets)도 여러 건물에 복사돼요 (<a href="{{ '/2026/11/15/replication/' | relative_url }}">5편</a>) · 참고: <a href="https://kafka.apache.org/41/implementation/distribution/">Apache Kafka 4.1: 코디네이터와 오프셋 저장</a></p>
 </section>
 
 <section class="slide">
-<h3>실제로는: 커밋한 위치를 브로커에 저장해요</h3>
-<svg class="dg" viewBox="0 0 400 285" role="img" aria-label="컨슈머의 읽은 위치는 다음 6이지만 3번까지 재고 반영한 뒤 다음 4를 코디네이터에 커밋해 내부 토픽에 저장하는 그림">
-<defs><marker id="cg-commit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs><circle class="box" cx="75" cy="75" r="28"/><use class="ic" href="#i-user-round" x="57" y="57" width="36" height="36"/>
-<text class="chip" x="75" y="121">컨슈머</text><circle class="kafka" cx="305" cy="75" r="28"/><use class="ic" href="#i-warehouse" x="287" y="57" width="36" height="36"/>
-<text class="chip" x="305" y="121">코디네이터</text><path class="line" d="M107,75 L272,75" marker-end="url(#cg-commit)"/>
-<text class="chip" x="190" y="52">다음 번호 4 커밋</text>
-<text class="small" x="75" y="145">읽은 위치: 다음 6</text>
-<text class="small" x="305" y="145">커밋한 위치: 다음 4</text>
-<circle class="new" cx="305" cy="213" r="28"/><use class="ic" href="#i-notebook-pen" x="287" y="195" width="36" height="36"/>
-<text class="chip" x="305" y="259">__consumer_offsets</text><path class="line" d="M305,165 L305,180" marker-end="url(#cg-commit)"/>
-<text class="small" x="109" y="229">재고 반영: 3번까지</text>
+<h3>커밋이 일과 어긋나면 중복이나 누락이 생겨요</h3>
+<svg class="dg" viewBox="0 0 400 300" role="img" aria-label="같은 주문을 두 순서로 나란히 비교한 그림. 위는 읽고 처리한 뒤 커밋하기 전에 멈춰서 새 담당이 같은 주문을 다시 처리한다. 아래는 읽고 처리하기 전에 커밋한 뒤 멈춰서 새 담당이 그 주문을 건너뛴다">
+<defs><marker id="cg10" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="6" y="6" width="388" height="136" rx="12"/>
+<text class="label center" x="200" y="26">처리한 뒤 커밋 전에 멈추면</text>
+<rect class="box" x="30" y="52" width="80" height="32" rx="6"/><text class="chip" x="70" y="68">읽기</text>
+<path class="line" d="M112,68 L156,68" marker-end="url(#cg10)"/>
+<rect class="kafka" x="160" y="52" width="80" height="32" rx="6"/><text class="chip" x="200" y="68">처리 끝</text>
+<path class="line" d="M242,68 L286,68" marker-end="url(#cg10)"/>
+<rect class="bad" x="290" y="52" width="80" height="32" rx="6"/><text class="chip" x="330" y="68">멈춤</text>
+<text class="alert" x="200" y="116">새 담당이 다시 처리해요 (중복)</text>
+<rect class="line" x="6" y="152" width="388" height="142" rx="12"/>
+<text class="label center" x="200" y="172">처리하기 전에 커밋하면</text>
+<rect class="box" x="30" y="198" width="80" height="32" rx="6"/><text class="chip" x="70" y="214">읽기</text>
+<path class="line" d="M112,214 L156,214" marker-end="url(#cg10)"/>
+<rect class="kafka" x="160" y="198" width="80" height="32" rx="6"/><text class="chip" x="200" y="214">커밋</text>
+<path class="line" d="M242,214 L286,214" marker-end="url(#cg10)"/>
+<rect class="bad" x="290" y="198" width="80" height="32" rx="6"/><text class="chip" x="330" y="214">멈춤</text>
+<text class="alert" x="200" y="264">새 담당이 건너뛰어요 (누락)</text>
 </svg>
-<p class="point">컨슈머가 커밋을 보내면 코디네이터가 커밋한 위치를 보관해요.</p>
-<p class="explain"><b>내부 토픽</b>은 Kafka가 스스로 쓰는 선반이에요. 읽은 위치는 새 메시지를 받으면 앞서가지만 커밋한 위치는 장부에 적을 때 바뀌므로 둘이 다를 수 있어요. 업무를 끝냈어도 커밋 전에 멈추면 새 담당은 그 완료 사실을 알 수 없어요. Kafka 4.1 공식 컨슈머(Java)는 기본으로 자동 커밋이 켜져 있고(<code>enable.auto.commit=true</code>) 기본 주기는 5초예요.</p>
+<ol class="steps">
+<li>처리 뒤 커밋 전에 멈추면 재고가 두 번 줄 수 있어요</li>
+<li>처리 전에 커밋하면 그 주문의 재고가 안 줄 수 있어요</li>
+<li>그래서 보통 처리를 끝낸 뒤 커밋해요</li>
+</ol>
+<p class="more">같은 소식을 두 번 받아도 괜찮게 만드는 법은 <a href="{{ '/2026/11/15/delivery-semantics/' | relative_url }}">7편</a>에서 봐요</p>
 </section>
+</div>
+
+<div class="slide-group">
+<h2 class="slide-group-title">판단: 읽을 때 무엇을 조심해요?</h2>
 
 <div class="slide-with-question">
 <section class="slide">
-<h3>이럴 땐 조심해요: 자동 커밋은 업무 완료를 확인하지 않아요</h3>
-<table>
-<caption>담당자가 일을 조수에게 넘기고 바로 다음 주문을 읽는 장면을 떠올려 보세요.</caption>
-<thead><tr><th>멈추기 전 상황</th><th>이어 읽을 때 생길 수 있는 일</th></tr></thead>
-<tbody>
-<tr><td>업무 완료 후 아직 커밋하지 못함</td><td>같은 주문을 다시 처리해 재고가 두 번 줄 수 있어요</td></tr>
-<tr><td>같은 프로그램 안에서 처리를 따로 맡긴 작업이 끝나기 전에 다음 것을 읽고 커밋함</td><td>끝내지 못한 주문을 건너뛰어 재고가 줄지 않을 수 있어요</td></tr>
-</tbody>
-</table>
-<p class="point">커밋한 위치가 실제 업무 진행과 어긋나면 중복이나 누락이 생길 수 있어요.</p>
-<p class="explain">자동 커밋은 컨슈머 프로그램에 들어간 Kafka 기본 코드가 업무 완료와 상관없이 그때의 읽은 위치를 장부에 적는 동작이에요. Kafka 4.1 공식 컨슈머(Java)의 기본 동작에서는 <code>poll()</code>을 부를 때 커밋 주기가 지났으면 자동 커밋을 요청해요. 같은 프로그램 안에서 처리를 따로 맡긴 작업이 아직 끝나지 않아도 커밋한 위치가 앞서갈 수 있으므로 커밋 시점을 관리해야 해요.</p>
+<h3>자동 커밋은 일이 끝났는지 보지 않아요</h3>
+<svg class="dg" viewBox="0 0 400 200" role="img" aria-label="왼쪽에서 오른쪽으로 흐르는 그림. 담당자가 1번째 읽기 요청(poll())으로 상자 4번과 5번을 받고 아직 처리하는 동안 5초가 지나 2번째 읽기 요청 때 자동으로 커밋한다. 4번과 5번이 끝나기 전에 커밋된다. 번호는 설명용 예시다">
+<defs><marker id="cg11" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<text class="label center" x="200" y="22">자동 커밋 (Kafka 4.1 Java 기본)</text>
+<rect class="box" x="10" y="40" width="120" height="30" rx="6"/><text class="chip" x="70" y="55">1번째 poll()</text>
+<circle class="new" cx="50" cy="104" r="16"/><use class="ic" href="#i-package" x="39" y="93" width="22" height="22"/><text class="chip" x="50" y="136">4</text>
+<circle class="new" cx="90" cy="104" r="16"/><use class="ic" href="#i-package" x="79" y="93" width="22" height="22"/><text class="chip" x="90" y="136">5</text>
+<path class="line" d="M114,104 L156,104" marker-end="url(#cg11)"/>
+<circle class="bad" cx="180" cy="104" r="16"/><use class="ic" href="#i-package" x="169" y="93" width="22" height="22"/>
+<circle class="bad" cx="220" cy="104" r="16"/><use class="ic" href="#i-package" x="209" y="93" width="22" height="22"/><text class="chip" x="200" y="136">처리 중</text>
+<path class="line" d="M242,104 L304,104" marker-end="url(#cg11)"/>
+<rect class="kafka" x="258" y="40" width="136" height="30" rx="6"/><text class="chip" x="326" y="55">2번째 poll() · 커밋</text>
+<circle class="box" cx="330" cy="104" r="18"/><use class="ic" href="#i-timer" x="318" y="92" width="24" height="24"/><text class="small" x="330" y="136">5초 지남</text>
+<text class="alert" x="200" y="186">4~5번이 끝나기 전에 커밋돼요</text>
+</svg>
+<ol class="steps">
+<li>1번째 읽기 요청(poll())으로 4~5번을 받아요 (예시)</li>
+<li>5초가 지나면 다음 읽기 요청 때 받은 번호까지 커밋해요</li>
+<li>이 동작은 기본으로 켜져 있어요 (enable.auto.commit)</li>
+</ol>
+<p class="more">참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Kafka 4.1 KafkaConsumer: 자동 커밋</a> · <a href="https://kafka.apache.org/41/configuration/consumer-configs/">컨슈머 설정</a> · <a href="https://github.com/apache/kafka/blob/4.1/clients/src/main/java/org/apache/kafka/clients/consumer/internals/ConsumerCoordinator.java">poll과 자동 커밋 코드</a></p>
 </section>
 <aside class="author-questions" aria-label="초보 독자 질문 목록">
 <details class="author-question">
 <summary>초보 독자 Q. 자동 커밋이 기본이면 끄고 직접 커밋해야 하나요?</summary>
-<p>A. 항상 꺼야 하는 것은 아니에요. 다음 읽기 요청 전에 받은 주문을 모두 처리하는 흐름이라면 자동 커밋을 쓸 수 있어요. 같은 프로그램 안에서 처리를 따로 맡긴다면 자동 커밋을 끄고 업무 완료 뒤 직접 커밋하는 방법이 있으며 전달 보장 편에서 이어 봐요.</p>
-<p>참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Apache Kafka 4.1: 자동 커밋과 직접 커밋의 처리 조건</a></p>
+<p>A. 다음 요청 전에 받은 걸 다 처리한다면 자동 커밋도 괜찮아요. 처리를 따로 맡긴다면 끄고 끝낸 뒤 직접 커밋해요 (<a href="{{ '/2026/11/15/delivery-semantics/' | relative_url }}">7편</a>).</p>
 </details>
 </aside>
 </div>
 
 <section class="slide">
-<h3>이럴 땐 조심해요: 교대했는데 커밋한 위치를 쓸 수 없어요</h3>
-<table>
-<thead><tr><th>담당을 이어받는 상황</th><th>놓치기 쉬운 점</th></tr></thead>
-<tbody>
-<tr><td>새 그룹이라 커밋한 위치가 없음</td><td>남아 있는 옛 주문부터 읽는다고 보장되지 않아요</td></tr>
-<tr><td>장부의 번호가 가리키던 주문이 보관 기간이 지나 선반에서 지워짐</td><td>커밋한 위치에서 그대로 이어 갈 수 없어요</td></tr>
-</tbody>
-</table>
-<p class="point">교대할 때 쓸 수 있는 커밋한 위치가 없다면 남아 있는 옛 주문을 건너뛸 수 있어요.</p>
-<p class="explain">Kafka 4.1 공식 컨슈머(Java)는 커밋한 위치가 없거나 그 번호가 가리키던 주문이 보관 기간이 지나 지워졌다면 <code>auto.offset.reset</code>을 적용해요. 이렇게 장부의 번호로 더는 주문을 읽을 수 없는 것을 범위를 벗어났다고 해요. 기본값 <code>latest</code>는 이미 쌓인 것을 건너뛰고 앞으로 올 것부터 읽으며 <code>earliest</code>는 남아 있는 가장 오래된 것부터 읽어요.</p>
-</section>
-
-<section class="slide">
-<h3>한눈에 다시 보기</h3>
-<svg class="dg" viewBox="0 0 400 240" role="img" aria-label="컨슈머 그룹, 병렬성의 한계, 리밸런싱, 오프셋 커밋을 네 줄로 다시 보는 그림">
-<circle class="box" cx="30" cy="28" r="18"/><use class="ic" href="#i-user-round" x="17" y="15" width="26" height="26"/>
-<text class="label" x="62" y="19">컨슈머 그룹</text><text class="small" x="62" y="38" style="text-anchor:start">같은 업무를 맡은 서비스들이 파티션을 나눠요.</text>
-<circle class="new" cx="30" cy="84" r="18"/><use class="ic" href="#i-shelving-unit" x="17" y="71" width="26" height="26"/>
-<text class="label" x="62" y="75">병렬성의 한계</text><text class="small" x="62" y="94" style="text-anchor:start">일반 그룹은 파티션 수보다 더 나눌 수 없어요.</text>
-<circle class="kafka" cx="30" cy="140" r="18"/><use class="ic" href="#i-warehouse" x="17" y="127" width="26" height="26"/>
-<text class="label" x="62" y="131">리밸런싱</text><text class="small" x="62" y="150" style="text-anchor:start">컨슈머나 파티션이 달라지면 담당을 조정해요.</text>
-<circle class="new" cx="30" cy="196" r="18"/><use class="ic" href="#i-notebook-pen" x="17" y="183" width="26" height="26"/>
-<text class="label" x="62" y="187">오프셋 커밋</text><text class="small" x="62" y="206" style="text-anchor:start">커밋한 위치를 저장하며 업무 완료와 구별해요.</text>
+<h3>장부 자리를 못 쓰면 시작 위치 설정을 따라요</h3>
+<svg class="dg" viewBox="0 0 400 290" role="img" aria-label="같은 칸을 위아래로 나란히 비교한 그림. 0~2번은 보관 기간이 지나 지워졌고 3~7번이 남아 있으며 끝에 새 상자가 온다. 위 latest(기본)는 남은 상자를 건너뛰고 새 상자부터 읽는다. 아래 earliest는 남아 있는 가장 오래된 3번부터 읽는다. 번호는 설명용 예시다">
+<rect class="line" x="6" y="6" width="388" height="134" rx="12"/>
+<text class="label center" x="200" y="26">latest · 끝부터 (Kafka 4.1 Java 기본)</text>
+<rect class="line dash" x="14" y="44" width="34" height="34" rx="6"/><text class="small" x="31" y="61">0</text>
+<rect class="line dash" x="54" y="44" width="34" height="34" rx="6"/><text class="small" x="71" y="61">1</text>
+<rect class="line dash" x="94" y="44" width="34" height="34" rx="6"/><text class="small" x="111" y="61">2</text>
+<rect class="kafka" x="134" y="44" width="34" height="34" rx="6"/><text class="chip" x="151" y="61">3</text>
+<rect class="kafka" x="174" y="44" width="34" height="34" rx="6"/><text class="chip" x="191" y="61">4</text>
+<rect class="kafka" x="214" y="44" width="34" height="34" rx="6"/><text class="chip" x="231" y="61">5</text>
+<rect class="kafka" x="254" y="44" width="34" height="34" rx="6"/><text class="chip" x="271" y="61">6</text>
+<rect class="kafka" x="294" y="44" width="34" height="34" rx="6"/><text class="chip" x="311" y="61">7</text>
+<rect class="new" x="334" y="44" width="34" height="34" rx="6"/><text class="chip" x="351" y="61">새</text>
+<text class="small" x="71" y="98">지워짐</text>
+<path class="mark" d="M345,96 L357,96 L351,86 z"/><text class="chip" x="351" y="118">여기부터</text>
+<text class="alert" x="231" y="118">남은 건 건너뛰어요</text>
+<rect class="line" x="6" y="150" width="388" height="134" rx="12"/>
+<text class="label center" x="200" y="170">earliest · 남은 처음부터</text>
+<rect class="line dash" x="14" y="188" width="34" height="34" rx="6"/><text class="small" x="31" y="205">0</text>
+<rect class="line dash" x="54" y="188" width="34" height="34" rx="6"/><text class="small" x="71" y="205">1</text>
+<rect class="line dash" x="94" y="188" width="34" height="34" rx="6"/><text class="small" x="111" y="205">2</text>
+<rect class="kafka" x="134" y="188" width="34" height="34" rx="6"/><text class="chip" x="151" y="205">3</text>
+<rect class="kafka" x="174" y="188" width="34" height="34" rx="6"/><text class="chip" x="191" y="205">4</text>
+<rect class="kafka" x="214" y="188" width="34" height="34" rx="6"/><text class="chip" x="231" y="205">5</text>
+<rect class="kafka" x="254" y="188" width="34" height="34" rx="6"/><text class="chip" x="271" y="205">6</text>
+<rect class="kafka" x="294" y="188" width="34" height="34" rx="6"/><text class="chip" x="311" y="205">7</text>
+<rect class="new" x="334" y="188" width="34" height="34" rx="6"/><text class="chip" x="351" y="205">새</text>
+<text class="small" x="71" y="242">지워짐</text>
+<path class="mark" d="M145,240 L157,240 L151,230 z"/><text class="chip" x="151" y="262">여기부터</text>
+<text class="small" x="290" y="262">남은 것부터 다 읽어요</text>
 </svg>
-<p class="point">컨슈머 그룹은 칸을 나눠 읽고 담당이 바뀌면 커밋한 위치를 기준으로 이어 가요.</p>
+<ol class="steps">
+<li>새 팀이라 장부 자리가 없을 때 써요</li>
+<li>적힌 자리의 상자가 지워졌을 때도 써요</li>
+<li>설정 이름은 auto.offset.reset이에요 (번호는 예시)</li>
+</ol>
+<p class="more">보관 기간은 <a href="{{ '/2026/11/15/retention-compaction/' | relative_url }}">6편</a>에서 봐요 · 참고: <a href="https://kafka.apache.org/41/configuration/consumer-configs/">Java 컨슈머 설정: 시작 위치</a></p>
 </section>
-
-<p>참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Apache Kafka 4.1 KafkaConsumer: 위치와 커밋, 자동 커밋의 조건</a> · <a href="https://kafka.apache.org/41/configuration/consumer-configs/">Java 컨슈머 설정: 자동 커밋과 시작 위치</a> · <a href="https://github.com/apache/kafka/blob/4.1/clients/src/main/java/org/apache/kafka/clients/consumer/internals/ConsumerCoordinator.java">Kafka 4.1 기본 방식: poll과 자동 커밋 주기 확인</a> · <a href="https://kafka.apache.org/41/implementation/distribution/">코디네이터와 오프셋 저장</a></p>
 </div>
 
 </div>
-<link rel="stylesheet" href="{{ "/assets/css/consumer-group-playground.css" | relative_url }}">
-<script defer src="{{ "/assets/js/consumer-group-playground.js" | relative_url }}"></script>
