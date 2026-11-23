@@ -19,6 +19,7 @@ Orca CLI의 `automations` 가이드에서 `daily`, `--time`, 기존 workspace, `
 
 1. 지침과 기존 글 확인
 - 루트 AGENTS.md를 읽고 글 작성·파일 생성·SVG·사실 확인·최종 검토와 docs/rules/12-youtube-video.md를 읽는다. 움직임을 넣을 때만 애니메이션 규칙을 추가로 읽는다.
+- docs/rules/11-agent-models.md에 따라 이번 실행의 공급자에 맞는 작성·조사·검토 모델을 지정한다.
 - docs/writing-feedback.md를 읽어 반복되었던 독자의 이해 문제를 확인한다.
 - _drafts/lesson-template.md와 _posts/kafka/2026-11-15-why-kafka.md를 구조와 그림 기준으로 읽는다. 다른 글은 예전 형식이라 구조를 따라 하지 않는다.
 - _data/series.yml, 기존 _posts와 _drafts의 제목·summary·도입 질문을 훑는다. 중복 가능성이 있는 글은 본문까지 확인한다.

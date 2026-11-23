@@ -42,7 +42,7 @@ summary: "소식이 남아 있어도 처리는 누락되거나 겹칠 수 있어
 <circle class="box" cx="170" cy="100" r="32"/><use class="ic" href="#i-user-round" x="150" y="80" width="40" height="40"/>
 <text class="big" x="170" y="154">담당자</text><text class="small" x="170" y="174">컨슈머</text>
 <circle class="kafka" cx="320" cy="50" r="28"/><use class="ic" href="#i-database" x="302" y="32" width="36" height="36"/>
-<text class="big" x="320" y="96">저장소</text><text class="small" x="320" y="114">4번으로 재고 10 → 9</text>
+<text class="big" x="320" y="96">저장소</text><text class="small" x="320" y="122">4번으로 재고 10 → 9</text>
 <circle class="bad blink" cx="320" cy="170" r="28"/><use class="ic" href="#i-notebook-pen" x="302" y="152" width="36" height="36"/>
 <text class="big" x="320" y="216">장부</text><text class="alert" x="320" y="236">다음도 4번부터</text>
 <circle class="packet" r="5"><animateMotion dur="1.6s" repeatCount="indefinite" path="M84,100 L132,100"/></circle>
@@ -63,7 +63,7 @@ summary: "소식이 남아 있어도 처리는 누락되거나 겹칠 수 있어
 <path class="line" d="M206,80 L286,80" marker-end="url(#ds2)"/><text class="chip" x="246" y="68">읽기</text>
 <path class="line" d="M206,112 L286,112" marker-end="url(#ds2)"/><text class="chip" x="246" y="132">다시 읽기</text>
 <circle class="box" cx="44" cy="90" r="26"/><use class="ic" href="#i-store" x="26" y="72" width="36" height="36"/>
-<text class="big" x="44" y="138">가게</text><text class="small" x="44" y="156">프로듀서</text>
+<text class="big" x="44" y="138">가게</text><text class="small" x="44" y="164">프로듀서</text>
 <circle class="kafka" cx="170" cy="96" r="30"/><use class="ic" href="#i-shelving-unit" x="150" y="76" width="40" height="40"/>
 <text class="big" x="170" y="148">선반</text><text class="small" x="170" y="168">한 번만 쌓여요</text>
 <circle class="bad" cx="326" cy="96" r="28"/><use class="ic" href="#i-user-round" x="308" y="78" width="36" height="36"/>
