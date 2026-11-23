@@ -58,14 +58,14 @@ youtube: KgLt0RLMcHM
 
 <section class="slide">
 <h3>담당자를 늘려도 칸이 하나면 한 명만 일해요</h3>
-<svg class="dg" viewBox="0 0 400 250" role="img" aria-label="한 칸뿐인 주문 선반을 재고 팀(컨슈머 그룹)의 담당자 세 명이 기다리지만 한 명만 칸을 맡아 읽고 나머지 두 명은 쉬는 그림">
+<svg class="dg" viewBox="0 0 400 250" role="img" aria-label="한 칸뿐인 주문 선반에 상자 0번, 1번, 2번이 남아 있고 팀은 다음에 읽을 번호 1번 하나만 적는다. 재고 팀(컨슈머 그룹)의 담당자 세 명 중 한 명만 칸을 맡아 읽고 나머지 두 명은 쉬는 그림">
 <defs><marker id="tp2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="line" x="8" y="40" width="170" height="160" rx="12"/>
 <text class="label center" x="93" y="60">주문 선반 (한 칸)</text>
-<circle class="new" cx="53" cy="118" r="17"/><use class="ic" href="#i-package" x="41" y="106" width="24" height="24"/>
-<circle class="new" cx="93" cy="118" r="17"/><use class="ic" href="#i-package" x="81" y="106" width="24" height="24"/>
-<circle class="new" cx="133" cy="118" r="17"/><use class="ic" href="#i-package" x="121" y="106" width="24" height="24"/>
-<text class="chip" x="93" y="166">칸 0</text>
+<circle class="new" cx="53" cy="108" r="17"/><use class="ic" href="#i-package" x="41" y="96" width="24" height="24"/><text class="chip" x="53" y="140">0번</text>
+<circle class="new" cx="93" cy="108" r="17"/><use class="ic" href="#i-package" x="81" y="96" width="24" height="24"/><text class="chip" x="93" y="140">1번</text>
+<circle class="new" cx="133" cy="108" r="17"/><use class="ic" href="#i-package" x="121" y="96" width="24" height="24"/><text class="chip" x="133" y="140">2번</text>
+<text class="small" x="93" y="176">팀 기록: 다음은 1번</text>
 <path class="line" d="M180,108 L240,90" marker-end="url(#tp2)"/>
 <rect class="line" x="222" y="8" width="170" height="234" rx="12"/>
 <text class="label center" x="307" y="28">재고 팀</text><text class="small" x="307" y="46">컨슈머 그룹</text>
@@ -76,8 +76,8 @@ youtube: KgLt0RLMcHM
 </svg>
 <ol class="steps">
 <li>같은 팀(컨슈머 그룹)에서 한 칸은 한 명만 맡아요</li>
-<li>팀은 칸마다 읽은 자리(오프셋)를 하나만 적어요</li>
-<li>둘이 같이 읽으면 같은 주문을 두 번 처리할 수 있어요</li>
+<li>팀은 칸마다 다음 자리 번호(오프셋)를 하나만 적어요</li>
+<li>상자는 남고 번호는 하나라 둘 다 1번을 처리해요 (예시)</li>
 </ol>
 </section>
 
@@ -176,28 +176,37 @@ youtube: KgLt0RLMcHM
 </ol>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>키를 계산한 숫자로 칸 번호를 정해요</h3>
-<svg class="dg" viewBox="0 0 400 200" role="img" aria-label="키 강남을 해시로 계산하면 7이 나오고 7을 칸 수 3으로 나눈 나머지 1이 칸 번호가 되어 칸 1(파티션 1)로 가는 그림. 7과 칸 3개는 설명용 예시다">
+<svg class="dg" viewBox="0 0 400 200" role="img" aria-label="키 강남을 해시라는 계산으로 숫자 7로 바꾸고 7을 칸 수 3으로 나눈 나머지 1이 칸 번호가 되어 칸 1(파티션 1)로 가는 그림. 7과 칸 3개는 설명용 예시다">
 <defs><marker id="tp5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <circle class="new" cx="40" cy="80" r="28"/><use class="ic" href="#i-tag" x="22" y="62" width="36" height="36"/>
 <text class="big" x="40" y="130">키</text><text class="small" x="40" y="150">강남</text>
-<path class="line" d="M70,80 L100,80" marker-end="url(#tp5)"/>
-<rect class="box" x="104" y="58" width="80" height="44" rx="8"/><text class="chip" x="144" y="80">해시 = 7</text>
-<path class="line" d="M186,80 L212,80" marker-end="url(#tp5)"/>
-<rect class="box" x="216" y="58" width="88" height="44" rx="8"/><text class="chip mono" x="260" y="80">7 % 3 = 1</text>
-<path class="line" d="M306,80 L328,80" marker-end="url(#tp5)"/>
+<path class="line" d="M70,80 L96,80" marker-end="url(#tp5)"/>
+<rect class="box" x="100" y="54" width="100" height="52" rx="8"/><text class="chip" x="150" y="70">강남</text><text class="chip" x="150" y="90">→ 7</text>
+<text class="small" x="150" y="122">해시</text><text class="small" x="263" y="122">칸 3개</text>
+<path class="line" d="M202,80 L218,80" marker-end="url(#tp5)"/>
+<rect class="box" x="222" y="54" width="82" height="52" rx="8"/><text class="chip" x="263" y="70">7 ÷ 3</text><text class="chip" x="263" y="90">나머지 1</text><path class="line" d="M306,80 L328,80" marker-end="url(#tp5)"/>
 <circle class="kafka" cx="360" cy="80" r="28"/><use class="ic" href="#i-panel-top" x="342" y="62" width="36" height="36"/>
 <text class="big" x="360" y="130">칸 1</text><text class="small" x="360" y="150">파티션 1</text>
-<text class="small" x="200" y="186">%는 나눈 나머지 · 7과 칸 3개는 예시</text>
+<text class="small" x="200" y="186">7과 칸 3개는 예시</text>
 </svg>
 <ol class="steps">
-<li>해시는 같은 키를 넣으면 늘 같은 숫자를 내요</li>
+<li>해시(키를 숫자로 바꾸는 계산)는 같은 키면 늘 같아요</li>
 <li>그 숫자를 칸 수로 나눈 나머지가 칸 번호예요 (Kafka 4.1 Java 기본)</li>
 <li>키가 달라도 나머지가 같으면 같은 칸에 모여요</li>
 </ol>
 <p class="more">칸을 직접 정하거나 분배 규칙을 바꾸거나 키를 무시하게 설정하면 달라져요 · 참고: <a href="https://kafka.apache.org/41/configuration/producer-configs/#partitioner.class">Kafka 4.1: 키를 붙인 소식과 안 붙인 소식의 분배</a> · <a href="https://github.com/apache/kafka/blob/4.1.0/clients/src/main/java/org/apache/kafka/clients/producer/internals/BuiltInPartitioner.java">키 해시 계산 원본</a></p>
 </section>
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. Python 같은 다른 언어의 가게가 보내도 같은 칸에 가나요?</summary>
+<p>A. 꼭 같지는 않아요. Python의 confluent-kafka처럼 librdkafka를 쓰는 가게는 기본으로 다른 해시(CRC32)를 써서, 같은 키라도 Java 가게와 다른 칸을 고를 수 있어요. 여러 언어의 가게가 한 선반에 맡긴다면 분배 규칙을 Java와 같은 murmur2_random으로 맞춰요.</p>
+<p>참고: <a href="https://github.com/confluentinc/librdkafka/blob/v2.16.0/CONFIGURATION.md">librdkafka 2.16.0 설정: partitioner</a></p>
+</details>
+</aside>
+</div>
 
 <section class="slide">
 <h3>키가 없으면 묶음마다 칸을 새로 골라요</h3>
@@ -230,6 +239,7 @@ youtube: KgLt0RLMcHM
 <div class="slide-group">
 <h2 class="slide-group-title">순서: 차례는 한 칸 안에서만 지켜져요</h2>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>키가 같으면 한 줄로 이어지고 없으면 흩어져요</h3>
 <svg class="dg" viewBox="0 0 400 230" role="img" aria-label="같은 상자 1, 2, 3, 4를 두 방식으로 나란히 비교한 그림. 왼쪽 키가 같으면 네 상자가 모두 칸 0에 차례대로 이어진다. 오른쪽 키가 없으면 1과 2는 칸 0에, 3과 4는 칸 1에 나뉘어 칸끼리의 전체 차례를 알 수 없다">
@@ -259,10 +269,17 @@ youtube: KgLt0RLMcHM
 </ol>
 <p class="more">참고: <a href="https://kafka.apache.org/41/getting-started/introduction/">Kafka 4.1: 같은 키의 메시지와 파티션 안의 순서</a></p>
 </section>
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. 차례가 중요하면 칸을 하나만 쓰면 되나요?</summary>
+<p>A. 그러면 다시 담당자 한 명만 일해서 상자가 쌓여요. 보통은 선반 전체의 차례가 아니라 같은 주문끼리의 차례만 필요해요. 그래서 주문 번호를 키로 붙여 같은 주문의 소식을 한 칸에 모으고, 칸은 여러 개로 둬요.</p>
+</details>
+</aside>
+</div>
 
 <section class="slide">
 <h3>받은 뒤 동시에 처리하면 끝나는 순서가 섞여요</h3>
-<svg class="dg" viewBox="0 0 400 250" role="img" aria-label="담당자가 칸 0에서 상자 0, 1, 2를 차례대로 받았지만 셋을 동시에 처리하자 1번이 가장 먼저 끝나는 시간 막대 그림. 시간은 설명용 예시다">
+<svg class="dg" viewBox="0 0 400 250" role="img" aria-label="담당자가 칸 0에서 상자 0, 1, 2를 차례대로 받아 도우미 셋에게 하나씩 나눠 맡긴다. 도우미 셋이 동시에 처리하자 1번이 가장 먼저 끝나는 시간 막대 그림. 시간은 설명용 예시다">
 <defs><marker id="tp7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="line" x="8" y="8" width="160" height="104" rx="12"/>
 <text class="label center" x="88" y="28">칸 0</text>
@@ -270,19 +287,21 @@ youtube: KgLt0RLMcHM
 <circle class="new" cx="88" cy="70" r="15"/><text class="chip" x="88" y="70">1</text>
 <circle class="new" cx="128" cy="70" r="15"/><text class="chip" x="128" y="70">2</text>
 <path class="line" d="M172,60 L202,60" marker-end="url(#tp7)"/>
-<circle class="box" cx="236" cy="60" r="28"/><use class="ic" href="#i-user-round" x="216" y="40" width="40" height="40"/>
-<text class="big" x="236" y="106">담당자</text>
+<circle class="kafka" cx="236" cy="60" r="28"/><use class="ic" href="#i-user-round" x="216" y="40" width="40" height="40"/>
+<text class="big" x="276" y="60" style="text-anchor:start">담당자</text>
+<path class="line" d="M236,90 L236,130" marker-end="url(#tp7)"/>
+<text class="chip" x="246" y="112" style="text-anchor:start">나눠 맡겨요</text>
 <rect class="line" x="8" y="134" width="384" height="106" rx="12"/>
-<text class="label" x="20" y="152">동시에 처리</text><text class="small" x="356" y="152">시간 →</text>
-<text class="chip" x="36" y="171">0번</text><rect class="box" x="60" y="162" width="200" height="18" rx="4"/>
-<text class="chip" x="36" y="197">1번</text><rect class="kafka" x="60" y="188" width="80" height="18" rx="4"/><text class="chip" x="150" y="197" style="text-anchor:start">← 먼저 끝나요</text>
-<text class="chip" x="36" y="223">2번</text><rect class="box" x="60" y="214" width="240" height="18" rx="4"/>
+<text class="label" x="20" y="152">도우미 셋이 동시에 처리</text><text class="small" x="356" y="152">시간 →</text>
+<circle class="box" cx="30" cy="176" r="10"/><use class="ic" href="#i-user-round" x="22" y="168" width="16" height="16"/><text class="chip" x="60" y="176">0번</text><rect class="box" x="82" y="167" width="190" height="18" rx="4"/>
+<circle class="box" cx="30" cy="201" r="10"/><use class="ic" href="#i-user-round" x="22" y="193" width="16" height="16"/><text class="chip" x="60" y="201">1번</text><rect class="kafka" x="82" y="192" width="70" height="18" rx="4"/><text class="chip" x="160" y="201" style="text-anchor:start">← 먼저 끝나요</text>
+<circle class="box" cx="30" cy="225" r="10"/><use class="ic" href="#i-user-round" x="22" y="217" width="16" height="16"/><text class="chip" x="60" y="225">2번</text><rect class="box" x="82" y="216" width="230" height="18" rx="4"/>
 <circle class="packet" r="5"><animateMotion dur="1.6s" repeatCount="indefinite" path="M172,60 L202,60"/></circle>
 </svg>
 <ol class="steps">
 <li>담당자는 칸에 쌓인 차례대로 받아요</li>
-<li>받은 상자를 동시에 처리하면 먼저 끝나는 게 달라요 (시간은 예시)</li>
-<li>끝나는 순서까지 Kafka가 맞춰 주지는 않아요</li>
+<li>도우미(스레드)는 담당자 프로그램 안의 일손이에요</li>
+<li>끝나는 순서까지 Kafka가 맞춰 주지는 않아요 (시간은 예시)</li>
 </ol>
 <p class="more">참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Kafka 4.1: 읽은 뒤 병렬 처리할 때 순서 주의</a></p>
 </section>
@@ -295,13 +314,13 @@ youtube: KgLt0RLMcHM
 <h3>칸을 늘리면 같은 키도 다른 칸으로 가요</h3>
 <svg class="dg" viewBox="0 0 400 346" role="img" aria-label="위아래로 나란히 비교한 그림. 위 칸이 1개일 때는 해시 7을 1로 나눈 나머지가 0이라 강남 상자 1, 2, 3이 모두 칸 0에 쌓인다. 아래 칸을 2개로 늘린 뒤에는 나머지가 1이 되어 옛 상자 1, 2는 칸 0에 그대로 남고 새로 온 강남 3만 칸 1로 간다. 7은 설명용 숫자다">
 <rect class="line" x="8" y="8" width="384" height="104" rx="12"/>
-<text class="label center" x="200" y="27">칸 1개: 7 % 1 = 0 → 칸 0</text>
+<text class="label center" x="200" y="27">칸 1개: 7 ÷ 1 나머지 0 → 칸 0</text>
 <text class="chip" x="44" y="67">칸 0</text>
 <circle class="new" cx="130" cy="62" r="18"/><use class="ic" href="#i-package" x="117" y="49" width="26" height="26"/><text class="chip" x="130" y="98">강남 1</text>
 <circle class="new" cx="220" cy="62" r="18"/><use class="ic" href="#i-package" x="207" y="49" width="26" height="26"/><text class="chip" x="220" y="98">강남 2</text>
 <circle class="new" cx="310" cy="62" r="18"/><use class="ic" href="#i-package" x="297" y="49" width="26" height="26"/><text class="chip" x="310" y="98">강남 3</text>
 <rect class="line" x="8" y="124" width="384" height="198" rx="12"/>
-<text class="label center" x="200" y="143">칸 2개: 7 % 2 = 1 → 칸 1</text>
+<text class="label center" x="200" y="143">칸 2개: 7 ÷ 2 나머지 1 → 칸 1</text>
 <text class="chip" x="44" y="183">칸 0</text>
 <circle class="new" cx="130" cy="178" r="18"/><use class="ic" href="#i-package" x="117" y="165" width="26" height="26"/><text class="chip" x="130" y="214">강남 1</text>
 <circle class="new" cx="220" cy="178" r="18"/><use class="ic" href="#i-package" x="207" y="165" width="26" height="26"/><text class="chip" x="220" y="214">강남 2</text>
@@ -346,6 +365,7 @@ youtube: KgLt0RLMcHM
 <p class="more">배정을 다시 정하는 과정은 <a href="{{ '/2026/11/15/consumer-group/' | relative_url }}">4편 컨슈머 그룹</a>에서 봐요 · 참고: <a href="https://kafka.apache.org/41/operations/basic-kafka-operations/#modifying-topics">파티션 감소 제한</a> · <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">새 파티션과 그룹 배정</a> · <a href="https://kafka.apache.org/41/configuration/broker-configs/#num.partitions">num.partitions 기본값</a></p>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>칸을 나눌 때는 세 가지를 조심해요</h3>
 <svg class="dg" viewBox="0 0 400 170" role="img" aria-label="조심할 점 세 가지 그림. 쏠림은 한 키에 몰려 한 칸만 바쁜 것, 적은 칸은 칸보다 많은 담당자가 쉬는 것, 많은 칸은 서버의 파일이 늘어나는 것이다">
@@ -363,6 +383,13 @@ youtube: KgLt0RLMcHM
 </ol>
 <p class="more">참고: <a href="https://kafka.apache.org/41/operations/hardware-and-os/">Kafka 4.1: 파티션 수와 파일 수</a></p>
 </section>
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. 처음에 칸을 몇 개로 만들어야 해요?</summary>
+<p>A. 앞으로 한 팀에 둘 담당자 수의 최대치보다 적지 않게 잡아요. 나중에 늘리면 같은 키가 다른 칸으로 가니, 키의 차례가 중요하면 처음에 조금 넉넉히 정해요. 그렇다고 너무 많이 만들면 칸마다 파일이 생겨 센터의 부담이 커져요.</p>
+</details>
+</aside>
+</div>
 </div>
 
 </div>

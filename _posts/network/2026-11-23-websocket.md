@@ -22,6 +22,7 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 <symbol id="i-hourglass" viewBox="0 0 24 24"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></symbol>
 <symbol id="i-unplug" viewBox="0 0 24 24"><path d="m19 5 3-3"/><path d="m2 22 3-3"/><path d="M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4Z"/><path d="M7.5 13.5 10 11"/><path d="M10.5 16.5 13 14"/><path d="m12 6 6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/></symbol>
 <symbol id="i-shield-alert" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
 <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
 <symbol id="i-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></symbol>
 </defs>
@@ -137,6 +138,7 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 </ol>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>첫 편지로 전화로 바꾸자고 해요</h3>
 <svg class="dg" viewBox="0 0 400 290" role="img" aria-label="웹소켓 연결 순서 그림. 1 나는 Upgrade: websocket 헤더를 단 HTTP 요청으로 전화로 바꾸자고 하고 2 담당자는 101 Switching Protocols로 좋다고 답한다. 3 그 뒤로 같은 연결이 전화가 되어 양쪽이 주고받는다">
@@ -160,6 +162,14 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 </ol>
 <p class="more">통화 주소는 ws://이고 잠근 통화는 wss://예요. 잠그는 법은 <a href="{{ '/2026/11/20/https-tls/' | relative_url }}">4편 HTTPS</a>에서 봐요 · 참고: <a href="https://www.rfc-editor.org/rfc/rfc6455.html#section-1.3">RFC 6455 1.3 연결 시작</a></p>
 </section>
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. 웹소켓에서는 로그인을 어떻게 확인해요?</summary>
+<p>A. 전화로 바꾸자는 첫 편지가 평범한 HTTP 요청이라 브라우저가 쿠키를 함께 실어 보내요. 그래서 보통 담당자(서버)가 전화를 연결해 줄 때 쿠키나 토큰으로 누구인지 확인해요. 쿠키와 토큰은 <a href="{{ '/2026/11/19/cookie-session-token/' | relative_url }}">2편</a>에서 봐요.</p>
+<p>참고: <a href="https://websockets.spec.whatwg.org/#websocket-opening-handshake">WHATWG WebSockets 표준: 연결 시작(credentials mode "include")</a></p>
+</details>
+</aside>
+</div>
 
 <section class="slide">
 <h3>통화 중엔 둘 다 아무 때나 말해요</h3>
@@ -189,7 +199,7 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 
 <section class="slide">
 <h3>폴링은 늦고 웹소켓은 바로 받아요</h3>
-<svg class="dg" viewBox="0 0 400 306" role="img" aria-label="같은 시간 축에서 세 방법을 위아래로 비교한 그림. 새 메시지가 같은 시각에 도착한다. 폴링은 직전 물음이 지난 뒤라 다음 물음 때까지 기다렸다 받고, 롱 폴링은 붙잡아 둔 답장으로 바로 받지만 받자마자 편지를 다시 보낸다. 웹소켓은 하나의 연결이 계속 이어져 있어 바로 받는다. 시간은 설명용 예시다">
+<svg class="dg" viewBox="0 0 400 330" role="img" aria-label="같은 시간 축에서 세 방법을 위아래로 비교한 그림. 새 메시지가 같은 시각에 도착한다. 폴링은 직전 물음이 지난 뒤라 다음 물음 때까지 빨간 구간만큼 기다렸다 받고, 롱 폴링은 붙잡아 둔 답장으로 바로 받지만 받자마자 편지를 다시 보낸다. 웹소켓은 하나의 연결이 계속 이어져 있어 도착선에서 바로 받는다. 아래 범례는 흰 칸이 물음, 빨간 칸이 늦어진 시간, 노란 칸이 받는 순간, 초록 점선 칸이 열어 둔 채 기다리는 시간이라는 뜻이다. 시간은 설명용 예시다">
 <text class="chip" x="250" y="12">새 메시지 도착</text>
 <path class="line dash" d="M250,22 L250,300"/>
 <rect class="line" x="6" y="26" width="388" height="86" rx="12"/>
@@ -199,7 +209,7 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 <rect class="box" x="220" y="62" width="14" height="22" rx="3"/>
 <rect class="bad" x="250" y="66" width="40" height="14" rx="3"/>
 <rect class="kafka" x="290" y="62" width="14" height="22" rx="3"/>
-<text class="alert" x="284" y="100">기다려요</text><text class="small" x="87" y="100">물음</text>
+<text class="alert" x="256" y="100" style="text-anchor:start">기다려요</text>
 <rect class="line" x="6" y="120" width="388" height="86" rx="12"/>
 <text class="label center" x="200" y="140">롱 폴링</text>
 <rect class="new" x="90" y="156" width="160" height="22" rx="4"/><text class="chip" x="170" y="167">답장 붙잡아 둠</text>
@@ -207,8 +217,13 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 <rect class="line dash" x="268" y="156" width="100" height="22" rx="4"/><text class="chip" x="318" y="167">다시 보내요</text>
 <rect class="line" x="6" y="214" width="388" height="86" rx="12"/>
 <text class="label center" x="200" y="234">웹소켓</text>
-<rect class="kafka" x="90" y="250" width="280" height="22" rx="4"/><text class="chip" x="170" y="261">연결 하나 그대로</text>
-<text class="chip" x="316" y="288">바로 받아요</text>
+<rect class="new" x="90" y="250" width="280" height="22" rx="4"/><text class="chip" x="170" y="261">연결 하나 그대로</text>
+<rect class="kafka" x="250" y="250" width="12" height="22" rx="3"/>
+<text class="chip" x="256" y="288" style="text-anchor:start">바로 받아요</text>
+<rect class="box" x="20" y="310" width="14" height="14" rx="3"/><text class="small" x="38" y="317" style="text-anchor:start">물음</text>
+<rect class="bad" x="98" y="310" width="14" height="14" rx="3"/><text class="small" x="116" y="317" style="text-anchor:start">늦어진 시간</text>
+<rect class="kafka" x="206" y="310" width="14" height="14" rx="3"/><text class="small" x="224" y="317" style="text-anchor:start">받는 순간</text>
+<rect class="new" x="300" y="310" width="14" height="14" rx="3"/><text class="small" x="318" y="317" style="text-anchor:start">열어 둠</text>
 </svg>
 <ol class="steps">
 <li>폴링은 메시지가 와도 다음 물음까지 몰라요</li>
@@ -219,25 +234,24 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 
 <section class="slide">
 <h3>서버만 말하면 방송(SSE)으로 충분해요</h3>
-<svg class="dg" viewBox="0 0 400 262" role="img" aria-label="왼쪽 방송(SSE) 카드는 담당자에서 나에게로 화살표가 하나만 있어 서버만 말하고 끊기면 브라우저가 기본으로 다시 붙는다. 오른쪽 웹소켓 카드는 같은 두 사람 사이에 위아래 화살표가 둘 있어 양쪽이 말하고 끊기면 내 코드가 직접 다시 연결한다">
+<svg class="dg" viewBox="0 0 400 262" role="img" aria-label="왼쪽 방송(SSE, Server-Sent Events) 카드는 담당자에서 나에게로 화살표가 하나만 있어 서버만 말하고 끊기면 브라우저가 기본으로 다시 붙는다. 오른쪽 웹소켓 카드는 같은 두 사람 사이에 위아래 화살표가 둘 있어 양쪽이 말하고 끊기면 다시 거는 코드를 개발자가 직접 짜야 한다">
 <defs><marker id="ws7" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="line" x="10" y="10" width="185" height="242" rx="12"/>
-<text class="label center" x="102" y="32">방송 · SSE</text>
+<text class="label center" x="102" y="28">방송 · SSE</text><text class="small" x="102" y="46">Server-Sent Events</text>
 <circle class="box" cx="102" cy="82" r="26"/><use class="ic" href="#i-server" x="84" y="64" width="36" height="36"/>
 <path class="line" d="M102,112 L102,150" marker-end="url(#ws7)"/>
 <circle class="box" cx="102" cy="180" r="26"/><use class="ic" href="#i-user-round" x="84" y="162" width="36" height="36"/>
-<text class="small" x="102" y="228">끊기면 저절로 다시 붙어요</text>
+<text class="small" x="102" y="228">브라우저가 다시 붙어요</text>
 <rect class="line" x="205" y="10" width="185" height="242" rx="12"/>
-<text class="label center" x="297" y="32">통화 · 웹소켓</text>
+<text class="label center" x="297" y="28">통화 · 웹소켓</text>
 <circle class="box" cx="297" cy="82" r="26"/><use class="ic" href="#i-server" x="279" y="64" width="36" height="36"/>
 <path class="line" d="M289,112 L289,150" marker-end="url(#ws7)"/>
 <path class="line" d="M305,150 L305,112" marker-end="url(#ws7)"/>
 <circle class="box" cx="297" cy="180" r="26"/><use class="ic" href="#i-user-round" x="279" y="162" width="36" height="36"/>
-<text class="small" x="297" y="228">끊기면 내 코드가 다시 걸어요</text>
+<text class="small" x="297" y="228">다시 걸 코드를 짜야 해요</text>
 </svg>
 <ol class="steps">
-<li>알림처럼 서버만 말하면 방송(SSE)으로 돼요</li>
-<li>방송은 끊겨도 브라우저가 기본으로 다시 붙어요</li>
+<li>SSE는 '서버가 보낸 소식'이란 뜻이에요</li>
 <li>나도 자주 말해야 하면 웹소켓을 써요</li>
 </ol>
 <p class="more">참고: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">MDN: Server-sent events</a> · <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html">HTML 표준: SSE 재연결</a></p>
@@ -269,6 +283,7 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 </ol>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>쓸 때는 세 가지를 조심해요</h3>
 <svg class="dg" viewBox="0 0 400 170" role="img" aria-label="조심할 점 세 가지 그림. 끊김은 플러그가 빠진 모습으로 다시 걸어야 하고, 연결 수는 서버가 열린 연결마다 메모리를 쓰고, 출처는 방패 경고로 서버가 직접 확인해야 한다는 뜻이다">
@@ -280,11 +295,44 @@ summary: "HTTP는 내가 편지를 보내야 답장이 오는 방식이라 서�
 <text class="big" x="330" y="130">출처</text><text class="small" x="330" y="152">서버가 확인해요</text>
 </svg>
 <ol class="steps">
-<li>끊기면 브라우저 대신 내 코드가 다시 걸어요</li>
+<li>SSE와 달리 브라우저가 대신 걸어 주지 않아요</li>
 <li>사람 수만큼 연결이 열려 서버가 버거워져요</li>
-<li>다른 사이트도 걸 수 있어 서버가 출처(Origin)를 봐요</li>
+<li>남의 사이트가 건 전화인지 출처로 가려요</li>
 </ol>
-<p class="more">웹소켓은 CORS 검사를 받지 않아요(<a href="{{ '/2026/11/20/cors/' | relative_url }}">5편 CORS</a>) · 참고: <a href="https://websockets.spec.whatwg.org/">WHATWG WebSockets 표준</a> · <a href="https://www.rfc-editor.org/rfc/rfc6455.html#section-10.2">RFC 6455 10.2 Origin 확인</a></p>
+</section>
+<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<details class="author-question">
+<summary>초보 독자 Q. 전화가 끊긴 사이에 온 메시지는 사라져요?</summary>
+<p>A. 웹소켓은 끊긴 동안의 말을 모아 뒀다가 다시 전해 주지 않아요. 그래서 채팅 앱은 보통 메시지를 서버에 저장해 두고, 다시 전화를 걸면 마지막으로 받은 메시지 다음 것부터 달라고 해서 놓친 것을 채워요.</p>
+</details>
+</aside>
+</div>
+
+<section class="slide">
+<h3>다른 사이트가 건 전화는 서버가 걸러요</h3>
+<svg class="dg" viewBox="0 0 400 300" role="img" aria-label="내가 열어 둔 다른 사이트 페이지가 1 내 브라우저에게 담당자(서버)로 전화를 걸어 달라고 시키면 2 브라우저는 내 쿠키와 Origin: other.test를 실어 연결을 청한다. 3 담당자는 출처를 보고 모르는 곳이라 403 Forbidden으로 거절한다. 확인하지 않으면 다른 사이트가 내 이름으로 통화하게 된다. 주소는 설명용 예시다">
+<defs><marker id="ws8" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<path class="line dash" d="M60,106 L60,268"/>
+<path class="line dash" d="M200,96 L200,268"/>
+<path class="line dash" d="M340,96 L340,268"/>
+<text class="small" x="60" y="98">내가 연 페이지</text>
+<circle class="bad" cx="60" cy="40" r="24"/><use class="ic" href="#i-globe" x="44" y="24" width="32" height="32"/>
+<circle class="box" cx="200" cy="40" r="24"/><use class="ic" href="#i-user-round" x="184" y="24" width="32" height="32"/>
+<circle class="kafka" cx="340" cy="40" r="24"/><use class="ic" href="#i-server" x="324" y="24" width="32" height="32"/>
+<text class="big" x="60" y="80">다른 사이트</text><text class="big" x="200" y="80">내 브라우저</text><text class="big" x="340" y="80">담당자</text>
+<path class="line" d="M64,124 L194,124" marker-end="url(#ws8)"/><text class="chip" x="130" y="112">① 전화 걸어 줘</text>
+<path class="line" d="M204,174 L334,174" marker-end="url(#ws8)"/><text class="chip" x="270" y="162">② 쿠키도 실어요</text>
+<text class="chip mono" x="270" y="190" style="font-size:11px">Origin: other.test</text>
+<path class="line dash" d="M336,236 L206,236" marker-end="url(#ws8)"/><text class="chip" x="270" y="224">③ 출처 보고 거절</text>
+<text class="chip mono" x="270" y="252" style="font-size:11px">403 Forbidden</text>
+<text class="alert" x="200" y="288">확인 안 하면 내 이름으로 통화돼요</text>
+</svg>
+<ol class="steps">
+<li>SameSite=None 쿠키는 남의 사이트가 걸어도 실려요</li>
+<li>CORS 같은 답장 검사가 없어 연결이 그냥 열려요</li>
+<li>그래서 서버가 출처(Origin)를 확인해요</li>
+</ol>
+<p class="more">쿠키가 실리는 조건(SameSite)은 <a href="{{ '/2026/11/19/cookie-session-token/' | relative_url }}">2편</a>, CORS는 <a href="{{ '/2026/11/20/cors/' | relative_url }}">5편 CORS</a>에서 봐요 · 참고: <a href="https://www.rfc-editor.org/rfc/rfc6455.html#section-10.2">RFC 6455 10.2 Origin 확인</a> · <a href="https://websockets.spec.whatwg.org/#websocket-opening-handshake">WHATWG WebSockets: 연결 시작(쿠키 포함)</a> · <a href="https://fetch.spec.whatwg.org/#main-fetch">Fetch 표준: main fetch(websocket은 CORS 검사 생략)</a></p>
 </section>
 </div>
 
