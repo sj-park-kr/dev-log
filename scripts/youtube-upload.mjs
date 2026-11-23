@@ -126,25 +126,48 @@ async function uploadVideo() {
   console.log(`업로드 완료 (${privacy}): https://www.youtube.com/watch?v=${receipt.id}`);
 }
 
-async function waitForShort(check, failure) {
-  const url = `https://www.youtube.com/shorts/${receipt.id}`;
+async function waitForPage(url, check, failure) {
   for (let attempt = 0; attempt < 12; attempt++) {
     try {
       const response = await fetch(url, { cache: 'no-store', signal: AbortSignal.timeout(8000) });
-      if (response.ok && check(await response.text())) return;
+      if (response.ok) {
+        const result = check(await response.text());
+        if (result) return result;
+      }
     } catch {}
     if (attempt < 11) await setTimeout(5000);
   }
   throw new Error(`${failure}. 같은 명령을 다시 실행하면 ${receipt.id}에서 이어갑니다.`);
 }
 
-function isPlayable(html) {
+function linkThumbnail(html) {
+  return html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
+}
+
+function playableShort(html) {
   const json = html.match(/(?:var )?ytInitialPlayerResponse\s*=\s*(\{[\s\S]*?\});\s*<\/script>/)?.[1];
-  if (!json) return false;
+  if (!json) return;
   const player = JSON.parse(json);
-  return player.playabilityStatus?.status === 'OK' && player.videoDetails?.videoId === receipt.id
+  if (player.playabilityStatus?.status === 'OK' && player.videoDetails?.videoId === receipt.id
     && Number(player.videoDetails.lengthSeconds) > 0
-    && (privacy !== 'public' || player.microformat?.playerMicroformatRenderer?.isUnlisted !== true);
+    && (privacy !== 'public' || player.microformat?.playerMicroformatRenderer?.isUnlisted !== true)) {
+    return player.videoDetails;
+  }
+}
+
+function channelCardThumbnails(html) {
+  const json = html.match(/(?:var )?ytInitialData\s*=\s*(\{[\s\S]*?\});\s*<\/script>/)?.[1];
+  if (!json) return;
+  const tabs = JSON.parse(json).contents?.twoColumnBrowseResultsRenderer?.tabs;
+  const rows = tabs?.find(tab => tab.tabRenderer?.selected)?.tabRenderer.content?.richGridRenderer?.contents;
+  const card = rows?.map(row => row.richItemRenderer?.content?.shortsLockupViewModel)
+    .find(item => item?.onTap?.innertubeCommand?.reelWatchEndpoint?.videoId === receipt.id);
+  // onTap 아래 이미지는 재생에 쓰이고, 목록에서 보이는 이미지는 thumbnailViewModel에 있다.
+  return card?.thumbnailViewModel?.thumbnailViewModel?.image?.sources;
+}
+
+function matchesThumbnail(url, path) {
+  return Boolean(url) && new URL(url).pathname === path;
 }
 
 async function applyThumbnail() {
@@ -156,21 +179,35 @@ async function applyThumbnail() {
   });
   const result = await res.json();
   if (!res.ok) throw new Error(`썸네일 적용 실패 ${res.status}: ${result.error?.message}`);
-  const preview = result.items?.[0]?.shortsAspectRatio?.url;
-  if (!preview) throw new Error('유튜브가 세로 썸네일 주소를 반환하지 않았습니다. 영상 처리 후 같은 명령으로 이어가세요.');
-  receipt.thumbnail = preview;
-  saveReceipt();
+  return result.items?.[0]?.shortsAspectRatio?.url;
 }
 
 if (!receipt) await uploadVideo();
 if (privacy !== 'private') {
-  await waitForShort(isPlayable, '쇼츠 공개 재생을 아직 확인하지 못했습니다');
+  const shortUrl = `https://www.youtube.com/shorts/${receipt.id}`;
+  const short = await waitForPage(shortUrl, playableShort, '쇼츠 공개 재생을 아직 확인하지 못했습니다');
   if (existsSync(thumbnail)) {
-    if (!receipt.thumbnail) await applyThumbnail();
+    let channelUrl;
+    if (privacy === 'public') {
+      if (!/^UC[A-Za-z0-9_-]{22}$/.test(short.channelId)) throw new Error('쇼츠에서 채널 ID를 확인하지 못했습니다');
+      channelUrl = `https://www.youtube.com/channel/${short.channelId}/shorts`;
+    }
+    const studioHint = `계속 다른 이미지가 보이면 스튜디오에서 thumbnail.png를 지정하세요 (https://studio.youtube.com/video/${receipt.id}/edit)`;
+    if (!receipt.thumbnail) {
+      if (channelUrl) {
+        await waitForPage(channelUrl, channelCardThumbnails, '채널 쇼츠 목록에 영상이 아직 표시되지 않습니다');
+      }
+      receipt.thumbnail = (await applyThumbnail()) ?? `https://i.ytimg.com/vi/${receipt.id}/sardefault.jpg`;
+      saveReceipt();
+    }
     const path = new URL(receipt.thumbnail).pathname;
-    await waitForShort(html => html.match(/<meta property="og:image" content="([^"]+)"/)?.[1].includes(path),
-      '쇼츠 미리보기에 새 썸네일이 아직 표시되지 않습니다');
-    console.log('쇼츠 미리보기 썸네일 확인');
+    if (channelUrl) {
+      await waitForPage(channelUrl, html => channelCardThumbnails(html)?.some(({ url }) => matchesThumbnail(url, path)),
+        `채널 쇼츠 목록에 맞춤 썸네일이 아직 표시되지 않습니다. ${studioHint}`);
+    }
+    await waitForPage(shortUrl, html => matchesThumbnail(linkThumbnail(html), path),
+      `쇼츠 링크 미리보기에 맞춤 썸네일이 아직 표시되지 않습니다. ${studioHint}`);
+    console.log(channelUrl ? '채널 쇼츠 목록과 링크 미리보기 썸네일 확인' : '쇼츠 링크 미리보기 썸네일 확인');
   }
 }
 if (post) {
