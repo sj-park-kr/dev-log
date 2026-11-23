@@ -5,6 +5,7 @@ description: "그림으로 보는 Kafka 복제: 같은 칸을 여러 건물에 �
 date: 2026-11-15 14:30:00 +0900
 series: kafka
 episode: 5
+youtube: g5ppw2sHY44
 summary: "건물이 멈춰도 소식을 이어 가려면 사본이 필요해요. 누가 따라왔는지와 몇 곳에 남겨야 성공인지 함께 살펴봐요."
 ---
 
