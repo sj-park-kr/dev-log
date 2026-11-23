@@ -95,6 +95,7 @@ summary: "읽은 소식도 남겨 두되 오래된 단을 통째로 버리거나
 <div class="slide-group">
 <h2 class="slide-group-title">보관 한도: 오래된 단을 통째로 버려요</h2>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>기간이 지난 단은 통째로 버려요</h3>
 <svg class="dg" viewBox="0 0 400 200" role="img" aria-label="칸 0(파티션)의 기록이 단 0, 단 1, 쓰는 중인 단 2(세그먼트)로 나뉘어 있고 기간이 지난 단 0은 상자 세 개째 통째로 버리며 단 1과 쓰는 중인 단 2는 남기는 그림. 단 크기와 번호는 설명용 예시다">
@@ -115,12 +116,20 @@ summary: "읽은 소식도 남겨 두되 오래된 단을 통째로 버리거나
 <text class="chip" x="328" y="176">쓰는 중</text>
 </svg>
 <ol class="steps">
-<li>칸 안의 기록은 파일 묶음인 단(세그먼트)으로 나눠요</li>
+<li>기록을 단(세그먼트)으로 나눠 통째로 지워요</li>
 <li>단 안의 가장 새 소식도 기본 7일이 지나면 단을 버려요</li>
 <li>용량 한도를 걸면 칸마다 따로 재요</li>
 </ol>
 <p class="more">기본값은 Kafka 4.1 기준이에요 · 참고: <a href="https://kafka.apache.org/41/configuration/topic-configs/#retention.ms">retention.ms</a> · <a href="https://kafka.apache.org/41/configuration/topic-configs/#retention.bytes">retention.bytes</a> · <a href="https://kafka.apache.org/41/implementation/log/">세그먼트째 지우기</a></p>
 </section>
+<aside class="author-questions" aria-label="작성자 질문 목록">
+<details class="author-question">
+<summary>Q. 7일 지난 기록만 지우면 되지 왜 굳이 단으로 나눠요?</summary>
+<p>A. 파일은 앞부분만 잘라내기 어려워서 파일 하나에 다 쓰면 오래된 줄을 지울 때마다 남은 기록을 새 파일로 다시 써야 해요. 단 파일로 나눠 두면 기한이 지난 단 파일만 지워서 금방 끝나요. 대신 단 안의 가장 새 소식이 기준이라 옛 소식은 7일보다 조금 더 남을 수 있어요.</p>
+<p>참고: <a href="https://kafka.apache.org/41/configuration/topic-configs/#segment.bytes">Kafka 4.1: 정리는 늘 파일 하나씩 해요</a> · <a href="https://kafka.apache.org/41/implementation/log/">세그먼트째 지우기</a></p>
+</details>
+</aside>
+</div>
 
 <section class="slide">
 <h3>읽을 자리가 지워졌으면 시작 규칙을 따라요</h3>
@@ -223,6 +232,7 @@ summary: "읽은 소식도 남겨 두되 오래된 단을 통째로 버리거나
 <p class="more">참고: <a href="https://kafka.apache.org/41/design/design/#log-compaction-basics">Kafka 4.1: 컴팩션 동작</a> · <a href="https://kafka.apache.org/41/implementation/log/">정리 주기</a></p>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>오래 안 바뀐 키도 컴팩션은 지우지 않아요</h3>
 <svg class="dg" viewBox="0 0 400 272" role="img" aria-label="같은 기록 용산 0, 강남 1부터 4를 두 방식으로 나란히 정리한 그림. 위 기간 정리(delete)는 오래된 0번부터 2번을 지워 용산 안내가 하나도 남지 않는다. 아래 컴팩션(compact)은 용산 0과 마지막 강남 4를 남긴다. 번호는 설명용 예시다">
@@ -248,34 +258,57 @@ summary: "읽은 소식도 남겨 두되 오래된 단을 통째로 버리거나
 </ol>
 <p class="more">참고: <a href="https://kafka.apache.org/41/configuration/topic-configs/#cleanup.policy">Kafka 4.1: cleanup.policy</a></p>
 </section>
+<aside class="author-questions" aria-label="작성자 질문 목록">
+<details class="author-question">
+<summary>Q. 컴팩션이랑 기간 정리(retention)는 겹치는 거 아니에요?</summary>
+<p>A. 기간 정리는 언제 썼는지 보고 단을 통째로 버리고, 컴팩션은 같은 키의 마지막 값인지 보고 옛 값만 덜어내요. 그래서 컴팩션만 고른 토픽은 7일이 지나도 지우지 않아요. 둘 다 필요하면 마지막 장처럼 두 방식을 함께 켜요.</p>
+<p>참고: <a href="https://kafka.apache.org/41/configuration/topic-configs/#retention.ms">Kafka 4.1: retention.ms는 delete 정책에 적용</a> · <a href="https://kafka.apache.org/41/configuration/topic-configs/#cleanup.policy">cleanup.policy</a></p>
+</details>
+</aside>
+</div>
 </div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">톰스톤: 지울 땐 빈 안내를 맡겨요</h2>
+<h2 class="slide-group-title">톰스톤: 컴팩션에서 키를 지우는 법</h2>
 
 <div class="slide-with-question">
 <section class="slide">
-<h3>키를 지우려면 값이 빈 안내를 맡겨요</h3>
-<svg class="dg" viewBox="0 0 400 306" role="img" aria-label="세 줄로 된 그림. 첫 줄은 용산 0, 강남 1, 용산 2 뒤에 용산의 빈 안내(톰스톤) 3을 맡긴다. 둘째 줄은 컴팩션 뒤 강남 1과 톰스톤 3이 남는다. 셋째 줄은 정해 둔 시간이 지나 톰스톤도 치우고 강남 1만 남는다. 번호와 동네는 설명용 예시다">
-<text class="label center" x="200" y="18">① 빈 안내를 맡겨요</text>
-<circle class="bad" cx="56" cy="56" r="18"/><use class="ic" href="#i-file-text" x="43" y="43" width="26" height="26"/><text class="chip" x="56" y="92">0 용산</text>
-<circle class="new" cx="152" cy="56" r="18"/><use class="ic" href="#i-file-text" x="139" y="43" width="26" height="26"/><text class="chip" x="152" y="92">1 강남</text>
-<circle class="bad" cx="248" cy="56" r="18"/><use class="ic" href="#i-file-text" x="235" y="43" width="26" height="26"/><text class="chip" x="248" y="92">2 용산</text>
-<circle class="bad" cx="344" cy="56" r="18"/><use class="ic" href="#i-trash-2" x="331" y="43" width="26" height="26"/><text class="chip" x="344" y="92">3 용산 폐기</text>
-<text class="label center" x="200" y="122">② 옛 용산 안내를 치워요</text>
-<circle class="new" cx="152" cy="158" r="18"/><use class="ic" href="#i-file-text" x="139" y="145" width="26" height="26"/><text class="chip" x="152" y="194">1 강남</text>
-<circle class="bad" cx="344" cy="158" r="18"/><use class="ic" href="#i-trash-2" x="331" y="145" width="26" height="26"/><text class="chip" x="344" y="194">3 용산 폐기</text>
-<text class="label center" x="200" y="226">③ 나중엔 빈 안내도 치워요</text>
-<circle class="new" cx="152" cy="262" r="18"/><use class="ic" href="#i-file-text" x="139" y="249" width="26" height="26"/><text class="chip" x="152" y="298">1 강남</text>
+<h3>컴팩션에선 가게가 빈 안내로 키를 지워요</h3>
+<svg class="dg" viewBox="0 0 400 332" role="img" aria-label="칸 0을 세 단계 카드로 위아래에 그린 그림. 첫 카드는 가게(프로듀서)가 용산 0, 강남 1, 용산 2 뒤에 용산의 빈 안내(톰스톤) 3을 맡긴다. 둘째 카드는 컴팩션 뒤 강남 1과 톰스톤 3이 남는다. 셋째 카드는 정해 둔 시간이 지나 톰스톤도 치우고 강남 1만 남는다. 번호와 동네는 설명용 예시다">
+<rect class="line" x="6" y="6" width="388" height="100" rx="12"/>
+<text class="label center" x="200" y="28">① 가게가 빈 안내를 맡겨요</text>
+<circle class="bad" cx="50" cy="58" r="18"/><use class="ic" href="#i-file-text" x="37" y="45" width="26" height="26"/><text class="chip" x="50" y="94">0 용산</text>
+<circle class="new" cx="140" cy="58" r="18"/><use class="ic" href="#i-file-text" x="127" y="45" width="26" height="26"/><text class="chip" x="140" y="94">1 강남</text>
+<circle class="bad" cx="230" cy="58" r="18"/><use class="ic" href="#i-file-text" x="217" y="45" width="26" height="26"/><text class="chip" x="230" y="94">2 용산</text>
+<circle class="bad" cx="320" cy="58" r="18"/><use class="ic" href="#i-trash-2" x="307" y="45" width="26" height="26"/><text class="chip" x="320" y="94">3 용산 톰스톤</text>
+<rect class="line" x="6" y="116" width="388" height="100" rx="12"/>
+<text class="label center" x="200" y="138">② 옛 용산 안내를 치워요</text>
+<circle class="new" cx="140" cy="168" r="18"/><use class="ic" href="#i-file-text" x="127" y="155" width="26" height="26"/><text class="chip" x="140" y="204">1 강남</text>
+<circle class="bad" cx="320" cy="168" r="18"/><use class="ic" href="#i-trash-2" x="307" y="155" width="26" height="26"/><text class="chip" x="320" y="204">3 용산 톰스톤</text>
+<rect class="line" x="6" y="226" width="388" height="100" rx="12"/>
+<text class="label center" x="200" y="248">③ 나중엔 빈 안내도 치워요</text>
+<circle class="new" cx="140" cy="278" r="18"/><use class="ic" href="#i-file-text" x="127" y="265" width="26" height="26"/><text class="chip" x="140" y="314">1 강남</text>
 </svg>
 <ol class="steps">
-<li>값이 빈 값(null)인 안내가 폐기 표지(톰스톤)예요</li>
-<li>센터가 옛 용산 안내를 먼저 치워요 (예시)</li>
-<li>톰스톤도 기본 하루 뒤엔 치워요</li>
+<li>가게가 값만 비워(null) 보낸 소식이 톰스톤이에요</li>
+<li>마지막 값은 늘 남아서 지운다는 표시가 필요해요</li>
+<li>켜는 설정은 없고 남길 기간만 정해요 (기본 하루)</li>
 </ol>
 <p class="more">기본값은 Kafka 4.1 기준이에요 · 참고: <a href="https://kafka.apache.org/41/design/design/#log-compaction-basics">Kafka 4.1: 삭제 표시와 컴팩션</a> · <a href="https://kafka.apache.org/41/configuration/topic-configs/#delete.retention.ms">delete.retention.ms</a></p>
 </section>
-<aside class="author-questions" aria-label="초보 독자 질문 목록">
+<aside class="author-questions" aria-label="작성자 질문과 초보 독자 질문 목록">
+<details class="author-question">
+<summary>Q. 톰스톤은 누가 설정해요? 따로 켜는 기능인가요?</summary>
+<p>A. 켜는 기능이 아니라 가게(프로듀서)가 같은 키에 값만 비워 보낸 소식을 부르는 이름이에요. 컴팩션이 이 소식을 지우라는 뜻으로 보고 옛 값을 치운 뒤 나중에 톰스톤도 치워요. 그래서 톰스톤은 컴팩션 토픽에서만 뜻이 있어요.</p>
+<p>참고: <a href="https://kafka.apache.org/41/design/design/#log-compaction-basics">Kafka 4.1: 삭제 표시와 컴팩션</a></p>
+</details>
+<details class="author-question">
+<summary>Q. 톰스톤이 지워지려면 컴팩션이랑 기간 정리를 둘 다 켜야 해요?</summary>
+<p>A. 아니요. 컴팩션만 켜면 돼요. 7일과 하루는 서로 다른 타이머예요.</p>
+<p>7일(retention.ms)은 기간 정리가 오래된 단을 버리는 타이머예요. 컴팩션만 고른 토픽에서는 이 타이머로 지우지 않아요.</p>
+<p>하루(delete.retention.ms)는 컴팩션이 톰스톤을 치우는 타이머예요. 이름에 delete와 retention이 들어 있어 7일 설정과 헷갈리지만 따로 있는 설정이에요.</p>
+<p>참고: <a href="https://kafka.apache.org/41/configuration/topic-configs/#delete.retention.ms">Kafka 4.1: delete.retention.ms</a></p>
+</details>
 <details class="author-question">
 <summary>초보 독자 Q. 톰스톤은 왜 하루나 남겨요?</summary>
 <p>A. 늦게 읽는 담당자도 지우라는 표지를 보게 하려는 거예요. 톰스톤을 바로 치우면 그 뒤에 읽은 담당자는 용산이 지워졌다는 걸 알 수 없어요. 그래서 처음부터 다시 읽는 담당자는 이 시간 안에 끝까지 읽어야 해요.</p>
@@ -284,32 +317,41 @@ summary: "읽은 소식도 남겨 두되 오래된 단을 통째로 버리거나
 </aside>
 </div>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>톰스톤을 놓치면 낡은 안내가 남아요</h3>
-<svg class="dg" viewBox="0 0 400 272" role="img" aria-label="다시 켜진 담당자를 두 경우로 나란히 비교한 그림. 위는 용산 폐기 표지(톰스톤)가 남아 있을 때 켜서 그것을 읽고 담당자 저장소(DB)의 용산 안내를 지운다. 아래는 표지가 이미 치워진 뒤 켜서 읽을 표지가 없고 저장소에는 낡은 용산 안내가 그대로 남는다. 동네는 설명용 예시다">
+<svg class="dg" viewBox="0 0 400 272" role="img" aria-label="담당자가 읽는 때를 두 경우로 나란히 비교한 그림. 위는 용산 톰스톤이 남아 있는 하루 안에 그것을 읽고 담당자 저장소(DB)의 용산 안내를 지운다. 아래는 톰스톤이 이미 치워진 뒤에 읽어서 읽을 표지가 없고 저장소에는 낡은 용산 안내가 그대로 남는다. 동네는 설명용 예시다">
 <defs><marker id="rc4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="line" x="6" y="6" width="388" height="124" rx="12"/>
-<text class="label center" x="200" y="28">톰스톤이 남아 있을 때 켜요</text>
-<circle class="bad" cx="90" cy="76" r="22"/><use class="ic" href="#i-trash-2" x="74" y="60" width="32" height="32"/><text class="chip" x="90" y="116">용산 폐기</text>
+<text class="label center" x="200" y="28">하루 안에 톰스톤을 읽었어요</text>
+<circle class="bad" cx="90" cy="76" r="22"/><use class="ic" href="#i-trash-2" x="74" y="60" width="32" height="32"/><text class="chip" x="90" y="116">용산 톰스톤</text>
 <path class="line" d="M116,76 L196,76" marker-end="url(#rc4)"/>
 <circle class="box" cx="226" cy="76" r="24"/><use class="ic" href="#i-user-round" x="210" y="60" width="32" height="32"/><text class="chip" x="226" y="116">담당자</text>
 <path class="line" d="M254,76 L306,76" marker-end="url(#rc4)"/>
 <circle class="box" cx="338" cy="76" r="26"/><use class="ic" href="#i-database" x="320" y="58" width="36" height="36"/><text class="chip" x="338" y="116">저장소 용산 지움</text>
 <rect class="line" x="6" y="142" width="388" height="124" rx="12"/>
-<text class="label center" x="200" y="164">톰스톤이 치워진 뒤 켜요</text>
+<text class="label center" x="200" y="164">톰스톤이 치워진 뒤에 읽었어요</text>
 <circle class="line dash" cx="90" cy="212" r="22"/><text class="chip" x="90" y="252">표지 없음</text>
 <path class="line dash" d="M116,212 L196,212" marker-end="url(#rc4)"/>
 <circle class="box" cx="226" cy="212" r="24"/><use class="ic" href="#i-user-round" x="210" y="196" width="32" height="32"/><text class="chip" x="226" y="252">담당자</text>
 <path class="line" d="M254,212 L306,212" marker-end="url(#rc4)"/>
-<circle class="bad blink" cx="338" cy="212" r="26"/><use class="ic" href="#i-database" x="320" y="194" width="36" height="36"/><text class="alert" x="338" y="252">저장소에 낡은 용산</text>
+<circle class="bad blink" cx="338" cy="212" r="26"/><use class="ic" href="#i-database" x="320" y="194" width="36" height="36"/><text class="alert" x="338" y="252">낡은 용산 남음</text>
 </svg>
 <ol class="steps">
-<li>다시 읽지 않으려고 저장소(DB)에 적어 둬요 (예시)</li>
-<li>톰스톤이 남아 있을 때 읽어야 저장소에서도 지워요</li>
+<li>저장소(DB)는 담당자가 지금 안내를 적어 두는 곳이에요</li>
+<li>톰스톤을 읽어야 저장소에서도 용산을 지워요</li>
 <li>놓쳤다면 저장소를 비우고 처음부터 다시 읽어요</li>
 </ol>
 <p class="more">참고: <a href="https://kafka.apache.org/41/configuration/topic-configs/#delete.retention.ms">Kafka 4.1: 톰스톤 보관과 컨슈머의 복구 범위</a></p>
 </section>
+<aside class="author-questions" aria-label="작성자 질문 목록">
+<details class="author-question">
+<summary>Q. 갑자기 저장소(DB)는 왜 나와요?</summary>
+<p>A. 담당자는 손님이 물을 때마다 선반을 처음부터 다시 읽지 않아요. 지금 안내만 자기 저장소(DB)에 적어 두고 거기서 바로 답해요. 그래서 톰스톤을 놓치면 선반에선 용산이 사라져도 저장소에는 끝난 용산 안내가 그대로 남아요.</p>
+<p>저장소에 적어 두는 방식은 <a href="{{ '/2026/11/15/delivery-semantics/' | relative_url }}">7편 전달 보장</a>에서도 나와요</p>
+</details>
+</aside>
+</div>
 </div>
 
 <div class="slide-group">
