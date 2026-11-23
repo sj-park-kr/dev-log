@@ -6,6 +6,7 @@ date: 2026-11-15 15:00:00 +0900
 series: kafka
 episode: 6
 summary: "읽은 소식도 남겨 두되 오래된 단을 통째로 버리거나 키별 최신 상태를 남겨요. 무엇을 다시 읽어야 하는지가 정리 방법을 결정해요."
+youtube: YTL22xtEngI
 ---
 
 <div class="lesson lesson-hierarchy storybook">

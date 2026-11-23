@@ -6,6 +6,7 @@ date: 2026-11-15 15:30:00 +0900
 series: kafka
 episode: 7
 summary: "소식이 남아 있어도 처리는 누락되거나 겹칠 수 있어요. 세 가지 약속을 비교하고 결과와 읽은 위치를 함께 확정하는 이유를 알아봐요."
+youtube: -vq-8GKqIR0
 ---
 
 <div class="lesson lesson-hierarchy storybook">
@@ -117,70 +118,76 @@ summary: "소식이 남아 있어도 처리는 누락되거나 겹칠 수 있어
 <p class="more">새 담당이 장부부터 읽는 과정은 <a href="{{ '/2026/11/15/consumer-group/' | relative_url }}">4편</a> · 지워진 소식은 <a href="{{ '/2026/11/15/retention-compaction/' | relative_url }}">6편</a>에서 봐요 · 참고: <a href="https://kafka.apache.org/41/design/design/#message-delivery-semantics">Apache Kafka 4.1: 세 전달 보장과 컨슈머 복구</a></p>
 </section>
 
+<div class="slide-with-question">
 <section class="slide">
-<h3>자동 커밋은 처리 방식에 따라 약속이 달라요</h3>
-<svg class="dg" viewBox="0 0 400 290" role="img" aria-label="자동 커밋을 켠 같은 담당자를 위아래로 나란히 비교한 그림. 위는 4번과 5번을 받아 다 처리한 뒤 다음 읽기 요청 때 장부에 6을 적어 최소 한 번이 된다. 아래는 4번과 5번의 처리를 다른 곳에 넘기고 바로 다음 읽기 요청이 장부에 6을 적고 그 뒤 처리 중에 멈춰 4번과 5번이 빠질 수 있다. 처리 상자의 색만 다르다. 번호는 설명용 예시다">
+<h3>자동 커밋은 5초가 지난 뒤 처음 달라고 할 때 적어요</h3>
+<svg class="dg" viewBox="0 0 400 160" role="img" aria-label="왼쪽에서 오른쪽으로 흐르는 시간 줄 위에 담당자가 다음 상자를 달라고 한 세 순간을 찍은 그림. 0초에 달라고 하며 장부를 적고 3초에 달라고 할 때는 5초가 안 지나 건너뛴다. 5초가 지나도 아직 적히지 않고 7초에 처음 달라고 할 때 장부를 적는다. 시각은 설명용 예시다">
 <defs><marker id="ds4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
-<text class="small" x="200" y="14">자동 커밋 (enable.auto.commit) · 기본 켜짐 · 지난 적기 뒤 5초</text>
-<rect class="line" x="6" y="24" width="388" height="126" rx="12"/>
-<text class="label center" x="200" y="44">다 처리한 뒤 다음 요청</text>
-<rect class="box" x="14" y="62" width="104" height="32" rx="6"/><text class="chip" x="66" y="78">4·5번 받기</text>
-<path class="line" d="M120,78 L144,78" marker-end="url(#ds4)"/>
-<rect class="kafka" x="148" y="62" width="104" height="32" rx="6"/><text class="chip" x="200" y="78">처리 끝</text>
-<path class="line" d="M254,78 L278,78" marker-end="url(#ds4)"/>
-<rect class="box" x="282" y="62" width="104" height="32" rx="6"/><text class="chip" x="334" y="78">장부에 6</text>
-<text class="chip" x="200" y="130">최소 한 번</text>
-<rect class="line" x="6" y="158" width="388" height="126" rx="12"/>
-<text class="label center" x="200" y="178">처리를 넘기고 바로 다음 요청</text>
-<rect class="box" x="14" y="196" width="104" height="32" rx="6"/><text class="chip" x="66" y="212">4·5번 받기</text>
-<path class="line" d="M120,212 L144,212" marker-end="url(#ds4)"/>
-<rect class="box" x="148" y="196" width="104" height="32" rx="6"/><text class="chip" x="200" y="212">장부에 6</text>
-<path class="line" d="M254,212 L278,212" marker-end="url(#ds4)"/>
-<rect class="bad" x="282" y="196" width="104" height="32" rx="6"/><text class="chip" x="334" y="212">처리 중 멈춤</text>
-<text class="alert" x="200" y="264">4·5번이 빠질 수 있어요</text>
+<path class="line" d="M20,90 L388,90" marker-end="url(#ds4)"/>
+<path class="line dash" d="M250,64 L250,112"/>
+<text class="small" x="250" y="52">5초 지남</text>
+<text class="alert" x="290" y="136">아직 안 적혀요</text>
+<circle class="kafka" cx="50" cy="90" r="12"/><text class="chip" x="50" y="56">달라 · 적기</text>
+<circle class="box" cx="170" cy="90" r="12"/><text class="chip" x="170" y="56">달라 · 건너뜀</text>
+<circle class="kafka" cx="330" cy="90" r="12"/><text class="chip" x="330" y="56">달라 · 적기</text>
+<text class="small" x="50" y="120">0초</text><text class="small" x="170" y="120">3초</text><text class="small" x="330" y="120">7초</text>
 </svg>
 <ol class="steps">
-<li>5초가 지나면 다음 읽기 요청(poll()) 때 적어요</li>
-<li>장부에는 다음에 읽을 번호 6을 적어요 (예시)</li>
-<li>그 요청 전에 일을 다 끝내야 최소 한 번이에요</li>
+<li>7초에야 적는 건 그때 처음 달라고 해서예요 (예시)</li>
+<li>적을 땐 받아 간 상자를 다 끝난 걸로 쳐요</li>
+<li>그래서 덜 끝낸 채 달라고 하면 빠질 수 있어요</li>
 </ol>
-<p class="more">기본값은 Kafka 4.1 Java 컨슈머 기준이에요 · 자동 커밋 동작은 <a href="{{ '/2026/11/15/consumer-group/' | relative_url }}">4편</a>에서 봐요 · 참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Kafka 4.1 KafkaConsumer: 자동 커밋</a> · <a href="https://kafka.apache.org/41/configuration/consumer-configs/#enable.auto.commit">컨슈머 설정</a></p>
+<p class="more">자동 커밋(enable.auto.commit)은 기본으로 켜져 있고 간격(auto.commit.interval.ms)은 5초예요 (Kafka 4.1 Java 컨슈머 기준) · 자동 커밋 동작은 <a href="{{ '/2026/11/15/consumer-group/' | relative_url }}">4편</a>에서 봐요 · 참고: <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html">Kafka 4.1 KafkaConsumer: 자동 커밋</a> · <a href="https://kafka.apache.org/41/configuration/consumer-configs/#enable.auto.commit">컨슈머 설정</a></p>
 </section>
+<aside class="author-questions" aria-label="작성자 질문 목록">
+<details class="author-question">
+<summary>Q. 자동 커밋은 언제 적힐지 제어가 안 되는데 보통 언제 써요?</summary>
+<p>A. 받은 상자를 직접 다 처리하는 단순한 담당자가 가끔 겹쳐도 괜찮은 일을 할 때 써요. 로그 모으기나 통계 집계가 그런 예예요. 결제·재고처럼 빠지면 안 되거나 일꾼에게 넘겨 처리할 때는 자동 커밋을 끄고(enable.auto.commit=false) 일을 끝낸 뒤 직접 적어요(commitSync()).</p>
+</details>
+</aside>
+</div>
 
 <section class="slide">
-<h3>겹쳐도 주문 번호를 보면 한 번만 반영해요</h3>
-<svg class="dg" viewBox="0 0 400 240" role="img" aria-label="같은 주문 B가 두 번 오는 두 경우를 위아래 카드로 나란히 비교한 그림. 위 처음 온 주문 B는 저장소에서 재고를 하나 줄이고 주문 번호 B를 적는다. 아래 다시 온 같은 주문 B는 저장소에 이미 B가 적혀 있어 건너뛴다. 주문 번호는 설명용 예시다">
+<h3>재고를 줄일 때 주문 번호도 같이 적으면 겹쳐도 괜찮아요</h3>
+<svg class="dg" viewBox="0 0 400 240" role="img" aria-label="같은 주문 B가 두 번 오는 두 경우를 위아래 카드로 나란히 비교한 그림. 재고 담당이 주문 B를 읽고 상자에 적힌 주문 번호 B가 저장소에 있는지 먼저 찾는다. 위 처음 온 주문 B는 저장소에 없어서 재고를 하나 줄이며 주문 번호 B를 한 번에 함께 적는다. 아래 다시 온 같은 주문 B는 저장소에 이미 B가 적혀 있어 건너뛴다. 주문 번호는 설명용 예시다">
 <defs><marker id="ds5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <rect class="line" x="6" y="6" width="388" height="110" rx="12"/>
 <text class="label center" x="200" y="26">처음 온 주문</text>
-<path class="line" d="M74,70 L154,70" marker-end="url(#ds5)"/>
-<path class="line" d="M206,70 L246,70" marker-end="url(#ds5)"/>
-<circle class="new" cx="50" cy="70" r="22"/><use class="ic" href="#i-package" x="36" y="56" width="28" height="28"/>
-<text class="chip" x="50" y="106">주문 B</text>
-<circle class="kafka" cx="180" cy="70" r="24"/><use class="ic" href="#i-database" x="164" y="54" width="32" height="32"/>
-<text class="small" x="180" y="106">저장소</text>
-<rect class="kafka" x="250" y="54" width="134" height="32" rx="6"/><text class="chip" x="317" y="70">재고 −1 · B 적기</text>
+<path class="line" d="M58,70 L94,70" marker-end="url(#ds5)"/>
+<path class="line" d="M144,70 L180,70" marker-end="url(#ds5)"/><text class="chip" x="162" y="56">B 있나?</text>
+<path class="line" d="M230,70 L250,70" marker-end="url(#ds5)"/>
+<circle class="new" cx="36" cy="70" r="20"/><use class="ic" href="#i-package" x="23" y="57" width="26" height="26"/>
+<text class="chip" x="36" y="106">주문 B</text>
+<circle class="box" cx="120" cy="70" r="22"/><use class="ic" href="#i-user-round" x="106" y="56" width="28" height="28"/>
+<text class="small" x="120" y="106">재고 담당</text>
+<circle class="kafka" cx="206" cy="70" r="22"/><use class="ic" href="#i-database" x="192" y="56" width="28" height="28"/>
+<text class="small" x="206" y="106">저장소</text>
+<rect class="kafka" x="254" y="54" width="132" height="32" rx="6"/><text class="chip" x="320" y="70">재고 −1 · B 적기</text>
 <rect class="line" x="6" y="124" width="388" height="110" rx="12"/>
 <text class="label center" x="200" y="144">다시 온 같은 주문</text>
-<path class="line" d="M74,188 L154,188" marker-end="url(#ds5)"/>
-<path class="line" d="M206,188 L246,188" marker-end="url(#ds5)"/>
-<circle class="box" cx="50" cy="188" r="22"/><use class="ic" href="#i-package" x="36" y="174" width="28" height="28"/>
-<text class="chip" x="50" y="224">주문 B</text>
-<circle class="kafka" cx="180" cy="188" r="24"/><use class="ic" href="#i-database" x="164" y="172" width="32" height="32"/>
-<text class="small" x="180" y="224">저장소</text>
-<rect class="box" x="250" y="172" width="134" height="32" rx="6"/><text class="chip" x="317" y="188">이미 있어 건너뛰기</text>
+<path class="line" d="M58,188 L94,188" marker-end="url(#ds5)"/>
+<path class="line" d="M144,188 L180,188" marker-end="url(#ds5)"/><text class="chip" x="162" y="174">B 있나?</text>
+<path class="line" d="M230,188 L250,188" marker-end="url(#ds5)"/>
+<circle class="box" cx="36" cy="188" r="20"/><use class="ic" href="#i-package" x="23" y="175" width="26" height="26"/>
+<text class="chip" x="36" y="224">주문 B</text>
+<circle class="box" cx="120" cy="188" r="22"/><use class="ic" href="#i-user-round" x="106" y="174" width="28" height="28"/>
+<text class="small" x="120" y="224">재고 담당</text>
+<circle class="kafka" cx="206" cy="188" r="22"/><use class="ic" href="#i-database" x="192" y="174" width="28" height="28"/>
+<text class="small" x="206" y="224">저장소</text>
+<rect class="box" x="254" y="172" width="132" height="32" rx="6"/><text class="chip" x="320" y="188">이미 있어 건너뛰기</text>
 </svg>
 <ol class="steps">
-<li>주문 번호를 함께 적어 두면 다시 와도 알아봐요 (예시)</li>
-<li>그래서 최소 한 번이어도 재고는 한 번 줄어요</li>
-<li>이 번호는 3편 번호와 달리 담당자가 확인해요</li>
+<li>재고 담당은 상자에 적힌 주문 번호(B)부터 저장소에서 찾아요</li>
+<li>없으면 재고 −1과 번호를 한 번에 함께 적어요 (DB 트랜잭션)</li>
+<li>그래서 최소 한 번이어도 재고는 한 번만 줄어요</li>
 </ol>
 </section>
 </div>
 
 <div class="slide-group">
-<h2 class="slide-group-title">트랜잭션: 결과와 장부를 함께 확정해요</h2>
+<h2 class="slide-group-title">트랜잭션: 결과와 장부를 함께 확정하거나 취소해요</h2>
 
+<div class="slide-with-question">
 <section class="slide">
 <h3>재고 담당은 결과를 다른 선반에 맡겨요</h3>
 <svg class="dg" viewBox="0 0 400 160" role="img" aria-label="재고 담당이 주문 선반에서 주문을 읽고 처리한 결과 소식을 결과 선반에 맡기는 그림. 읽을 때는 컨슈머이고 맡길 때는 프로듀서다">
@@ -201,6 +208,13 @@ summary: "소식이 남아 있어도 처리는 누락되거나 겹칠 수 있어
 <li>읽을 땐 담당자(컨슈머), 맡길 땐 가게(프로듀서)예요</li>
 </ol>
 </section>
+<aside class="author-questions" aria-label="작성자 질문 목록">
+<details class="author-question">
+<summary>Q. 주문을 읽은 다음 결과를 다시 프로듀스하는 건 보통 언제 해요?</summary>
+<p>A. 내 일의 결과를 다른 팀도 알아야 할 때 해요. 재고 담당이 “재고 확보됨”을 맡기면 배송 담당이 읽고 출고하듯 서비스를 직접 부르지 않고 이어 갈 수 있어요. 해외 주문만 골라 맡기거나 1분마다 판매 수를 세어 맡기는 처리도 같은 모양이고 Kafka Streams가 이 일을 전문으로 해요.</p>
+</details>
+</aside>
+</div>
 
 <section class="slide">
 <h3>결과와 장부를 한 묶음으로 확정해요</h3>
@@ -223,10 +237,6 @@ summary: "소식이 남아 있어도 처리는 누락되거나 겹칠 수 있어
 </ol>
 <p class="more">참고: <a href="https://kafka.apache.org/41/design/design/#using-transactions">Kafka 4.1: 트랜잭션 쓰기</a> · <a href="https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/producer/KafkaProducer.html#sendOffsetsToTransaction(java.util.Map,org.apache.kafka.clients.consumer.ConsumerGroupMetadata)">출력과 오프셋 묶기</a></p>
 </section>
-</div>
-
-<div class="slide-group">
-<h2 class="slide-group-title">취소: 멈추면 없던 일이 돼요</h2>
 
 <section class="slide">
 <h3>확정 전에 멈추면 묶음을 통째로 취소해요</h3>
@@ -246,7 +256,7 @@ summary: "소식이 남아 있어도 처리는 누락되거나 겹칠 수 있어
 <ol class="steps">
 <li>결과와 장부가 함께 없던 일이 돼요</li>
 <li>새 담당은 장부의 4번부터 다시 해요 (예시)</li>
-<li>취소된 건 없던 일이라 확정 결과는 한 번뿐이에요</li>
+<li>그래서 2-1처럼 멈춰도 확정된 결과는 한 번뿐이에요</li>
 </ol>
 <p class="more">참고: <a href="https://kafka.apache.org/41/design/design/#using-transactions">Kafka 4.1: 트랜잭션과 복구 조건</a></p>
 </section>
