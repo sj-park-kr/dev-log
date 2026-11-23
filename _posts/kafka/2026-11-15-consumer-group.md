@@ -249,14 +249,14 @@ youtube: g97ZCCTyKf0
 <circle class="box" cx="70" cy="100" r="34"/><use class="ic" href="#i-user-round" x="48" y="78" width="44" height="44"/>
 <text class="big" x="70" y="158">담당자</text><text class="small" x="70" y="178">컨슈머</text>
 <rect class="line" x="236" y="10" width="158" height="190" rx="12"/>
-<use class="ic" href="#i-warehouse" x="246" y="18" width="22" height="22"/><text class="label" x="274" y="34">센터 (브로커)</text>
+<use class="ic" href="#i-warehouse" x="246" y="18" width="22" height="22"/><text class="label" x="274" y="34">건물 (브로커)</text>
 <circle class="kafka" cx="316" cy="100" r="36"/><use class="ic" href="#i-clipboard-list" x="294" y="78" width="44" height="44"/>
 <text class="big" x="316" y="160">사무실</text><text class="small" x="316" y="180">그룹 코디네이터</text>
 <circle class="packet" r="5"><animateMotion dur="1.6s" repeatCount="indefinite" path="M108,70 L292,70"/></circle>
 <circle class="packet" r="5"><animateMotion dur="1.6s" begin="0.8s" repeatCount="indefinite" path="M292,130 L108,130"/></circle>
 </svg>
 <ol class="steps">
-<li>사무실(그룹 코디네이터)은 센터(브로커) 한 곳이 맡아요</li>
+<li>사무실(그룹 코디네이터)은 건물(브로커) 한 곳이 맡아요</li>
 <li>담당자는 살아 있다는 신호(하트비트)를 계속 보내요</li>
 <li>신호나 읽기 요청(poll())이 오래 끊기면 칸을 넘겨요</li>
 </ol>

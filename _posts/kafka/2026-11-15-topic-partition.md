@@ -140,7 +140,7 @@ youtube: KgLt0RLMcHM
 <text class="small" x="200" y="242">색칠한 두 1번은 서로 다른 상자예요</text>
 </svg>
 <ol class="steps">
-<li>센터(브로커)는 칸 끝에 붙이며 번호(오프셋)를 매겨요</li>
+<li>센터(Kafka 클러스터)는 칸 끝에 붙이며 번호(오프셋)를 매겨요</li>
 <li>번호는 그 칸 안의 차례만 나타내요</li>
 <li>번호로 두 칸 사이의 앞뒤는 정할 수 없어요</li>
 </ol>

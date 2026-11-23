@@ -295,7 +295,7 @@ summary: "건물이 멈춰도 소식을 이어 가려면 사본이 필요해요.
 <li>건물 2는 선이 멈춘 뒤 빠져 앞 소식을 다 가졌어요</li>
 <li>이런 사본이 안전 후보(ELR, eligible leader replicas)예요</li>
 </ol>
-<p class="more">4.1부터 새 클러스터(건물 단지)는 기본으로 켜져요 · 참고: <a href="https://kafka.apache.org/41/operations/eligible-leader-replicas/">Kafka 4.1: ELR</a></p>
+<p class="more">4.1부터 새 센터(Kafka 클러스터)는 기본으로 켜져요 · 참고: <a href="https://kafka.apache.org/41/operations/eligible-leader-replicas/">Kafka 4.1: ELR</a></p>
 </section>
 </div>
 
