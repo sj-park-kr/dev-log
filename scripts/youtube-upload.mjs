@@ -1,5 +1,6 @@
-// 사용법: node scripts/youtube-upload.mjs _motion/<슬러그> [public|unlisted|private] [글 파일]
+// 사용법: node scripts/youtube-upload.mjs _motion/<슬러그> [public|unlisted|private|<예약 시각 ISO>] [글 파일]
 // youtube.md와 MP4를 올리고, 처리 후 thumbnail.png와 글을 연결한다. 비밀값은 출력하지 않는다.
+// 예약(예: 2026-11-24T22:00:00+09:00)은 비공개로 올려 그 시각에 공개되게만 한다. 공개 뒤 public과 글 경로로 다시 실행해 확인·썸네일·글 연결을 이어간다.
 // 비밀 파일 이름을 조각내 쓰는 이유: Claude 훅이 해당 문자열이 든 도구 호출을 막아서, 이 파일도 Claude가 쓸 수 있어야 한다.
 import { createServer } from 'node:http';
 import { readFileSync, readdirSync, writeFileSync, existsSync, renameSync } from 'node:fs';
@@ -7,10 +8,13 @@ import { exec } from 'node:child_process';
 import { basename, isAbsolute, join, relative, sep } from 'node:path';
 import { setTimeout } from 'node:timers/promises';
 
-const [dir, privacy = 'public', post] = process.argv.slice(2);
+const [dir, mode = 'public', post] = process.argv.slice(2);
 if (!dir) throw new Error('폴더를 지정하세요: node scripts/youtube-upload.mjs _motion/<슬러그> public [글 파일]');
-if (!['public', 'unlisted', 'private'].includes(privacy)) throw new Error('공개 범위는 public|unlisted|private');
-if (post && privacy !== 'public') throw new Error('글에는 공개 영상을 연결하세요.');
+const publishAt = /^\d{4}-\d{2}-\d{2}T/.test(mode) ? new Date(mode) : null;
+if (publishAt && !(publishAt > Date.now())) throw new Error('예약 시각은 앞으로의 ISO 시각이어야 합니다 (예: 2026-11-24T22:00:00+09:00)');
+const privacy = publishAt ? 'public' : mode; // 예약 영상은 결국 공개되므로 기록도 public으로 남겨 재실행을 잇는다
+if (!['public', 'unlisted', 'private'].includes(privacy)) throw new Error('공개 범위는 public|unlisted|private 또는 예약 시각');
+if (post && (privacy !== 'public' || publishAt)) throw new Error('글에는 공개된 영상만 연결하세요. 예약 영상은 공개 뒤 public으로 다시 실행하세요.');
 
 const KEY = 'client_' + 'secret';
 const keyFile = readdirSync('_motion').find((f) => f.startsWith(KEY) && f.endsWith('.json'));
@@ -112,7 +116,9 @@ async function uploadVideo() {
     },
     body: JSON.stringify({
       snippet: { title, description, categoryId: '27' },
-      status: { privacyStatus: privacy, selfDeclaredMadeForKids: false },
+      status: publishAt
+        ? { privacyStatus: 'private', publishAt: publishAt.toISOString(), selfDeclaredMadeForKids: false }
+        : { privacyStatus: privacy, selfDeclaredMadeForKids: false },
     }),
   });
   if (!start.ok) throw new Error(`업로드 시작 실패 ${start.status}: ${await start.text()}`);
@@ -183,6 +189,12 @@ async function applyThumbnail() {
 }
 
 if (!receipt) await uploadVideo();
+if (publishAt) {
+  // 스튜디오에서 바로 보이게 지금 넣되 기록하지 않는다. 공개 뒤 재실행이 채널 쇼츠 목록에 뜬 다음 한 번 더 넣는다.
+  if (existsSync(thumbnail)) { await applyThumbnail(); console.log('썸네일 적용'); }
+  console.log(`예약 완료 (${publishAt.toISOString()} 공개). 공개 뒤 public과 글 경로로 다시 실행하세요: https://studio.youtube.com/video/${receipt.id}/edit`);
+  process.exit(0);
+}
 if (privacy !== 'private') {
   const shortUrl = `https://www.youtube.com/shorts/${receipt.id}`;
   const short = await waitForPage(shortUrl, playableShort, '쇼츠 공개 재생을 아직 확인하지 못했습니다');
