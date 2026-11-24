@@ -6,6 +6,7 @@ date: 2026-11-15 21:00:00 +0900
 series: docker
 episode: 1
 summary: "Docker는 앱과 준비물을 밀키트 상자처럼 봉인해요. 칩과 운영체제가 맞는 컴퓨터라면 같은 준비물로 앱을 실행해요."
+youtube: nyTlqQQP2XM
 ---
 
 <div class="lesson lesson-hierarchy storybook">

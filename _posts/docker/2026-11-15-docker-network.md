@@ -6,6 +6,7 @@ date: 2026-11-15 21:20:00 +0900
 series: docker
 episode: 3
 summary: "바깥에서 컨테이너로 들어올 때는 기본적으로 포트 매핑(-p)을 써요. 컨테이너끼리는 사용자 정의 네트워크에서 이름으로 찾아요."
+youtube: KPMHrk7fovM
 ---
 
 <div class="lesson lesson-hierarchy storybook">

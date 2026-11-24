@@ -6,6 +6,7 @@ date: 2026-11-15 21:10:00 +0900
 series: docker
 episode: 2
 summary: "컨테이너 안에 쓴 데이터는 컨테이너와 함께 지워져요. 남길 데이터는 Docker가 맡는 볼륨에 두고 내가 고칠 파일은 바인드 마운트로 연결해요."
+youtube: 8XFdJ9sP7Es
 ---
 
 <div class="lesson lesson-hierarchy storybook">
