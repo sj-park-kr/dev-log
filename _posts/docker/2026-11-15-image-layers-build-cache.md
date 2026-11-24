@@ -6,6 +6,7 @@ date: 2026-11-15 21:40:00 +0900
 series: docker
 episode: 5
 summary: "이미지는 칸마다 봉인한 트레이를 쌓은 상자예요. 바뀌지 않은 칸은 창고에서 꺼내 다시 쓰니까 자주 바뀌는 재료를 맨 위에 두면 다시 포장이 빨라져요."
+youtube: DdN-0ZGBhII
 ---
 
 <div class="lesson lesson-hierarchy storybook">
