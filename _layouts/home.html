@@ -2,6 +2,31 @@
 layout: default
 ---
 <section class="hero" aria-labelledby="hero-title">
+  <div class="hero-top">
+    {% if site.goatcounter_url and site.goatcounter_url != "" %}
+    <script src="{{ '/assets/js/visitor-counter.js' | relative_url }}?v={{ site.time | date: '%s' }}" data-endpoint="{{ site.goatcounter_url | escape }}/counter/TOTAL.json" defer></script>
+    <section class="visitor-stats" aria-label="방문 통계 (UTC 기준)" hidden>
+      <dl>
+        <div>
+          <dt>오늘 방문</dt>
+          <dd><span data-visitor-count="today"></span>회</dd>
+        </div>
+        <div>
+          <dt>이번 주</dt>
+          <dd><span data-visitor-count="week"></span>회</dd>
+        </div>
+        <div>
+          <dt>이번 달</dt>
+          <dd><span data-visitor-count="month"></span>회</dd>
+        </div>
+        <div>
+          <dt>누적</dt>
+          <dd><span data-visitor-count="total"></span>회</dd>
+        </div>
+      </dl>
+    </section>
+    {% endif %}
+  </div>
   <p class="eyebrow">작은 비유로 여는 큰 세상</p>
   <h1 id="hero-title"><span class="hero-title-first">어려운 개발 개념을</span><br><span>초등학생도 알게.</span></h1>
   <p class="hero-description">{{ site.description | escape }}</p>
@@ -22,30 +47,6 @@ layout: default
     mark.classList.add('is-animated');
   })();
 </script>
-
-{% if site.goatcounter_url and site.goatcounter_url != "" %}
-<script src="{{ '/assets/js/visitor-counter.js' | relative_url }}?v={{ site.time | date: '%s' }}" data-endpoint="{{ site.goatcounter_url | escape }}/counter/TOTAL.json" defer></script>
-<section class="visitor-stats" aria-label="방문 통계 (UTC 기준)" hidden>
-  <dl>
-    <div>
-      <dt>오늘 방문</dt>
-      <dd><span data-visitor-count="today"></span><small>회</small></dd>
-    </div>
-    <div>
-      <dt>이번 주</dt>
-      <dd><span data-visitor-count="week"></span><small>회</small></dd>
-    </div>
-    <div>
-      <dt>이번 달</dt>
-      <dd><span data-visitor-count="month"></span><small>회</small></dd>
-    </div>
-    <div>
-      <dt>총 누적</dt>
-      <dd><span data-visitor-count="total"></span><small>회</small></dd>
-    </div>
-  </dl>
-</section>
-{% endif %}
 
 <section class="home-section" aria-labelledby="series-title">
   <div class="section-heading">
