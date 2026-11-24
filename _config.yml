@@ -4,6 +4,7 @@ lang: ko
 url: https://sj-park-kr.github.io
 baseurl: /dev-log # 커스텀 도메인 연결 시 "" 로 변경
 github_username: sj-park-kr
+goatcounter_url: https://tjdwp77v.goatcounter.com
 
 theme: minima
 plugins:

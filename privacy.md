@@ -7,7 +7,7 @@ permalink: /privacy/
 
 ## 블로그가 직접 모으는 정보
 
-없습니다. 회원가입, 댓글, 입력 폼이 없어서 이름·이메일 같은 개인정보를 직접 모으지 않습니다.
+회원가입, 댓글, 입력 폼이 없어서 이름·이메일 같은 정보를 직접 모으지 않습니다.
 
 ## 브라우저에만 저장하는 정보
 
@@ -23,6 +23,8 @@ permalink: /privacy/
   - 자세한 내용은 [Google 광고 정책](https://policies.google.com/technologies/ads)을 참고하세요.
 - **GitHub Pages**: 블로그를 호스팅합니다. 보안과 운영을 위해 접속 IP 주소 등 기록을 남길 수 있습니다. ([GitHub 개인정보 처리방침](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement))
 - **Google Fonts**: 글꼴을 불러올 때 접속 IP 주소가 Google에 전달됩니다. ([Google 개인정보처리방침](https://policies.google.com/privacy))
+{% if site.goatcounter_url and site.goatcounter_url != "" %}- **GoatCounter**는 방문한 페이지와 유입 경로, 브라우저 종류, 접속 국가 등을 집계합니다. 반복 방문을 구분할 때 IP 주소와 브라우저 정보를 일시적으로 사용합니다. 방문 집계에 쿠키나 브라우저 저장소를 쓰지 않습니다. 블로그에는 집계한 숫자만 표시합니다. [GoatCounter 개인정보처리방침](https://www.goatcounter.com/help/privacy)
+{% endif %}
 
 ## 문의
 

@@ -23,6 +23,30 @@ layout: default
   })();
 </script>
 
+{% if site.goatcounter_url and site.goatcounter_url != "" %}
+<script src="{{ '/assets/js/visitor-counter.js' | relative_url }}?v={{ site.time | date: '%s' }}" data-endpoint="{{ site.goatcounter_url | escape }}/counter/TOTAL.json" defer></script>
+<section class="visitor-stats" aria-label="방문 통계 (UTC 기준)" hidden>
+  <dl>
+    <div>
+      <dt>오늘 방문</dt>
+      <dd><span data-visitor-count="today"></span><small>회</small></dd>
+    </div>
+    <div>
+      <dt>이번 주</dt>
+      <dd><span data-visitor-count="week"></span><small>회</small></dd>
+    </div>
+    <div>
+      <dt>이번 달</dt>
+      <dd><span data-visitor-count="month"></span><small>회</small></dd>
+    </div>
+    <div>
+      <dt>총 누적</dt>
+      <dd><span data-visitor-count="total"></span><small>회</small></dd>
+    </div>
+  </dl>
+</section>
+{% endif %}
+
 <section class="home-section" aria-labelledby="series-title">
   <div class="section-heading">
     <div><p class="eyebrow">하나의 주제로 이어지는 이해</p><h2 id="series-title">차근차근 시리즈</h2></div>
