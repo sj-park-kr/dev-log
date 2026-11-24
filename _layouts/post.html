@@ -23,26 +23,11 @@ layout: default
   {% endif %}
   <div class="post-content">{{ content }}</div>
 
-  {% if post_series and page.episode %}
-    {% assign episodes = site.posts | where: 'series', post_series.id | sort: 'episode' %}
-    {% assign previous_episode = nil %}
-    {% assign next_episode = nil %}
-    {% for episode in episodes %}
-      {% if episode.episode %}
-        {% if episode.episode < page.episode %}
-          {% assign previous_episode = episode %}
-        {% elsif episode.episode > page.episode %}
-          {% assign next_episode = episode %}
-          {% break %}
-        {% endif %}
-      {% endif %}
-    {% endfor %}
-    {% if previous_episode or next_episode %}
-      <nav class="episode-nav" aria-label="시리즈 이어 읽기">
-        {% if previous_episode %}<a href="{{ previous_episode.url | relative_url }}"><span>← 이전 편 · #{{ previous_episode.episode }}</span><strong>{{ previous_episode.title | escape }}</strong></a>{% endif %}
-        {% if next_episode %}<a class="next" href="{{ next_episode.url | relative_url }}"><span>다음 편 · #{{ next_episode.episode }} →</span><strong>{{ next_episode.title | escape }}</strong></a>{% endif %}
-      </nav>
-    {% endif %}
+  {% if page.previous or page.next %}
+    <nav class="episode-nav" aria-label="발행 순서로 이어 읽기">
+      {% if page.previous %}<a href="{{ page.previous.url | relative_url }}"><span>← 이전 편{% if page.previous.episode %} · #{{ page.previous.episode }}{% endif %}</span><strong>{{ page.previous.title | escape }}</strong></a>{% endif %}
+      {% if page.next %}<a class="next" href="{{ page.next.url | relative_url }}"><span>다음 편{% if page.next.episode %} · #{{ page.next.episode }}{% endif %} →</span><strong>{{ page.next.title | escape }}</strong></a>{% endif %}
+    </nav>
   {% endif %}
 </article>
 <script src="{{ '/assets/js/post-toc.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
