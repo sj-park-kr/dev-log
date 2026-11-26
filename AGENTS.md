@@ -22,6 +22,7 @@ Claude와 Codex의 공통 진입점이다. 세부 규칙은 `docs/`에서만 관
 | 새 글을 만들 때 함께 진행하는 쇼츠 제작, 음성·썸네일 확인, 유튜브 공개·예약, 글에 영상 연결 | [영상 제작과 유튜브 업로드](docs/rules/12-youtube-video.md) |
 | Claude·Codex에서 작성·조사·검토 모델을 정할 때 | [작업별 모델](docs/rules/11-agent-models.md) |
 | 매일 자동으로 새 글 작성 | [자동화 프롬프트와 설정](docs/daily-writing-prompt.md) |
+| 새 글 작성·기존 글 수정·검토, 사용자가 "이해가 안 된다"고 했을 때 (사례 갱신) | [독자가 막힌 이유](docs/rules/13-reader-pitfalls.md) |
 | 문체·설명 방식 판단, 과거 피드백 확인 | [세션 기반 수정 성향](docs/writing-feedback.md) |
 
 새 글을 시작할 때는 [작성 템플릿](_drafts/lesson-template.md)을 사용한다. 기존 글을 동화책 형식으로 옮기거나 완성된 글의 구성을 확인할 때는 [Kafka 1편](_posts/kafka/2026-11-15-why-kafka.md)을 기준으로 삼는다.
