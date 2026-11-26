@@ -285,8 +285,9 @@ hr { margin-block: 36px; border: 0; border-top: 1px solid var(--line); }
 .storybook .slide svg { max-width: 560px; }
 .post-content .storybook .slide h3 { font-size: 22px; text-align: center; text-wrap: balance; }
 .storybook .steps { list-style: none; counter-reset: step; max-width: 440px; margin: 20px auto 0; padding: 0; }
-.storybook .steps li { counter-increment: step; display: flex; gap: 10px; align-items: baseline; margin: 8px 0; font-size: 17px; line-height: 1.6; }
-.storybook .steps li::before { content: counter(step); flex: none; display: inline-grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--hl-line); border-radius: 50%; background: var(--hl); color: var(--ink); font-size: 13px; font-weight: 700; }
+/* li를 flex로 두면 문장 속 <code>가 따로 칸이 돼 줄이 깨져요. 번호만 왼쪽에 띄워요. */
+.storybook .steps li { counter-increment: step; position: relative; margin: 8px 0; padding-left: 34px; font-size: 17px; line-height: 1.6; }
+.storybook .steps li::before { content: counter(step); position: absolute; left: 0; top: 1px; display: inline-grid; place-items: center; width: 24px; height: 24px; border: 2px solid var(--hl-line); border-radius: 50%; background: var(--hl); color: var(--ink); font-size: 13px; font-weight: 700; }
 .storybook .more { margin: 14px 0 0; color: var(--muted); font-size: 14px; text-align: center; }
 
 /* 슬라이드 안 SVG 그림 */

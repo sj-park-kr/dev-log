@@ -189,25 +189,21 @@ youtube: 8XFdJ9sP7Es
 </section>
 
 <section class="slide">
-<h3>빈 볼륨과 빈 서랍은 처음 열 때 달라요</h3>
-<svg class="dg" viewBox="0 0 400 205" role="img" aria-label="같은 이미지 폴더에 처음 연결하면 빈 볼륨에는 원본이 복사되고 빈 집 서랍에서는 원래 파일이 가려져요.">
-<rect class="line" x="7" y="8" width="191" height="188" rx="12"/>
-<text class="label center" x="102.5" y="34">빈 볼륨</text>
-<use class="ic" href="#i-bowl" x="82" y="44" width="41" height="41"/>
-<text class="small" x="102" y="99">원래 파일</text>
-<circle class="new" cx="102" cy="135" r="24"/><use class="ic" href="#i-bowl" x="86" y="119" width="32" height="32"/>
-<text class="chip" x="102" y="182">볼륨에 생긴 사본</text>
-<rect class="line" x="202" y="8" width="191" height="188" rx="12"/>
-<text class="label center" x="297" y="34">빈 집 서랍</text>
-<use class="ic" href="#i-bowl" x="277" y="44" width="41" height="41"/>
-<text class="small" x="297" y="99">원래 파일</text>
-<rect class="box" x="271" y="115" width="52" height="40" rx="6"/>
-<text class="chip" x="297" y="182">원래 파일은 안 보여요</text>
+<h3>빈 볼륨은 파일을 받고 빈 PC 폴더는 가려요</h3>
+<svg class="dg" viewBox="0 0 400 246" role="img" aria-label="이미지의 /app 폴더에 파일이 있을 때의 두 명령 비교예요. docker run -v my-vol:/app은 콜론 왼쪽이 이름이라 볼륨을 연결해요. my-vol이 빈 볼륨이면 이미지의 파일이 복사돼 /app에 보여요. docker run -v ./empty:/app은 콜론 왼쪽이 경로라 내 PC 폴더를 연결해요. empty가 빈 폴더면 /app이 비어 보여요.">
+<rect class="line" x="7" y="8" width="386" height="110" rx="12"/>
+<text class="label center" x="200" y="34">빈 볼륨: 왼쪽이 이름</text>
+<text class="mono center" x="200" y="67" text-anchor="middle">-v my-vol:/app</text>
+<text class="chip" x="200" y="100">이미지 파일이 복사돼 보여요 (기본)</text>
+<rect class="line" x="7" y="128" width="386" height="110" rx="12"/>
+<text class="label center" x="200" y="154">빈 PC 폴더: 왼쪽이 경로</text>
+<text class="mono center" x="200" y="187" text-anchor="middle">-v ./empty:/app</text>
+<text class="chip" x="200" y="220">복사 없이 /app이 비어 보여요</text>
 </svg>
 <ol class="steps">
-<li>빈 볼륨에는 연결할 폴더의 기존 파일을 기본으로 복사해요</li>
-<li>파일이 든 볼륨과 집 서랍은 앱의 기존 파일을 가려요</li>
-<li>연결 없이 새로 띄우면 이미지에 든 파일이 보여요</li>
+<li><code>my-vol</code>처럼 이름만 쓰면 Docker 볼륨이에요</li>
+<li><code>./empty</code>처럼 경로를 쓰면 내 PC 폴더예요</li>
+<li>파일 든 볼륨도 이미지 파일을 지우지 않고 가려요</li>
 </ol>
 <p class="more">참고: <a href="https://docs.docker.com/engine/storage/volumes/#mounting-a-volume-over-existing-data">빈 볼륨의 초기 복사</a> · <a href="https://docs.docker.com/engine/storage/bind-mounts/#bind-mounting-over-existing-data">연결 중 가려지는 파일</a></p>
 </section>
@@ -241,21 +237,21 @@ youtube: 8XFdJ9sP7Es
 </section>
 
 <section class="slide">
-<h3>자동 삭제해도 이름 붙인 칸은 남아요</h3>
-<svg class="dg" viewBox="0 0 400 205" role="img" aria-label="자동 삭제 옵션으로 컨테이너를 지울 때 이름 있는 볼륨은 남고 익명 볼륨은 함께 지워져요.">
-<rect class="line" x="7" y="8" width="191" height="188" rx="12"/>
-<text class="label center" x="102.5" y="34">이름 있는 볼륨</text>
-<circle class="new" cx="102.5" cy="91" r="34"/><use class="ic" href="#i-fridge" x="79.5" y="68" width="46" height="46"/>
-<text class="chip" x="102.5" y="149">db-data:/data</text><text class="small" x="102.5" y="175">자동 삭제 뒤 보관</text>
-<rect class="line" x="202" y="8" width="191" height="188" rx="12"/>
-<text class="label center" x="297.5" y="34">자동 이름(익명 볼륨)</text>
-<circle class="bad" cx="297.5" cy="91" r="34"/><use class="ic" href="#i-fridge" x="274.5" y="68" width="46" height="46"/>
-<text class="chip" x="297.5" y="149">/data</text><text class="small" x="297.5" y="175">자동 삭제 때 제거</text>
+<h3>--rm으로 지워도 이름 있는 볼륨은 남아요</h3>
+<svg class="dg" viewBox="0 0 400 246" role="img" aria-label="--rm을 붙여 실행한 컨테이너는 종료되면 자동으로 삭제돼요. docker run --rm -v db-data:/data는 이름 있는 볼륨이라 컨테이너가 삭제돼도 볼륨이 남아요. docker run --rm -v /data는 이름이 없는 익명 볼륨이라 컨테이너와 함께 볼륨도 삭제돼요.">
+<rect class="line" x="7" y="8" width="386" height="110" rx="12"/>
+<text class="label center" x="200" y="34">이름 있는 볼륨</text>
+<text class="mono" x="200" y="67">--rm -v db-data:/data</text>
+<text class="chip" x="200" y="100">컨테이너만 삭제, 볼륨은 남음</text>
+<rect class="line" x="7" y="128" width="386" height="110" rx="12"/>
+<text class="label center" x="200" y="154">이름 없는 볼륨(익명 볼륨)</text>
+<text class="mono" x="200" y="187">--rm -v /data</text>
+<text class="chip" x="200" y="220">컨테이너와 볼륨 모두 삭제</text>
 </svg>
 <ol class="steps">
-<li><code>-v /data</code>처럼 이름을 생략하면 Docker가 임의 이름을 붙여요</li>
-<li><code>--rm</code>이면 종료 때 Docker가 조리대와 익명 칸을 지워요</li>
-<li>이름 붙인 볼륨도 앱이 안의 파일을 지우면 파일은 사라져요</li>
+<li><code>--rm</code>을 붙이면 끝난 컨테이너를 자동으로 지워요</li>
+<li>이름 없이 만든 익명 볼륨도 이때 함께 지워져요</li>
+<li>이름 있는 볼륨도 앱이 안의 파일을 지우면 사라져요</li>
 </ol>
 </section>
 
