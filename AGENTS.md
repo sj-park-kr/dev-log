@@ -10,7 +10,7 @@ Claude와 Codex의 공통 진입점이다. 세부 규칙은 `docs/`에서만 관
 
 | 작업·상황 | 읽을 문서 |
 |---|---|
-| 다음에 쓸 주제를 고르거나 후보를 남길 때 | [주제 후보 목록](docs/todo.md) |
+| 다음에 쓸 주제·만들 영상을 고르거나 후보를 남길 때 | [시리즈 진행 순서](docs/rules/02-series-files.md), [주제 후보 목록](docs/todo.md) |
 | 새 글 작성·기존 글 수정 (동화책 형식) | [블로그 정체성](docs/rules/01-blog-identity.md), [글 구성](docs/rules/03-article-structure.md), [페이지 문장](docs/rules/04-slides-writing.md) |
 | 글 파일·시리즈 생성, 메타데이터 수정 | [시리즈와 파일 구조](docs/rules/02-series-files.md) |
 | 그림 생성·수정 | [SVG 규칙](docs/rules/05-svg.md) |
