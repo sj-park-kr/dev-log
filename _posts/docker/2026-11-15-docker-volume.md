@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "상자를 뜯고 요리하면 남은 음식은 어디에 둘까? 밀키트로 이해하는 Docker 볼륨"
-description: "컨테이너를 지우면 안의 데이터도 사라지는 문제를 밀키트 주방 비유로 설명하고 Docker의 쓰기 층·볼륨·바인드 마운트·tmpfs 마운트가 어떻게 다르고 언제 무엇을 쓰는지 실제 동작으로 이어서 설명합니다."
+description: "컨테이너를 지우면 안의 데이터도 사라지는 문제를 밀키트 주방 비유로 설명하고 Docker의 쓰기 레이어·볼륨·바인드 마운트·tmpfs 마운트가 어떻게 다르고 언제 무엇을 쓰는지 실제 동작으로 이어서 설명합니다."
 date: 2026-11-15 21:10:00 +0900
 series: docker
 episode: 2
@@ -13,8 +13,9 @@ youtube: 8XFdJ9sP7Es
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
 <defs>
-<!-- i-pot=cooking-pot, i-fridge=refrigerator, i-trash=trash-2, i-memory=memory-stick. 아이콘 원본: https://cdn.jsdelivr.net/npm/lucide-static@1.25.0/icons/ (ISC). 라이선스: assets/icons/LICENSE-lucide.txt. i-bowl만 Lucide에 맞는 것이 없어 1편과 같이 직접 그렸어요. -->
+<!-- i-pot=cooking-pot, i-fridge=refrigerator, i-trash=trash-2, i-memory=memory-stick, i-box=package. 아이콘 원본: https://cdn.jsdelivr.net/npm/lucide-static@1.25.0/icons/ (ISC). 라이선스: assets/icons/LICENSE-lucide.txt. i-bowl만 Lucide에 맞는 것이 없어 1편과 같이 직접 그렸어요. -->
 <symbol id="i-pot" viewBox="0 0 24 24"><path d="M2 12h20M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8M4 8l16-4M8.86 6.78l-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.46l.45 1.8"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73zM12 22V12M3.29 7 12 12 20.71 7M7.5 4.27l9 5.15"/></symbol>
 <symbol id="i-fridge" viewBox="0 0 24 24"><path d="M5 6a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6ZM5 10h14M15 7v6"/></symbol>
 <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M3 12h18a9 9 0 0 1-18 0zM7 12c1-4 3-6 5-8 2 2 4 4 5 8"/></symbol>
 <symbol id="i-trash" viewBox="0 0 24 24"><path d="M10 11v6M14 11v6M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
@@ -57,22 +58,22 @@ youtube: 8XFdJ9sP7Es
 
 <section class="slide">
 <h3>조리대를 멈추면 주문 기록은 남아요</h3>
-<svg class="dg" viewBox="0 0 400 204" role="img" aria-label="이미지 v1으로 만든 같은 컨테이너를 멈췄다 다시 시작하면 쓰기 층의 주문 100건이 남고 지운 뒤 같은 v1으로 다시 만들면 0건이에요. 주문 수는 예시예요.">
+<svg class="dg" viewBox="0 0 400 204" role="img" aria-label="이미지 v1으로 만든 같은 컨테이너를 멈췄다 다시 시작하면 기록 공간의 주문 100건이 남고 지운 뒤 같은 v1으로 다시 만들면 0건이에요. 주문 수는 예시예요.">
 <rect class="line" x="7" y="8" width="191" height="188" rx="12"/>
 <text class="label center" x="102.5" y="35">멈춤 뒤 재시작</text>
 <circle class="new" cx="102.5" cy="88" r="32"/><use class="ic" href="#i-pot" x="80.5" y="66" width="44" height="44"/>
-<text class="chip" x="102.5" y="149">같은 쓰기 층</text><text class="small" x="102.5" y="176">주문 100건 (예시)</text>
+<text class="chip" x="102.5" y="149">같은 기록 공간</text><text class="small" x="102.5" y="176">주문 100건 (예시)</text>
 <rect class="line" x="202" y="8" width="191" height="188" rx="12"/>
 <text class="label center" x="297.5" y="35">삭제 뒤 새로 생성</text>
 <circle class="bad" cx="297.5" cy="88" r="32"/><use class="ic" href="#i-pot" x="275.5" y="66" width="44" height="44"/>
-<text class="chip" x="297.5" y="149">새 쓰기 층</text><text class="small" x="297.5" y="176">주문 0건 (예시)</text>
+<text class="chip" x="297.5" y="149">새 기록 공간</text><text class="small" x="297.5" y="176">주문 0건 (예시)</text>
 </svg>
 <ol class="steps">
-<li>밀키트 상자(이미지)는 읽기 전용이에요</li>
-<li>멈췄던 조리대를 다시 열면 주문 100건이 남아요 (예시)</li>
-<li>새 조리대에는 새 기록 공간(쓰기 층)이 생겨요</li>
+<li>상자(이미지)는 읽기 전용이라 조리대에 기록해요</li>
+<li>멈췄다 열면 같은 공간이라 100건이 남아요 (예시)</li>
+<li>새 조리대에는 빈 기록 공간(쓰기 레이어)이 생겨요</li>
 </ol>
-<p class="more">참고: <a href="https://docs.docker.com/engine/storage/drivers/">쓰기 층</a></p>
+<p class="more">참고: <a href="https://docs.docker.com/engine/storage/drivers/">쓰기 레이어</a></p>
 </section>
 
 <details class="origin">
@@ -112,17 +113,17 @@ youtube: 8XFdJ9sP7Es
 <div class="slide-with-question">
 <section class="slide">
 <h3>앱이 쓰는 폴더에 볼륨을 연결해요</h3>
-<svg class="dg" viewBox="0 0 400 240" role="img" aria-label="호스트 안에서 지운 컨테이너 v1과 새로 실행한 컨테이너 v2가 각 컨테이너의 /data 폴더에 같은 볼륨 db-data를 연결하고 볼륨은 Docker가 관리해서 컨테이너를 지워도 남는다는 그림">
+<svg class="dg" viewBox="0 0 400 256" role="img" aria-label="호스트 안에서 지운 컨테이너 v1과 새로 실행한 컨테이너 v2가 각 컨테이너의 /data 폴더에 같은 볼륨 db-data를 연결하고 볼륨은 Docker가 관리해서 컨테이너를 지워도 남는다는 그림">
 <defs><marker id="v4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
-<rect class="line" x="10" y="10" width="380" height="220" rx="12"/>
+<rect class="line" x="10" y="10" width="380" height="236" rx="12"/>
 <text class="label center" x="200" y="30">Docker를 실행하는 컴퓨터(호스트)</text>
-<circle class="box" cx="88" cy="75" r="29"/><use class="ic" href="#i-pot" x="68" y="55" width="40" height="40"/>
-<circle class="box" cx="312" cy="75" r="29"/><use class="ic" href="#i-pot" x="292" y="55" width="40" height="40"/>
-<text class="small" x="88" y="111">① 이전 조리대 삭제</text><text class="small" x="312" y="111">② 새 조리대 실행</text>
-<text class="chip" x="88" y="132">/data</text><text class="chip" x="312" y="132">/data</text>
-<path class="line dash" d="M88,143 L162,164"/><path class="line" d="M312,143 L235,164" marker-end="url(#v4)"/>
-<circle class="new" cx="200" cy="171" r="29"/><use class="ic" href="#i-fridge" x="180" y="151" width="40" height="40"/>
-<text class="chip" x="200" y="221">db-data</text>
+<circle class="box" cx="88" cy="73" r="29"/><use class="ic" href="#i-pot" x="68" y="53" width="40" height="40"/>
+<circle class="box" cx="312" cy="73" r="29"/><use class="ic" href="#i-pot" x="292" y="53" width="40" height="40"/>
+<text class="small" x="88" y="119">① 이전 조리대 삭제</text><text class="small" x="312" y="119">② 새 조리대 실행</text>
+<text class="chip" x="88" y="139">/data</text><text class="chip" x="312" y="139">/data</text>
+<path class="line dash" d="M88,151 L162,177"/><path class="line" d="M312,151 L235,177" marker-end="url(#v4)"/>
+<circle class="new" cx="200" cy="184" r="29"/><use class="ic" href="#i-fridge" x="180" y="164" width="40" height="40"/>
+<text class="chip" x="200" y="229">db-data</text>
 </svg>
 <ol class="steps">
 <li><code>-v db-data:/data</code>에서 콜론 앞은 볼륨 이름이에요</li>
@@ -149,22 +150,23 @@ youtube: 8XFdJ9sP7Es
 
 <section class="slide">
 <h3>내가 고칠 레시피는 집 서랍에 둬요</h3>
-<svg class="dg" viewBox="0 0 400 180" role="img" aria-label="우리 집 서랍과 조리대가 양쪽으로 이어져 집에서 고친 레시피가 조리대에서 바로 보이고 조리대에서 버린 것은 집 서랍에서도 사라진다는 그림">
+<svg class="dg" viewBox="0 0 400 180" role="img" aria-label="내 PC 폴더(집 서랍)와 조리대가 양쪽으로 이어져 내 PC에서 고친 파일이 조리대에서 바로 보이고 앱이 지운 파일은 내 PC에서도 삭제된다는 그림">
 <defs><marker id="v5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
 <path class="line" d="M108,64 L292,64" marker-end="url(#v5)"/>
 <path class="line" d="M292,96 L108,96" marker-end="url(#v5)"/>
 <circle class="box" cx="65" cy="80" r="42"/><use class="ic" href="#i-house" x="39" y="54" width="52" height="52"/>
 <circle class="box" cx="335" cy="80" r="42"/><use class="ic" href="#i-pot" x="309" y="54" width="52" height="52"/>
-<text class="small" x="200" y="48">고친 레시피가 바로 보여요</text>
-<text class="alert" x="200" y="113">버리면 서랍에서도 사라져요</text>
-<text class="big" x="65" y="146">우리 집 서랍</text><text class="small" x="65" y="165">호스트 폴더</text>
+<text class="small" x="200" y="48">PC에서 고치면 바로 반영</text>
+<text class="alert" x="200" y="113">앱이 지우면 PC에서도 삭제</text>
+<text class="big" x="65" y="146">집 서랍</text><text class="small" x="65" y="165">내 PC 폴더(호스트)</text>
 <text class="big" x="335" y="146">조리대</text><text class="small" x="335" y="165">앱 폴더</text>
 <circle class="packet" r="5"><animateMotion dur="1.6s" begin="0s" repeatCount="indefinite" path="M108,64 L292,64"/></circle>
 <circle class="packet" r="5"><animateMotion dur="1.6s" begin="0.8s" repeatCount="indefinite" path="M292,96 L108,96"/></circle>
 </svg>
 <ol class="steps">
-<li>집 서랍 연결(바인드 마운트)로 같은 파일을 열어요</li>
-<li>기본으로 앱도 서랍의 파일을 고치거나 지울 수 있어요</li>
+<li>내 PC 폴더를 조리대에 연결해요 (바인드 마운트)</li>
+<li>내 PC에서 고치면 조리대 안 파일도 바로 바뀌어요</li>
+<li>반대로 앱이 고치거나 지워도 내 PC에 반영돼요</li>
 </ol>
 </section>
 

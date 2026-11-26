@@ -18,7 +18,6 @@ youtube: KPMHrk7fovM
 <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2M8 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0"/></symbol>
 <symbol id="i-lock" viewBox="0 0 24 24"><path d="M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2zM7 11V7a5 5 0 0 1 10 0v4"/></symbol>
 <symbol id="i-door" viewBox="0 0 24 24"><path d="M11 20H2M11 4.562v16.157a1 1 0 0 0 1.242.97L19 20V5.562a2 2 0 0 0-1.515-1.94l-4-1A2 2 0 0 0 11 4.561zM11 4H8a2 2 0 0 0-2 2v14M14 12h.01M22 20h-3"/></symbol>
-<symbol id="i-hash" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18"/></symbol>
 <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42zM7.5 7.5h.01"/></symbol>
 <symbol id="i-network" viewBox="0 0 24 24"><path d="M17 16h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1zM3 16h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-4a1 1 0 0 1 1-1zM10 2h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zM5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3M12 12V8"/></symbol>
 <symbol id="i-unplug" viewBox="0 0 24 24"><path d="m19 5 3-3M2 22l3-3M6.3 20.3a2.4 2.4 0 0 0 3.4 0L12 18l-6-6-2.3 2.3a2.4 2.4 0 0 0 0 3.4ZM7.5 13.5 10 11M10.5 16.5 13 14M12 6l6 6 2.3-2.3a2.4 2.4 0 0 0 0-3.4l-2.6-2.6a2.4 2.4 0 0 0-3.4 0Z"/></symbol>
@@ -42,41 +41,10 @@ youtube: KPMHrk7fovM
 <text class="big" x="286" y="138">조리대</text>
 </svg>
 <ol class="steps">
-<li>앱은 조리대(컨테이너)에서 주문을 기다려요</li>
+<li>앱은 조리대(컨테이너) 안 창구 번호(포트)에서 기다려요</li>
 <li>밖 손님은 가게(호스트)에 열어 둔 창구를 찾아요</li>
 </ol>
 </section>
-
-<section class="slide">
-<h3>자리가 다르면 같은 번호도 써요</h3>
-<svg class="dg" viewBox="0 0 400 205" role="img" aria-label="기본 bridge에서 두 조리대는 서로 다른 주소를 받아요. 80번은 두 앱이 모두 같은 창구를 쓰는 예시예요.">
-<rect class="line" x="7" y="8" width="191" height="188" rx="12"/>
-<text class="label center" x="102.5" y="34">조리대 A</text>
-<circle class="box" cx="102.5" cy="91" r="34"/><use class="ic" href="#i-pot" x="79.5" y="68" width="46" height="46"/>
-<text class="chip" x="102.5" y="149">IP 주소 A</text><text class="small" x="102.5" y="175">80번 (예시)</text>
-<rect class="line" x="202" y="8" width="191" height="188" rx="12"/>
-<text class="label center" x="297.5" y="34">조리대 B</text>
-<circle class="box" cx="297.5" cy="91" r="34"/><use class="ic" href="#i-pot" x="274.5" y="68" width="46" height="46"/>
-<text class="chip" x="297.5" y="149">IP 주소 B</text><text class="small" x="297.5" y="175">80번 (예시)</text>
-</svg>
-<ol class="steps">
-<li>조리대의 자리(IP 주소)에서 창구 번호(포트)를 골라요</li>
-<li>기본 구역(bridge)은 조리대마다 다른 주소를 줘요</li>
-<li>칸막이(네임스페이스) 덕에 80번이 겹치지 않아요 (예시)</li>
-</ol>
-</section>
-
-<details class="origin">
-<summary>더 알아보기: 누가 왜 만들었을까?</summary>
-<p>초기 Docker에서는 컨테이너가 모두 기본 bridge 네트워크 하나에 붙었어요. 컨테이너끼리 이름으로 부르려면 <code>--link</code> 옵션으로 하나하나 이어 줘야 했고 지금 공식 문서는 이 방식을 옛 기능(legacy)으로 분류해요.</p>
-<p>Docker, Inc.는 <b>2015년 3월</b> 네트워크 스타트업 SocketPlane을 인수하고 네트워크 기능을 libnetwork라는 부품으로 다시 짰어요. <b>2015년 11월</b> 나온 Docker 1.9에서 <code>docker network</code> 명령이 정식 기능이 되어 사용자가 네트워크를 직접 만들고 컨테이너를 붙였다 뗄 수 있게 됐어요. <b>2016년 2월</b> Docker 1.10부터는 사용자 정의 네트워크 안에서 컨테이너 이름을 DNS로 찾아요.</p>
-<p>bridge는 영어로 다리예요. 네트워크에서는 두 구간을 이어 주는 장치를 부르는 말이고 Docker의 bridge는 호스트 안에 소프트웨어로 만든 다리예요.</p>
-<p>참고: <a href="https://github.com/moby/moby/releases/tag/v1.9.0">Docker 1.9 릴리스 노트</a> · <a href="https://github.com/moby/moby/releases/tag/v1.10.0">Docker 1.10 릴리스 노트</a> · <a href="https://siliconangle.com/2015/11/09/docker-1-9-intros-a-fix-for-container-networking-headaches">SiliconANGLE: Docker 1.9와 SocketPlane</a></p>
-</details>
-</div>
-
-<div class="slide-group">
-<h2 class="slide-group-title">정문: 공개한 포트로 손님을 맞아요</h2>
 
 <section class="slide">
 <h3>손님 주문은 정문에서 조리대로 넘어가요</h3>
@@ -104,6 +72,18 @@ youtube: KPMHrk7fovM
 </ol>
 </section>
 
+<details class="origin">
+<summary>더 알아보기: 누가 왜 만들었을까?</summary>
+<p>초기 Docker에서는 컨테이너가 모두 기본 bridge 네트워크 하나에 붙었어요. 컨테이너끼리 이름으로 부르려면 <code>--link</code> 옵션으로 하나하나 이어 줘야 했고 지금 공식 문서는 이 방식을 옛 기능(legacy)으로 분류해요.</p>
+<p>Docker, Inc.는 <b>2015년 3월</b> 네트워크 스타트업 SocketPlane을 인수하고 네트워크 기능을 libnetwork라는 부품으로 다시 짰어요. <b>2015년 11월</b> 나온 Docker 1.9에서 <code>docker network</code> 명령이 정식 기능이 되어 사용자가 네트워크를 직접 만들고 컨테이너를 붙였다 뗄 수 있게 됐어요. <b>2016년 2월</b> Docker 1.10부터는 사용자 정의 네트워크 안에서 컨테이너 이름을 DNS로 찾아요.</p>
+<p>bridge는 영어로 다리예요. 네트워크에서는 두 구간을 이어 주는 장치를 부르는 말이고 Docker의 bridge는 호스트 안에 소프트웨어로 만든 다리예요.</p>
+<p>참고: <a href="https://github.com/moby/moby/releases/tag/v1.9.0">Docker 1.9 릴리스 노트</a> · <a href="https://github.com/moby/moby/releases/tag/v1.10.0">Docker 1.10 릴리스 노트</a> · <a href="https://siliconangle.com/2015/11/09/docker-1-9-intros-a-fix-for-container-networking-headaches">SiliconANGLE: Docker 1.9와 SocketPlane</a></p>
+</details>
+</div>
+
+<div class="slide-group">
+<h2 class="slide-group-title">정문: 공개한 포트로 손님을 맞아요</h2>
+
 <section class="slide">
 <h3>앞 번호는 정문이고 뒤 번호는 조리대예요</h3>
 <svg class="dg" viewBox="0 0 400 200" role="img" aria-label="예시 명령 -p 8080:80에서 앞의 8080은 호스트 포트이고 뒤의 80은 컨테이너 포트이며 브라우저가 가게 정문에 요청하면 호스트가 8080번에서 받아 web 컨테이너의 80번 웹 앱으로 넘기는 흐름 그림">
@@ -121,9 +101,9 @@ youtube: KPMHrk7fovM
 <circle class="packet" r="5"><animateMotion dur="2.4s" repeatCount="indefinite" path="M90,136 L173,136 M224,136 L308,136"/></circle>
 </svg>
 <ol class="steps">
-<li><code>docker run</code>에 두 창구를 잇는 규칙(포트 매핑)을 줘요 (예시)</li>
+<li><code>docker run</code>에 두 창구를 잇는 규칙(포트 매핑)을 줘요</li>
 <li>Mac·Windows의 가상 머신 속 웹은 공개 창구로 찾아요</li>
-<li>리눅스에서 Docker를 돌리는 컴퓨터는 조리대 주소로도 닿아요</li>
+<li>리눅스 Engine에선 조리대 IP 주소로도 닿아요</li>
 </ol>
 </section>
 
@@ -180,30 +160,31 @@ youtube: KPMHrk7fovM
 <h2 class="slide-group-title">이름표: 같은 구역에서 조리대를 찾아요</h2>
 
 <section class="slide">
-<h3>자리가 바뀌어도 이름표로 찾아요</h3>
-<svg class="dg" viewBox="0 0 400 200" role="img" aria-label="3번과 4번은 자리 번호 예시예요. 왼쪽 기본 공용 구역에서는 조리대를 3번 자리와 4번 자리처럼 번호로만 불러서 자리가 바뀌면 못 찾고 오른쪽 우리가 만든 구역에서는 web과 db 이름표로 불러서 이름만 알면 찾는 그림">
-<rect class="line" x="10" y="14" width="185" height="172" rx="12"/>
-<text class="label center" x="102" y="38">기본 공용 구역</text>
-<path class="line" d="M67,90 L138,90"/>
-<circle class="box" cx="45" cy="90" r="22"/><use class="ic" href="#i-pot" x="31" y="76" width="28" height="28"/>
-<circle class="box" cx="160" cy="90" r="22"/><use class="ic" href="#i-pot" x="146" y="76" width="28" height="28"/>
-<circle class="box" cx="102" cy="90" r="16"/><use class="ic" href="#i-hash" x="92" y="80" width="20" height="20"/>
-<text class="chip" x="45" y="128">3번 (예시)</text><text class="chip" x="160" y="128">4번 (예시)</text>
-<text class="alert" x="102" y="160">자리가 바뀌면 못 찾아요</text>
-<rect class="line" x="205" y="14" width="185" height="172" rx="12"/>
-<text class="label center" x="297" y="38">우리가 만든 구역</text>
-<path class="line" d="M262,90 L333,90"/>
-<circle class="box" cx="240" cy="90" r="22"/><use class="ic" href="#i-pot" x="226" y="76" width="28" height="28"/>
-<circle class="box" cx="355" cy="90" r="22"/><use class="ic" href="#i-pot" x="341" y="76" width="28" height="28"/>
-<circle class="box" cx="297" cy="90" r="16"/><use class="ic" href="#i-tag" x="287" y="80" width="20" height="20"/>
-<text class="chip" x="297" y="61">구역 안내판</text>
-<text class="chip" x="240" y="128">web</text><text class="chip" x="355" y="128">db</text>
-<text class="small" x="297" y="160">이름만 알면 찾아요</text>
-<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M262,90 L333,90"/></circle>
+<h3>IP 주소 대신 컨테이너 이름으로 찾아요</h3>
+<svg class="dg" viewBox="0 0 400 210" role="img" aria-label="같은 컴퓨터의 Docker에서 web 컨테이너가 db 컨테이너를 부르는 두 방법을 비교해요. 왼쪽 기본 네트워크(bridge)에서는 IP 주소로 불러야 하고 이름 db로는 찾지 못해요. 오른쪽 직접 만든 네트워크에서는 이름 db로 불러서 db를 다시 만들어도 찾아요.">
+<defs><marker id="n4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z"/></marker></defs>
+<rect class="line" x="7" y="8" width="191" height="194" rx="12"/>
+<text class="label center" x="102.5" y="34">기본 네트워크(bridge)</text>
+<path class="line" d="M79,98 L126,98" marker-end="url(#n4)"/>
+<circle class="box" cx="54" cy="98" r="24"/><use class="ic" href="#i-pot" x="39" y="83" width="30" height="30"/>
+<circle class="box" cx="151" cy="98" r="24"/><use class="ic" href="#i-pot" x="136" y="83" width="30" height="30"/>
+<text class="chip" x="102.5" y="76">IP 주소</text>
+<text class="chip" x="54" y="142">web 컨테이너</text><text class="chip" x="151" y="142">db 컨테이너</text>
+<text class="alert" x="102.5" y="182">이름 db로는 못 찾아요</text>
+<rect class="line" x="202" y="8" width="191" height="194" rx="12"/>
+<text class="label center" x="297.5" y="34">직접 만든 네트워크</text>
+<path class="line" d="M274,98 L321,98" marker-end="url(#n4)"/>
+<circle class="box" cx="249" cy="98" r="24"/><use class="ic" href="#i-pot" x="234" y="83" width="30" height="30"/>
+<circle class="box" cx="346" cy="98" r="24"/><use class="ic" href="#i-pot" x="331" y="83" width="30" height="30"/>
+<text class="chip" x="297.5" y="76">db</text>
+<text class="chip" x="249" y="142">web 컨테이너</text><text class="chip" x="346" y="142">db 컨테이너</text>
+<text class="small" x="297.5" y="182">다시 만들어도 찾아요</text>
+<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M79,98 L126,98"/></circle>
+<circle class="packet" r="5"><animateMotion dur="1.4s" begin="0s" repeatCount="indefinite" path="M274,98 L321,98"/></circle>
 </svg>
 <ol class="steps">
-<li>주인이 만든 구역(사용자 정의 bridge)에 둘을 모아요 (예시)</li>
-<li>새 조리대에 예전 이름을 붙이면 그 이름으로 찾아요</li>
+<li>web과 db는 한 컴퓨터의 Docker에 뜬 컨테이너예요</li>
+<li>db를 새로 만들면 자리 번호(IP 주소)가 바뀔 수 있어요</li>
 </ol>
 </section>
 
@@ -242,11 +223,11 @@ youtube: KPMHrk7fovM
 <h3>이름으로 찾으려면 같은 구역에 넣어요</h3>
 <svg class="dg" viewBox="0 0 400 205" role="img" aria-label="기본 bridge에는 자동으로 붙고 사용자 정의 bridge에는 지정한 컨테이너만 붙어 이름으로 찾아요.">
 <rect class="line" x="7" y="8" width="191" height="188" rx="12"/>
-<text class="label center" x="102.5" y="34">기본 구역</text>
+<text class="label center" x="102.5" y="34">기본 네트워크(bridge)</text>
 <circle class="box" cx="102.5" cy="91" r="34"/><use class="ic" href="#i-network" x="79.5" y="68" width="46" height="46"/>
 <text class="chip" x="102.5" y="149">자동 참여</text><text class="small" x="102.5" y="175">IP로 찾기</text>
 <rect class="line" x="202" y="8" width="191" height="188" rx="12"/>
-<text class="label center" x="297.5" y="34">직접 만든 구역</text>
+<text class="label center" x="297.5" y="34">직접 만든 네트워크</text>
 <circle class="kafka" cx="297.5" cy="91" r="34"/><use class="ic" href="#i-network" x="274.5" y="68" width="46" height="46"/>
 <text class="chip" x="297.5" y="149">지정해서 참여</text><text class="small" x="297.5" y="175">이름으로 찾기</text>
 </svg>
@@ -272,7 +253,7 @@ youtube: KPMHrk7fovM
 <li>웹 앱이 읽는 환경 설정에 <code>db:5432</code>를 적어요</li>
 <li>DB 상자(<code>postgres:18</code>)의 기본 포트는 5432예요</li>
 </ol>
-<p class="more"><a href="{{ '/2026/11/15/compose/' | relative_url }}">4편</a>에서 Compose가 기본 구역의 서비스 이름을 쓰는 이유를 봐요</p>
+<p class="more"><a href="{{ '/2026/11/15/compose/' | relative_url }}">4편</a>에서 Compose가 대신 만드는 네트워크(프로젝트명_default)를 봐요</p>
 </section>
 </div>
 

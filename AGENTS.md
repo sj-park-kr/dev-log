@@ -24,5 +24,6 @@ Claude와 Codex의 공통 진입점이다. 세부 규칙은 `docs/`에서만 관
 | 매일 자동으로 새 글 작성 | [자동화 프롬프트와 설정](docs/daily-writing-prompt.md) |
 | 새 글 작성·기존 글 수정·검토, 사용자가 "이해가 안 된다"고 했을 때 (사례 갱신) | [독자가 막힌 이유](docs/rules/13-reader-pitfalls.md) |
 | 문체·설명 방식 판단, 과거 피드백 확인 | [세션 기반 수정 성향](docs/writing-feedback.md) |
+| 사용자가 수정을 요청하거나 결과물에 의견을 말했을 때 (따로 말하지 않아도 기록) | [수정 요청 기록](docs/writing-feedback.md#수정-요청-기록-계속-누적) |
 
 새 글을 시작할 때는 [작성 템플릿](_drafts/lesson-template.md)을 사용한다. 기존 글을 동화책 형식으로 옮기거나 완성된 글의 구성을 확인할 때는 [Kafka 1편](_posts/kafka/2026-11-15-why-kafka.md)을 기준으로 삼는다.

@@ -6,6 +6,7 @@ date: 2026-11-16 23:30:00 +0900
 series: redis
 episode: 2
 summary: "Redis는 값이 메모인지 카드인지 순위표인지 알아요. 그래서 앱이 값을 꺼내 고치지 않아도 Redis가 그 자리에서 한 칸만 안전하게 고쳐 줘요."
+youtube: Hmxc4cWaJjo
 ---
 
 <div class="lesson lesson-hierarchy storybook">
